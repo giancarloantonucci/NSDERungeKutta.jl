@@ -1,0 +1,13 @@
+name = "RungeKutta"
+uuid = "3978d399-9848-4322-9a48-ca26b732c7dc"
+authors = ["Giancarlo A. Antonucci"]
+version = "0.1.0"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
