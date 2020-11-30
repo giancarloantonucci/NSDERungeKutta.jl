@@ -44,7 +44,7 @@ plot(
 
 ![svg](imgs/runge_kutta_4_0.svg)
 
-`RungeKutta.jl` currently supports explicit (`Euler`/`ExplicitEuler`, `Midpoint`/`ExplicitMidpoint`, `Heun2`, `Ralston2`, `Heun3`, `Kutta3`, `Ralston3`, `RK4`, `RKF45`/`RungeKuttaFehlberg`, `DOPRI54`/`DormandPrince`) and implicit methods (`BackwardEuler`/`ImplicitEuler`, `ImplicitMidpoint`, `Trapezoidal`/`CrankNicolson`). Other time-steppers from [wikipedia](https://en.wikipedia.org/wiki/List_of_Runge–Kutta_methods) will be added with time.
+`RungeKutta.jl` currently supports explicit (`Euler`/`ExplicitEuler`, `Midpoint`/`ExplicitMidpoint`, `Heun2`, `Ralston2`, `Heun3`, `Kutta3`, `Ralston3`, `RK4`, `RKF45`/`RungeKuttaFehlberg`, `DOPRI54`/`DormandPrince`) and implicit methods (`BackwardEuler`/`ImplicitEuler`, `ImplicitMidpoint`, `Trapezoidal`/`CrankNicolson`).
 
 ## Installation
 
@@ -55,7 +55,8 @@ plot(
 
 ## What's in the pipeline
 
-1. Add IMEX methods.
-2. Make ``stability`` decide the size of the plottable area automatically.
-3. Improve performances.
-4. Improve error messages.
+- Add IMEX methods.
+- Make ``stability`` decide the size of the plottable area automatically.
+- Improve performances.
+- Improve error messages.
+- Add other time-steppers from [wikipedia](https://en.wikipedia.org/wiki/List_of_Runge–Kutta_methods).

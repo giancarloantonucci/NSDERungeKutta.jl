@@ -32,7 +32,8 @@ end
 returns the `RungeKuttaSolution` of an `InitialValueProblem`.
 """
 function NSDEBase.solve(problem::InitialValueProblem, solver::RungeKuttaSolver)
-    tN = problem.tspan[2]
+    @↓ tspan = problem
+    tN = tspan[2]
     solution = RungeKuttaSolution(problem, solver)
     @↓ u, t = solution
     N = length(t)

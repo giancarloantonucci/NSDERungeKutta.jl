@@ -6,7 +6,7 @@ returns a constructor for an implicit-explicit (ARK) `RungeKuttaSolver` with
 - `ℐ` : stiff implicit solver.
 - `ℰ` : non-stiff explicit solver.
 """
-struct AdditiveRungeKuttaSolver{ℐ_T, ℰ_T} <: RungeKuttaSolver
+mutable struct AdditiveRungeKuttaSolver{ℐ_T, ℰ_T} <: RungeKuttaSolver
     ℐ::ℐ_T
     ℰ::ℰ_T
 end
@@ -27,8 +27,8 @@ end
 returns an `AdditiveRungeKuttaSolver` for the <u>1st-order</u> ARK-Euler method.
 """
 function IMEXEuler(; h = 0.0, ϵ = 1e-3, K = 10)
-    ℐ = BackwardEuler(h, ϵ, K)
-    ℰ = Euler(h)
+    ℐ = BackwardEuler(h = h, ϵ = ϵ, K = K)
+    ℰ = Euler(h = h)
     return ARK(ℐ, ℰ)
 end
 @doc (@doc IMEXEuler) AdditiveEuler(args...; kwargs...) = IMEXEuler(args...; kwargs...)

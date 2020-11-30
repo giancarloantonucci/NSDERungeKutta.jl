@@ -6,7 +6,8 @@ computes a step of the `RungeKuttaSolution` of an `InitialValueProblem` using an
 function step!(cache::RungeKuttaCache, solution::RungeKuttaSolution, problem::InitialValueProblem, solver::ExplicitRungeKuttaSolver)
     @↓ n, k = cache
     @↓ u, t = solution
-    @↓ f = problem.rhs
+    @↓ rhs = problem
+    @↓ f!, Df! = rhs
     @↓ tableau, h = solver
     @↓ A, b, c, s = tableau
     v = u[Block(n+1)] # to avoid allocs
@@ -36,11 +37,12 @@ computes a step of the `RungeKuttaSolution` of an `InitialValueProblem` using an
 function step!(cache::RungeKuttaCache, solution::RungeKuttaSolution, problem::InitialValueProblem, solver::ImplicitRungeKuttaSolver)
     @↓ n, k, Δk, J = cache
     @↓ u, t = solution
-    @↓ f, Df = problem.rhs
+    @↓ rhs = problem
+    @↓ f!, Df! = rhs
     @↓ tableau, h, ϵ, K = solver
     @↓ A, b, c, s = tableau
     v = u[Block(n+1)] # to avoid allocs
-    @← J = Df(u[Block(n)], t[n])
+    @← J = Df(v, u[Block(n)], t[n])
     Z = factorize(I - h * kron(A, J))
     zero!(k)
     # compute stages

@@ -7,7 +7,9 @@ mutable struct RungeKuttaCache{n_T, m_T, k_T, Δk_T, J_T}
 end
 
 function RungeKuttaCache(problem::InitialValueProblem, solver::ExplicitRungeKuttaSolver)
-    @↓ u0, T ← eltype(u0), L ← length(u0) = problem
+    @↓ u0 = problem
+    T = eltype(u0)
+    L = length(u0)
     @⤓ s = solver
     n = m = 1
     k = BlockVector{T}(undef, [L for i = 1:s])
@@ -15,7 +17,9 @@ function RungeKuttaCache(problem::InitialValueProblem, solver::ExplicitRungeKutt
 end
 
 function RungeKuttaCache(problem::InitialValueProblem, solver::ImplicitRungeKuttaSolver)
-    @↓ u0, T ← eltype(u0), L ← length(u0) = problem
+    @↓ u0 = problem
+    T = eltype(u0)
+    L = length(u0)
     @⤓ s = solver
     n = m = 1
     k = BlockVector{T}(undef, [L for i = 1:s])
@@ -25,7 +29,9 @@ function RungeKuttaCache(problem::InitialValueProblem, solver::ImplicitRungeKutt
 end
 
 function RungeKuttaCache(problem::InitialValueProblem, solver::AdditiveRungeKuttaSolver)
-    @↓ u0, T ← eltype(u0), L ← length(u0) = problem
+    @↓ u0 = problem
+    T = eltype(u0)
+    L = length(u0)
     @⤓ s = solver
     n = m = 1
     kᴵ = BlockVector{T}(undef, [L for i = 1:s])

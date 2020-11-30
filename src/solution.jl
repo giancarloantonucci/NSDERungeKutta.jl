@@ -11,8 +11,10 @@ struct RungeKuttaSolution{u_T, t_T} <: InitialValueSolution
 end
 
 function RungeKuttaSolution(problem::InitialValueProblem, solver::RungeKuttaSolver)
-    @↓ u0, T ← eltype(u0), L ← length(u0), tspan = problem
+    @↓ u0, tspan = problem
     @↓ h = solver
+    T = eltype(u0)
+    L = length(u0)
     t0, tN = tspan
     N = floor(Int, (tN - t0) / h) + 1
     u = BlockVector{T}(undef, [L for i = 1:N])
@@ -26,5 +28,5 @@ Base.length(solution::RungeKuttaSolution) = length(solution.t)
 function Base.getindex(solution::RungeKuttaSolution, i::Int)
     @↓ u, t = solution
     N = length(t)
-    return RungeKuttaSolution([u[Block(n, i)] for n = 1:N], t)
+    return RungeKuttaSolution([u[BlockIndex(n, i)] for n = 1:N], t)
 end
