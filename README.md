@@ -1,7 +1,5 @@
 # RungeKutta
 
-A Julia package implementing Runge-Kutta methods.
-
 [![Build Status](https://github.com/antonuccig/RungeKutta.jl/workflows/CI/badge.svg)](https://github.com/antonuccig/RungeKutta.jl/actions)
 [![Coverage](https://codecov.io/gh/antonuccig/RungeKutta.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/antonuccig/RungeKutta.jl)
 
@@ -44,8 +42,12 @@ plot(
 
 ![svg](imgs/runge_kutta_4_0.svg)
 
+`RungeKutta.jl` currently supports explicit (`Euler`/`ExplicitEuler`, `Midpoint`/`ExplicitMidpoint`, `Heun2`, `Ralston2`, `Heun3`, `Kutta3`, `Ralston3`, `SSPRK3`, `RK4`, `Rule38`, `HeunEuler`, `Fehlberg45`/`F45`, `DormandPrince54`/`DP54`, `Verner65`/`V65`) and implicit methods (`BackwardEuler`/`ImplicitEuler`, `ImplicitMidpoint`, `CrankNicolson`, `SDIRK3`, `GaussLegendre4`/`GL4`, `GaussLegendre6`/`GL6`, `LobattoIIIA4`, `LobattoIIIB2`, `LobattoIIIB4`, `LobattoIIIC2`, `LobattoIIIC4`, `RadauIA3`, `RadauIA5`, `RadauIIA3`, `RadauIIA5`).
 
-`RungeKutta.jl` currently supports explicit (`Euler`/`ExplicitEuler`, `Heun2`, `Ralston2`, `Midpoint`/`ExplicitMidpoint`, `Heun3`, `Kutta3`, `Ralston3`, `SSPRK3`, `RK4`, `Rule38`, `Fehlberg45`/`F45`, `DormandPrince54`/`DP54`, `Verner65`/`V65`), diagonally implicit (`SDIRK3`) and fully implicit methods (`BackwardEuler`/`ImplicitEuler`, `ImplicitMidpoint`, `CrankNicolson`, `SDIRK3`, `HammerHollingsworth`/`HH4`, `LobattoIIIA4`, `RadauIIA5`).
+Current plans for further developments are:
+- improve performance and error messages.
+- automatic size detection of stability region.
+- IMEX methods.
 
 ## Installation
 
@@ -53,11 +55,3 @@ plot(
 ```julia
 ]add https://github.com/antonuccig/RungeKutta.jl
 ```
-
-## What's in the pipeline
-
-- Add IMEX methods.
-- Make ``stability`` decide the size of the plottable area automatically.
-- Improve performances.
-- Improve error messages.
-- Add other time-steppers from [wikipedia](https://en.wikipedia.org/wiki/List_of_Runge–Kutta_methods).

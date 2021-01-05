@@ -30,163 +30,223 @@ function Base.copy(solver::ImplicitRungeKuttaSolver)
     return IRK(tableau, h, ϵ, K, adaptive)
 end
 
-@doc raw"""
+"""
     BackwardEuler(; h = 0.0, ϵ = 1e-3, K = 10) -> ImplicitRungeKuttaSolver
     ImplicitEuler(args...; kwargs...) -> ImplicitRungeKuttaSolver
 
-returns an `ImplicitRungeKuttaSolver` for the backward Euler method:
-```math
-\begin{array}{c|c}
-    1 & 1 \\
-    \hline
-    1 & 1
-\end{array}
-```
+returns an `ImplicitRungeKuttaSolver` for the 1st-order backward Euler method.
 """
 function BackwardEuler(; h = 0.0, ϵ = 1e-3, K = 10)
-    tableau = ButcherTableau([
-        1. 1.;
-        1. 1.;
+    tableau = ButcherTableau(typeof(h)[
+        1 1;
+        1 1;
     ])
     return IRK(tableau, h, ϵ, K)
 end
 @doc (@doc BackwardEuler) ImplicitEuler(args...; kwargs...) = BackwardEuler(args...; kwargs...)
 
-@doc raw"""
+"""
     ImplicitMidpoint(; h = 0.0, ϵ = 1e-3, K = 10) -> ImplicitRungeKuttaSolver
 
-returns an `ImplicitRungeKuttaSolver` for the implicit midpoint method:
-```math
-\begin{array}{c|c}
-    1/2 & 1/2 \\
-    \hline
-    2   & 1
-\end{array}
-```
+returns an `ImplicitRungeKuttaSolver` for the 2nd-order implicit midpoint method.
 """
 function ImplicitMidpoint(; h = 0.0, ϵ = 1e-3, K = 10)
-    tableau = ButcherTableau([
+    tableau = ButcherTableau(typeof(h)[
         1/2 1/2;
-        2.  1. ;
+         2   1 ;
     ])
     return IRK(tableau, h, ϵ, K)
 end
 
-@doc raw"""
+"""
     CrankNicolson(; h = 0.0, ϵ = 1e-3, K = 10) -> ImplicitRungeKuttaSolver
 
-returns an `ImplicitRungeKuttaSolver` for the Crank-Nicolson method:
-```math
-\begin{array}{c|cc}
-    0   & 0   & 0   \\
-    1   & 1/2 & 1/2 \\
-    \hline
-    2   & 1/2 & 1/2
-\end{array}
-```
+returns an `ImplicitRungeKuttaSolver` for the 2nd-order Crank-Nicolson method.
 """
 function CrankNicolson(; h = 0.0, ϵ = 1e-3, K = 10)
-    tableau = ButcherTableau([
-        0.  0.  0. ;
-        1.  1/2 1/2;
-        2.  1/2 1/2;
+    tableau = ButcherTableau(typeof(h)[
+        0   0   0 ;
+        1  1/2 1/2;
+        2  1/2 1/2;
     ])
     return IRK(tableau, h, ϵ, K)
 end
 
-@doc raw"""
+"""
     SDIRK3(; h = 0.0, ϵ = 1e-3, K = 10) -> ImplicitRungeKuttaSolver
 
-returns an `ImplicitRungeKuttaSolver` for the 3rd-order SDIRK method:
-```math
-\begin{array}{c|cc}
-    \gamma     & \gamma     & 0          \\
-    1-\gamma   & 1-2\gamma  & \gamma     \\
-    \hline
-    3          & 1/2        & 1/2
-\end{array}
-```
-where ``\gamma = (3 + √3)/6``.
+returns an `ImplicitRungeKuttaSolver` for the 3rd-order SDIRK method.
 """
 function SDIRK3(; h = 0.0, ϵ = 1e-3, K = 10)
     γ = 1/2 + √3/6
-    tableau = ButcherTableau([
-        γ    γ    0. ;
-        1-γ  1-2γ γ  ;
-        3.   1/2  1/2;
+    tableau = ButcherTableau(typeof(h)[
+         γ    γ   0 ;
+        1-γ 1-2γ  γ ;
+         3   1/2 1/2;
     ])
     return IRK(tableau, h, ϵ, K)
 end
 
-@doc raw"""
-    HammerHollingsworth(; h = 0.0, ϵ = 1e-3, K = 10) -> ImplicitRungeKuttaSolver
-    HH4(args...; kwargs...) -> ImplicitRungeKuttaSolver
-
-returns an `ImplicitRungeKuttaSolver` for the 4th-order Hammer and Hollingsworth method:
-```math
-\begin{array}{c|cc}
-    \frac{1}{2} - \frac{\sqrt{3}}{6}  & \frac{1}{4}                      & \frac{1}{4} - \frac{\sqrt{3}}{6} \\
-    \frac{1}{2} + \frac{\sqrt{3}}{6}  & \frac{1}{4} + \frac{\sqrt{3}}{6} & \frac{1}{4}                      \\
-    \hline
-    4                                 & 1/2                              & 1/2
-\end{array}
-```
 """
-function HammerHollingsworth(; h = 0.0, ϵ = 1e-3, K = 10)
-    tableau = ButcherTableau([
-        1/2-√3/6  1/4       1/4-√3/6  ;
-        1/2+√3/6  1/4+√3/6  1/4       ;
-        4.        1/2       1/2
+    GaussLegendre4(; h = 0.0, ϵ = 1e-3, K = 10) -> ImplicitRungeKuttaSolver
+    GL4(args...; kwargs...) -> ImplicitRungeKuttaSolver
+
+returns an `ImplicitRungeKuttaSolver` for the 4th-order Gauss-Legendre method.
+"""
+function GaussLegendre4(; h = 0.0, ϵ = 1e-3, K = 10)
+    tableau = ButcherTableau(typeof(h)[
+        1/2-√3/6   1/4    1/4-√3/6;
+        1/2+√3/6 1/4+√3/6   1/4   ;
+           4       1/2      1/2   ;
     ])
     return IRK(tableau, h, ϵ, K)
 end
-@doc (@doc HammerHollingsworth) HH4(args...; kwargs...) = HammerHollingsworth(args...; kwargs...)
+@doc (@doc GaussLegendre4) GL4(args...; kwargs...) = GaussLegendre4(args...; kwargs...)
 
-@doc raw"""
+"""
+    GaussLegendre6(; h = 0.0, ϵ = 1e-3, K = 10) -> ImplicitRungeKuttaSolver
+    GL6(args...; kwargs...) -> ImplicitRungeKuttaSolver
+
+returns an `ImplicitRungeKuttaSolver` for the 6th-order Gauss–Legendre method.
+"""
+function GaussLegendre6(; h = 0.0, ϵ = 1e-3, K = 10)
+    tableau = ButcherTableau(typeof(h)[
+        1/2-√15/10     5/36    2/9-√15/15 5/36-√15/30;
+           1/2     5/36+√15/24    2/9     5/36-√15/24;
+        1/2+√15/10 5/36+√15/30 2/9+√15/15     5/36   ;
+            6          5/18       4/9         5/18   ;
+    ])
+    return IRK(tableau, h, ϵ, K)
+end
+@doc (@doc GaussLegendre6) GL6(args...; kwargs...) = GaussLegendre6(args...; kwargs...)
+
+"""
     LobattoIIIA4(; h = 0.0, ϵ = 1e-3, K = 10) -> ImplicitRungeKuttaSolver
 
-returns an `ImplicitRungeKuttaSolver` for the 4th-order Lobatto IIIA method:
-```math
-\begin{array}{c|ccc}
-    0     & 0     & 0     & 0     \\
-    1/2   & 5/24  & 1/3   & -1/24 \\
-    1     & 1/6   & 2/3   & 1/6   \\
-    \hline
-    4     & 1/6   & 2/3   & 1/6
-\end{array}
-```
+returns an `ImplicitRungeKuttaSolver` for the 4th-order Lobatto IIIA method.
 """
 function LobattoIIIA4(; h = 0.0, ϵ = 1e-3, K = 10)
-    tableau = ButcherTableau([
-        0.   0.   0.   0.   ;
-        1/2  5/24 1/3  -1/24;
-        1.   1/6  2/3  1/6  ;
-        4.   1/6  2/3  1/6  ;
+    tableau = ButcherTableau(typeof(h)[
+         0   0    0    0  ;
+        1/2 5/24 1/3 -1/24;
+         1  1/6  2/3  1/6 ;
+         4  1/6  2/3  1/6 ;
     ])
     return IRK(tableau, h, ϵ, K)
 end
 
-@doc raw"""
+"""
+    LobattoIIIB2(; h = 0.0, ϵ = 1e-3, K = 10) -> ImplicitRungeKuttaSolver
+
+returns an `ImplicitRungeKuttaSolver` for the 2nd-order Lobatto IIIB method.
+"""
+function LobattoIIIB2(; h = 0.0, ϵ = 1e-3, K = 10)
+    tableau = ButcherTableau(typeof(h)[
+        1/2 1/2  0 ;
+        1/2 1/2  0 ;
+         2  1/2 1/2;
+    ])
+    return IRK(tableau, h, ϵ, K)
+end
+
+"""
+    LobattoIIIB4(; h = 0.0, ϵ = 1e-3, K = 10) -> ImplicitRungeKuttaSolver
+
+returns an `ImplicitRungeKuttaSolver` for the 4th-order Lobatto IIIB method.
+"""
+function LobattoIIIB4(; h = 0.0, ϵ = 1e-3, K = 10)
+    tableau = ButcherTableau(typeof(h)[
+         0  1/6 -1/6  0 ;
+        1/2 1/6  1/3  0 ;
+         1  1/6  5/6  0 ;
+         4  1/6  2/3 1/6;
+    ])
+    return IRK(tableau, h, ϵ, K)
+end
+
+"""
+    LobattoIIIC2(; h = 0.0, ϵ = 1e-3, K = 10) -> ImplicitRungeKuttaSolver
+
+returns an `ImplicitRungeKuttaSolver` for the 2nd-order Lobatto IIIC method.
+"""
+function LobattoIIIC2(; h = 0.0, ϵ = 1e-3, K = 10)
+    tableau = ButcherTableau(typeof(h)[
+        0  1/2 -1/2;
+        1  1/2  1/2;
+        2  1/2  1/2;
+    ])
+    return IRK(tableau, h, ϵ, K)
+end
+
+"""
+    LobattoIIIC4(; h = 0.0, ϵ = 1e-3, K = 10) -> ImplicitRungeKuttaSolver
+
+returns an `ImplicitRungeKuttaSolver` for the 4th-order Lobatto IIIC method.
+"""
+function LobattoIIIC4(; h = 0.0, ϵ = 1e-3, K = 10)
+    tableau = ButcherTableau(typeof(h)[
+         0   1/6 -1/3   1/6 ;
+        1/2  1/6  5/12 -1/12;
+         1   1/6  2/3   1/6 ;
+         4   1/6  2/3   1/6 ;
+    ])
+    return IRK(tableau, h, ϵ, K)
+end
+
+"""
+    RadauIA3(; h = 0.0, ϵ = 1e-3, K = 10) -> ImplicitRungeKuttaSolver
+
+returns an `ImplicitRungeKuttaSolver` for the 3rd-order Radau IA method.
+"""
+function RadauIA3(; h = 0.0, ϵ = 1e-3, K = 10)
+    tableau = ButcherTableau(typeof(h)[
+         0  1/4 -1/4 ;
+        2/3 1/4  5/12;
+         3  1/4  3/4 ;
+    ])
+    return IRK(tableau, h, ϵ, K)
+end
+
+"""
+    RadauIA5(; h = 0.0, ϵ = 1e-3, K = 10) -> ImplicitRungeKuttaSolver
+
+returns an `ImplicitRungeKuttaSolver` for the 5th-order Radau IA method.
+"""
+function RadauIA5(; h = 0.0, ϵ = 1e-3, K = 10)
+    tableau = ButcherTableau(typeof(h)[
+            0     1/9   -1/18-√6/18     -1/18+√6/18  ;
+        3/5-√6/10 1/9  11/45+7*√6/360 11/45-43*√6/360;
+        3/5+√6/10 1/9 11/45+43*√6/360  11/45-7*√6/360;
+            5     1/9    4/9+√6/36       4/9-√6/36   ;
+    ])
+    return IRK(tableau, h, ϵ, K)
+end
+
+"""
+    RadauIIA3(; h = 0.0, ϵ = 1e-3, K = 10) -> ImplicitRungeKuttaSolver
+
+returns an `ImplicitRungeKuttaSolver` for the 3rd-order Radau IIA method.
+"""
+function RadauIIA3(; h = 0.0, ϵ = 1e-3, K = 10)
+    tableau = ButcherTableau(typeof(h)[
+        1/3  5/12 -1/12;
+         1   3/4   1/4 ;
+         3   3/4   1/4 ;
+    ])
+    return IRK(tableau, h, ϵ, K)
+end
+
+"""
     RadauIIA5(; h = 0.0, ϵ = 1e-3, K = 10) -> ImplicitRungeKuttaSolver
     
-returns an `ImplicitRungeKuttaSolver` for the 5th-order Radau IIA method:
-```math
-\begin{array}{c|ccc}
-    \frac{2}{5} - \frac{\sqrt{6}}{10}          & \frac{11}{45} - \frac{7\sqrt{6}}{360}     & \frac{37}{225} - \frac{169\sqrt{6}}{1800} & -\frac{2}{225} + \frac{\sqrt{6}}{75}      \\
-    \frac{2}{5} + \frac{\sqrt{6}}{10}          & \frac{37}{225} + \frac{169\sqrt{6}}{1800} & \frac{11}{45} + \frac{7\sqrt{6}}{360}     & -\frac{2}{225} - \frac{\sqrt{6}}{75}      \\
-    1                                          & \frac{4}{9} - \frac{\sqrt{6}}{36}         & \frac{4}{9} + \frac{\sqrt{6}}{36}         & \frac{1}{9}                               \\
-    \hline
-    5                                          & \frac{4}{9} - \frac{\sqrt{6}}{36}         & \frac{4}{9} + \frac{\sqrt{6}}{36}         & \frac{1}{9}
-\end{array}
-
-```
+returns an `ImplicitRungeKuttaSolver` for the 5th-order Radau IIA method.
 """
 function RadauIIA5(; h = 0.0, ϵ = 1e-3, K = 10)
-    tableau = ButcherTableau([
-        2/5-√6/10          11/45-7*√6/360     37/225-169*√6/1800 -2/225+√6/75      ;
-        2/5+√6/10          37/225+169*√6/1800 11/45+7*√6/360     -2/225-√6/75      ;
-        1.                 4/9-√6/36          4/9+√6/36          1/9               ;
-        5.                 4/9-√6/36          4/9+√6/36          1/9
+    tableau = ButcherTableau(typeof(h)[
+        2/5-√6/10   11/45-7*√6/360   37/225-169*√6/1800 -2/225+√6/75;
+        2/5+√6/10 37/225+169*√6/1800   11/45+7*√6/360   -2/225-√6/75;
+           1           4/9-√6/36          4/9+√6/36          1/9    ;
+           5           4/9-√6/36          4/9+√6/36          1/9    ;
     ])
     return IRK(tableau, h, ϵ, K)
 end
