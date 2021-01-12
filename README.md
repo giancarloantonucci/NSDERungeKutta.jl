@@ -17,20 +17,20 @@ solver = Midpoint(h = 1e-2)
 solution = solve(problem, solver)
 ```
 
-We can plot the obtained `solution` by extracting its fields `u` and `t`, e.g. with the convenient macro `@↓ solution = u, t` from `NSDEBase`. Or we can use the predefined recipes:
+We can plot the obtained `solution` by extracting its fields `u` and `t`, e.g. with the convenient macro `@↓ u, t = solution` from `ArrowMacros`. Alternatively, we can use the predefined recipes:
 
 ```julia
 using Plots, LaTeXStrings
 plot(
   size = (800, 400),
-  plot(solution, label = [L"$\theta$" L"$\omega$"], legend = true),
-  phaseplot(solution, vars = (1, 2), xlabel = L"$\theta$", ylabel = L"$\omega$", widen = true)
+  plot(solution, xlabel = L"$t$", label = [L"$\theta$" L"$\omega$"], widen = false, legend = true),
+  phaseplot(solution, vars = (1, 2), xlabel = L"$\theta$", ylabel = L"$\omega$")
 )
 ```
 
-![svg](imgs/runge_kutta_2_0.svg)
+![svg](imgs/RungeKutta_1.svg)
 
-`RungeKutta` has predefined recipes to plot stability regions and order stars too:
+`RungeKutta` has also predefined recipes to plot stability regions and order stars:
 
 ```julia
 plot(
@@ -40,7 +40,7 @@ plot(
 )
 ```
 
-![svg](imgs/runge_kutta_4_0.svg)
+![svg](imgs/RungeKutta_2.svg)
 
 `RungeKutta.jl` currently supports explicit (`Euler`/`ExplicitEuler`, `Midpoint`/`ExplicitMidpoint`, `Heun2`, `Ralston2`, `Heun3`, `Kutta3`, `Ralston3`, `SSPRK3`, `RK4`, `Rule38`, `HeunEuler`, `Fehlberg45`/`F45`, `DormandPrince54`/`DP54`, `Verner65`/`V65`) and implicit methods (`BackwardEuler`/`ImplicitEuler`, `ImplicitMidpoint`, `CrankNicolson`, `SDIRK3`, `GaussLegendre4`/`GL4`, `GaussLegendre6`/`GL6`, `LobattoIIIA4`, `LobattoIIIB2`, `LobattoIIIB4`, `LobattoIIIC2`, `LobattoIIIC4`, `RadauIA3`, `RadauIA5`, `RadauIIA3`, `RadauIIA5`).
 

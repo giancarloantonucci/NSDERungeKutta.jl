@@ -7,7 +7,6 @@ export ExplicitRungeKuttaSolver, ERK
 export ImplicitRungeKuttaSolver, IRK
 export stability_function, ℛ
 
-# Fixed-Step Explicit Methods
 export Euler, ExplicitEuler
 export Midpoint, ExplicitMidpoint
 export Heun2
@@ -19,13 +18,11 @@ export SSPRK3
 export RK4
 export Rule38
 
-# Adaptive Explicit Methods
 export HeunEuler
 export Fehlberg45, F45
 export DormandPrince54, DP54
 export Verner65, V65
 
-# Fixed-Step Implicit Methods
 export BackwardEuler, ImplicitEuler
 export ImplicitMidpoint
 export CrankNicolson

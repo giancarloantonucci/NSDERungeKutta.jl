@@ -1,6 +1,7 @@
 @recipe function f(solution::RungeKuttaSolution; vars = nothing)
     framestyle --> :box
-    legend     --> :none
+    gridalpha  --> 0.1
+    legend     --> false
     linewidth  --> 1.5
     seriestype --> :path
     @↓ u, t = solution
@@ -19,7 +20,9 @@ end
     length(h.args) == 1 ? true : error("Got too many arguments: $(length(h.args)).")
     solution = h.args[1] isa RungeKuttaSolution ? h.args[1] : error("Got $(typeof(h.args)) instead of `RungeKuttaSolution`.")
     framestyle --> :box
-    legend     --> :none
+    gridalpha  --> 0.1
+    legend     --> false
+    linewidth  --> 1.5
     seriestype --> :path
     @↓ u, t = solution
     L = length(u[Block(1)])
@@ -33,15 +36,18 @@ end
 end
 
 @userplot STABILITY
-@recipe function f(h::STABILITY; lims = (-4, 4), xlims = lims, ylims = xlims)
+@recipe function f(h::STABILITY; lims = (-4, 4), xlims = lims, ylims = lims)
     length(h.args) == 1 ? true : error("Got too many arguments: $(length(h.args)).")
     R = h.args[1] isa ButcherTableau   ? z -> ℛ(z, h.args[1])         :
         h.args[1] isa RungeKuttaSolver ? z -> ℛ(z, h.args[1].tableau) :
         h.args[1] isa Function         ? h.args[1]                    :
         error("Got $(typeof(h.args)) instead of `ButcherTableau`, `RungeKuttaSolver` or `Function`.")
     framestyle --> :box
-    legend     --> :none
+    gridalpha  --> 0.1
+    gridstyle  --> :dot
+    legend     --> false
     levels     --> [1.0]
+    linewidth  --> 1.5
     seriestype --> :contour
     Δx = abs(xlims[2] - xlims[1])
     Δy = abs(ylims[2] - ylims[1])
@@ -55,7 +61,7 @@ end
 end
 
 @userplot STABILITYF
-@recipe function f(h::STABILITYF; lims = (-4, 4), xlims = lims, ylims = xlims)
+@recipe function f(h::STABILITYF; lims = (-4, 4), xlims = lims, ylims = lims)
     length(h.args) == 1 ? true : error("Got too many arguments: $(length(h.args)).")
     R = h.args[1] isa ButcherTableau   ? z -> ℛ(z, h.args[1])         :
         h.args[1] isa RungeKuttaSolver ? z -> ℛ(z, h.args[1].tableau) :
@@ -64,7 +70,8 @@ end
     clims      --> (0, 1)
     colorbar   --> true
     framestyle --> :box
-    legend     --> :none
+    gridalpha  --> 0.1
+    legend     --> false
     seriestype --> :heatmap
     Δx = abs(xlims[2] - xlims[1])
     Δy = abs(ylims[2] - ylims[1])
@@ -79,15 +86,17 @@ end
 end
 
 @userplot ORDERSTAR
-@recipe function f(h::ORDERSTAR; lims = (-4, 4), xlims = lims, ylims = xlims)
+@recipe function f(h::ORDERSTAR; lims = (-4, 4), xlims = lims, ylims = lims)
     length(h.args) == 1 ? true : error("Got too many arguments: $(length(h.args)).")
     R = h.args[1] isa ButcherTableau   ? z -> ℛ(z, h.args[1])         :
         h.args[1] isa RungeKuttaSolver ? z -> ℛ(z, h.args[1].tableau) :
         h.args[1] isa Function         ? h.args[1]                    :
         error("Got $(typeof(h.args)) instead of `ButcherTableau`, `RungeKuttaSolver` or `Function`.")
     framestyle --> :box
-    legend     --> :none
+    gridalpha  --> 0.1
+    legend     --> false
     levels     --> [1.0]
+    linewidth  --> 1.5
     seriestype --> :contour
     Δx = abs(xlims[2] - xlims[1])
     Δy = abs(ylims[2] - ylims[1])
@@ -101,7 +110,7 @@ end
 end
 
 @userplot ORDERSTARF
-@recipe function f(h::ORDERSTARF; lims = (-4, 4), xlims = lims, ylims = xlims)
+@recipe function f(h::ORDERSTARF; lims = (-4, 4), xlims = lims, ylims = lims)
     length(h.args) == 1 ? true : error("Got too many arguments: $(length(h.args)).")
     R = h.args[1] isa ButcherTableau   ? z -> ℛ(z, h.args[1])         :
         h.args[1] isa RungeKuttaSolver ? z -> ℛ(z, h.args[1].tableau) :
@@ -110,7 +119,8 @@ end
     clims      --> (0, 1)
     colorbar   --> true
     framestyle --> :box
-    legend     --> :none
+    gridalpha  --> 0.1
+    legend     --> false
     seriestype --> :heatmap
     Δx = abs(xlims[2] - xlims[1])
     Δy = abs(ylims[2] - ylims[1])
