@@ -35,8 +35,8 @@ plot(
 ```julia
 plot(
   size = (1000, 400),
-  stabilityf(RK4(), colour = :blues),
-  orderstarf(RK4(), colour = :blues)
+  stabilityf(RK4(), xlabel = L"$\Im(z)$", ylabel = L"$\Re(z)$", colour = :blues),
+  orderstarf(RK4(), xlabel = L"$\Im(z)$", ylabel = L"$\Re(z)$", colour = :blues)
 )
 ```
 
