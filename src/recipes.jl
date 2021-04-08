@@ -4,15 +4,17 @@
     legend     --> false
     linewidth  --> 1.5
     seriestype --> :path
+    widen      --> false
+    ylims      --> :round
     @↓ u, t = solution
-    L = length(u[Block(1)])
+    L = length(u[1])
     N = length(t)
     if vars !== nothing && !(vars isa Tuple && length(vars) > 1)
         error("Got $(typeof(vars)) instead of `Tuple` with length > 1.")
     elseif vars === nothing
         vars = 1:L
     end
-    [(t, [u[BlockIndex(n, i)] for n = 1:N]) for i in vars]
+    [(t, [u[n][i] for n = 1:N]) for i in vars]
 end
 
 @userplot PHASEPLOT
@@ -25,14 +27,14 @@ end
     linewidth  --> 1.5
     seriestype --> :path
     @↓ u, t = solution
-    L = length(u[Block(1)])
+    L = length(u[1])
     N = length(t)
     if vars !== nothing && !(vars isa Tuple && length(vars) > 1)
         error("Got $(typeof(vars)) instead of `Tuple` with length > 1.")
     elseif vars === nothing
         vars = 1:L
     end
-    tuple([[u[BlockIndex(n, i)] for n = 1:N] for i in vars]...)
+    tuple([[u[n][i] for n = 1:N] for i in vars]...)
 end
 
 @userplot STABILITY

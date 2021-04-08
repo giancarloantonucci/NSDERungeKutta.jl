@@ -40,14 +40,28 @@ export RadauIIA3
 export RadauIIA5
 
 using Reexport
-@reexport using NSDEBase
 using ArrowMacros
 using LinearAlgebra
-using BlockArrays
+@reexport using NSDEBase
 using RecipesBase
 
-zero!(v::AbstractVector) = fill!(v, zero(eltype(v)))
 abstract type RungeKuttaSolver <: InitialValueSolver end
+Vector{T}(undef, n, d) where T = Vector{T}[Vector{T}(undef, d) for i = 1:n]
+Vector{T}(undef, m, n, d) where T = Vector{Vector{T}}[Vector{T}(undef, n, d) for i = 1:m]
+zero!(v::AbstractVector) = fill!(v, zero(eltype(v)))
+function zero!(v::AbstractVector{<:AbstractVector})
+    for i in eachindex(v)
+        zero!(v[i])
+    end
+    return v
+end
+function norm!(v::AbstractVector{<:AbstractVector})
+    r = zero(eltype(v))
+    for i in eachindex(v)
+        r += norm(v[i])
+    end
+    return r
+end
 
 include("tableau.jl")
 include("adaptive.jl")
@@ -58,6 +72,6 @@ include("solution.jl")
 include("step.jl")
 include("solve.jl")
 include("stability.jl")
-include("plot_recipes.jl")
+include("recipes.jl")
 
 end

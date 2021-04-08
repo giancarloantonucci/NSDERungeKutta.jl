@@ -1,48 +1,57 @@
 """
-step!(cache::RungeKuttaCache, solution::RungeKuttaSolution, problem::InitialValueProblem, solver::ExplicitRungeKuttaSolver)
+step!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::ExplicitRungeKuttaSolver, cache::RungeKuttaCache)
 
 computes a step of the `RungeKuttaSolution` of an `InitialValueProblem` using an `ExplicitRungeKuttaSolver`.
 """
-function step!(cache::RungeKuttaCache, solution::RungeKuttaSolution, problem::InitialValueProblem, solver::ExplicitRungeKuttaSolver)
-    @↓ n, v, k = cache
+function step!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::ExplicitRungeKuttaSolver, cache::RungeKuttaCache, save_stages)
+    @↓ n, v = cache
     @↓ u, t = solution
+    k = if save_stages
+        @↓ k ← k[n] = solution
+    else
+        @↓ k = cache
+    end
     @↓ f! = problem.rhs
     @↓ tableau, h = solver
     @↓ s, A, c, b = tableau
-    v = view(u, Block(n+1)) # avoid allocs
+    v = u[n+1] # avoid allocs
     # compute stages
     for i = 1:s
         zero!(v)
         for j = 1:i-1
-            @. v += A[i,j] * k[Block(j)]
+            @. v += A[i,j] * k[j]
         end
-        @. v = u[Block(n)] + h * v
-        k_i = view(k, Block(i))
-        f!(k_i, v, t[n] + h * c[i])
+        @. v = u[n] + h * v
+        @← k[i] = f(v, t[n] + h * c[i])
         t[n+1] = t[n] + h
     end
     # compute step
     zero!(v)
     for i = 1:s
-        @. v += b[i] * k[Block(i)]
+        @. v += b[i] * k[i]
     end
-    @. v = u[Block(n)] + h * v
+    @. v = u[n] + h * v
     t[n+1] = t[n] + h
 end
 
 """
-step!(cache::RungeKuttaCache, solution::RungeKuttaSolution, problem::InitialValueProblem, solver::ImplicitRungeKuttaSolver)
+step!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::ImplicitRungeKuttaSolver, cache::RungeKuttaCache)
 
 computes a step of the `RungeKuttaSolution` of an `InitialValueProblem` using an `ImplicitRungeKuttaSolver`.
 """
-function step!(cache::RungeKuttaCache, solution::RungeKuttaSolution, problem::InitialValueProblem, solver::ImplicitRungeKuttaSolver)
-    @↓ n, v, k, Δk, J = cache
+function step!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::ImplicitRungeKuttaSolver, cache::RungeKuttaCache, save_stages)
+    @↓ n, v, Δk, J = cache
     @↓ u, t = solution
+    k = if save_stages
+        @↓ k ← k[n] = solution
+    else
+        @↓ k = cache
+    end
     @↓ f!, Df! = problem.rhs
     @↓ tableau, h, ϵ, K = solver
     @↓ s, A, c, b = tableau
-    v = view(u, Block(n+1)) # avoid allocs
-    Df!(J, v, u[Block(n)], t[n])
+    v = u[n+1] # avoid allocs
+    @← J = Df(v, u[n], t[n])
     Z = factorize(I - h * kron(A, J))
     zero!(k)
     # compute stages
@@ -50,24 +59,31 @@ function step!(cache::RungeKuttaCache, solution::RungeKuttaSolution, problem::In
         for i = 1:s
             zero!(v)
             for j = 1:s
-                @. v += A[i,j] * k[Block(j)]
+                @. v += A[i,j] * k[j]
             end
-            @. v = u[Block(n)] + h * v
-            Δk_i = view(Δk, Block(i))
-            f!(Δk_i, v, t[n] + h * c[i])
-            @. Δk_i -= k[Block(i)]
+            @. v = u[n] + h * v
+            @← Δk[i] = f(v, t[n] + h * c[i])
+            @. Δk[i] -= k[i]
         end
-        Δk .= Z \ Δk
-        if norm(Δk) < ϵ * norm(k)
+        # temporary workaround to
+        # ldiv!(Z, Δk) # Δk = Z \ Δk
+        Δk_ = vcat(Δk...)
+        ldiv!(Z, Δk_) # Z \ Δk
+        if norm(Δk_) < ϵ * norm(k)
             break
         end
-        k .+= Δk
+        # temporary workaround to
+        # k .+= Δk
+        for i in eachindex(k)
+            L = length(k[i])
+            k[i] .+= Δk_[(i-1)*L+1:i*L]
+        end
     end
     # compute step
     zero!(v)
     for i = 1:s
-        @. v += b[i] * k[Block(i)]
+        @. v += b[i] * k[i]
     end
-    @. v = u[Block(n)] + h * v
+    @. v = u[n] + h * v
     t[n+1] = t[n] + h
 end
