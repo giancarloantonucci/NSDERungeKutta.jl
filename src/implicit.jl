@@ -19,16 +19,8 @@ mutable struct ImplicitRungeKuttaSolver{tableau_T, h_T, ϵ_T, K_T, adaptive_T} <
     adaptive::adaptive_T
 end
 
-function ImplicitRungeKuttaSolver(tableau, h, ϵ, K)
-    adaptive = nothing
-    return ImplicitRungeKuttaSolver(tableau, h, ϵ, K, adaptive)
-end
+ImplicitRungeKuttaSolver(tableau, h, ϵ, K) = ImplicitRungeKuttaSolver(tableau, h, ϵ, K, nothing)
 @doc (@doc ImplicitRungeKuttaSolver) IRK(args...; kwargs...) = ImplicitRungeKuttaSolver(args...; kwargs...)
-
-function Base.copy(solver::ImplicitRungeKuttaSolver)
-    @↓ tableau, h, ϵ, K, adaptive = solver
-    return IRK(tableau, h, ϵ, K, adaptive)
-end
 
 """
     BackwardEuler(; h = 0.0, ϵ = 1e-3, K = 10) -> ImplicitRungeKuttaSolver
@@ -238,7 +230,7 @@ end
 
 """
     RadauIIA5(; h = 0.0, ϵ = 1e-3, K = 10) -> ImplicitRungeKuttaSolver
-    
+
 returns an `ImplicitRungeKuttaSolver` for the 5th-order Radau IIA method.
 """
 function RadauIIA5(; h = 0.0, ϵ = 1e-3, K = 10)

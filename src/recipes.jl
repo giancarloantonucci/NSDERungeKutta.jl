@@ -1,11 +1,12 @@
 @recipe function f(solution::RungeKuttaSolution; vars = nothing)
-    framestyle --> :box
-    gridalpha  --> 0.1
-    legend     --> false
-    linewidth  --> 1.5
-    seriestype --> :path
-    widen      --> false
-    ylims      --> :round
+    # fontfamily     --> "Computer Modern"
+    framestyle     --> :box
+    gridalpha      --> 0.1
+    legend         --> false
+    linewidth      --> 1.5
+    seriestype     --> :path
+    xwiden         --> false
+    tick_direction --> :out
     @↓ u, t = solution
     L = length(u[1])
     N = length(t)
@@ -21,11 +22,13 @@ end
 @recipe function f(h::PHASEPLOT; vars = nothing)
     length(h.args) == 1 ? true : error("Got too many arguments: $(length(h.args)).")
     solution = h.args[1] isa RungeKuttaSolution ? h.args[1] : error("Got $(typeof(h.args)) instead of `RungeKuttaSolution`.")
-    framestyle --> :box
-    gridalpha  --> 0.1
-    legend     --> false
-    linewidth  --> 1.5
-    seriestype --> :path
+    # fontfamily     --> "Computer Modern"
+    framestyle     --> :box
+    gridalpha      --> 0.1
+    legend         --> false
+    linewidth      --> 1.5
+    seriestype     --> :path
+    tick_direction --> :out
     @↓ u, t = solution
     L = length(u[1])
     N = length(t)
@@ -44,17 +47,19 @@ end
         h.args[1] isa RungeKuttaSolver ? z -> ℛ(z, h.args[1].tableau) :
         h.args[1] isa Function         ? h.args[1]                    :
         error("Got $(typeof(h.args)) instead of `ButcherTableau`, `RungeKuttaSolver` or `Function`.")
-    framestyle --> :box
-    gridalpha  --> 0.1
-    gridstyle  --> :dot
-    legend     --> false
-    levels     --> [1.0]
-    linewidth  --> 1.5
-    seriestype --> :contour
-    Δx = abs(xlims[2] - xlims[1])
-    Δy = abs(ylims[2] - ylims[1])
-    x = length(xlims) == 2 ? LinRange(xlims..., Δx * 101) : LinRange(xlims...)
-    y = length(ylims) == 2 ? LinRange(ylims..., Δy * 101) : LinRange(ylims...)
+    # fontfamily     --> "Computer Modern"
+    framestyle     --> :box
+    gridalpha      --> 0.1
+    gridstyle      --> :dot
+    legend         --> false
+    levels         --> [1.0]
+    linewidth      --> 1.5
+    seriestype     --> :contour
+    tick_direction --> :out
+    Δx = max(1, abs(xlims[2] - xlims[1]))
+    Δy = max(1, abs(ylims[2] - ylims[1]))
+    x = length(xlims) == 2 ? LinRange(xlims..., Int(Δx * 101)) : LinRange(xlims...)
+    y = length(ylims) == 2 ? LinRange(ylims..., Int(Δy * 101)) : LinRange(ylims...)
     function f(x, y)
         z = x + 1im * y
         p = abs(R(z))
@@ -69,16 +74,18 @@ end
         h.args[1] isa RungeKuttaSolver ? z -> ℛ(z, h.args[1].tableau) :
         h.args[1] isa Function         ? h.args[1]                    :
         error("Got $(typeof(h.args)) instead of `ButcherTableau`, `RungeKuttaSolver` or `Function`.")
-    clims      --> (0, 1)
-    colorbar   --> true
-    framestyle --> :box
-    gridalpha  --> 0.1
-    legend     --> false
-    seriestype --> :heatmap
-    Δx = abs(xlims[2] - xlims[1])
-    Δy = abs(ylims[2] - ylims[1])
-    x = length(xlims) == 2 ? LinRange(xlims..., Δx * 101) : LinRange(xlims...)
-    y = length(ylims) == 2 ? LinRange(ylims..., Δy * 101) : LinRange(ylims...)
+    # fontfamily     --> "Computer Modern"
+    clims          --> (0, 1)
+    colorbar       --> true
+    framestyle     --> :box
+    gridalpha      --> 0.1
+    legend         --> false
+    seriestype     --> :heatmap
+    tick_direction --> :out
+    Δx = max(1, abs(xlims[2] - xlims[1]))
+    Δy = max(1, abs(ylims[2] - ylims[1]))
+    x = length(xlims) == 2 ? LinRange(xlims..., Int(Δx * 101)) : LinRange(xlims...)
+    y = length(ylims) == 2 ? LinRange(ylims..., Int(Δy * 101)) : LinRange(ylims...)
     function f(x, y)
         z = x + 1im * y
         p = abs(R(z))
@@ -94,16 +101,18 @@ end
         h.args[1] isa RungeKuttaSolver ? z -> ℛ(z, h.args[1].tableau) :
         h.args[1] isa Function         ? h.args[1]                    :
         error("Got $(typeof(h.args)) instead of `ButcherTableau`, `RungeKuttaSolver` or `Function`.")
-    framestyle --> :box
-    gridalpha  --> 0.1
-    legend     --> false
-    levels     --> [1.0]
-    linewidth  --> 1.5
-    seriestype --> :contour
-    Δx = abs(xlims[2] - xlims[1])
-    Δy = abs(ylims[2] - ylims[1])
-    x = length(xlims) == 2 ? LinRange(xlims..., Δx * 101) : LinRange(xlims...)
-    y = length(ylims) == 2 ? LinRange(ylims..., Δy * 101) : LinRange(ylims...)
+    # fontfamily     --> "Computer Modern"
+    framestyle     --> :box
+    gridalpha      --> 0.1
+    legend         --> false
+    levels         --> [1.0]
+    linewidth      --> 1.5
+    seriestype     --> :contour
+    tick_direction --> :out
+    Δx = max(1, abs(xlims[2] - xlims[1]))
+    Δy = max(1, abs(ylims[2] - ylims[1]))
+    x = length(xlims) == 2 ? LinRange(xlims..., Int(Δx * 101)) : LinRange(xlims...)
+    y = length(ylims) == 2 ? LinRange(ylims..., Int(Δy * 101)) : LinRange(ylims...)
     function f(x, y)
         z = x + 1im * y
         abs(R(z) * exp(-z))
@@ -118,16 +127,18 @@ end
         h.args[1] isa RungeKuttaSolver ? z -> ℛ(z, h.args[1].tableau) :
         h.args[1] isa Function         ? h.args[1]                    :
         error("Got $(typeof(h.args)) instead of `ButcherTableau`, `RungeKuttaSolver` or `Function`.")
-    clims      --> (0, 1)
-    colorbar   --> true
-    framestyle --> :box
-    gridalpha  --> 0.1
-    legend     --> false
-    seriestype --> :heatmap
-    Δx = abs(xlims[2] - xlims[1])
-    Δy = abs(ylims[2] - ylims[1])
-    x = length(xlims) == 2 ? LinRange(xlims..., Δx * 101) : LinRange(xlims...)
-    y = length(ylims) == 2 ? LinRange(ylims..., Δy * 101) : LinRange(ylims...)
+    # fontfamily     --> "Computer Modern"
+    clims          --> (0, 1)
+    colorbar       --> true
+    framestyle     --> :box
+    gridalpha      --> 0.1
+    legend         --> false
+    seriestype     --> :heatmap
+    tick_direction --> :out
+    Δx = max(1, abs(xlims[2] - xlims[1]))
+    Δy = max(1, abs(ylims[2] - ylims[1]))
+    x = length(xlims) == 2 ? LinRange(xlims..., Int(Δx * 101)) : LinRange(xlims...)
+    y = length(ylims) == 2 ? LinRange(ylims..., Int(Δy * 101)) : LinRange(ylims...)
     function f(x, y)
         z = x + 1im * y
         p = abs(R(z) * exp(-z))

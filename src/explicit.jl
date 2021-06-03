@@ -15,16 +15,8 @@ mutable struct ExplicitRungeKuttaSolver{tableau_T, h_T, adaptive_T} <: RungeKutt
     adaptive::adaptive_T
 end
 
-function ExplicitRungeKuttaSolver(tableau, h)
-    adaptive = nothing
-    return ExplicitRungeKuttaSolver(tableau, h, adaptive)
-end
+ExplicitRungeKuttaSolver(tableau, h) = ExplicitRungeKuttaSolver(tableau, h, nothing)
 @doc (@doc ExplicitRungeKuttaSolver) ERK(args...; kwargs...) = ExplicitRungeKuttaSolver(args...; kwargs...)
-
-function Base.copy(solver::ExplicitRungeKuttaSolver)
-    @↓ tableau, h, adaptive = solver
-    return ERK(tableau, h, adaptive)
-end
 
 """
     Euler(; h = 0.0) -> ExplicitRungeKuttaSolver

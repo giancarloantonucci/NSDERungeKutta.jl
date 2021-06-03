@@ -17,9 +17,10 @@ end
 AdaptiveParameters(; δ = 0.0, ϵ = 1e-5, K = 100) = AdaptiveParameters(δ, ϵ, K)
 
 function adaptive_step!(solution, solver, cache, save_stages)
+    @↓ u = solution
+    @↓ h = solver
+    @↓ n, m, v = cache
     if solver.adaptive isa AdaptiveParameters
-        @↓ n, m, v = cache
-        @↓ u = solution
         k = if save_stages
             @↓ k ← k[n] = solution
         else
@@ -32,16 +33,18 @@ function adaptive_step!(solution, solver, cache, save_stages)
             @. v += (b[i] - d[i]) * k[i]
         end
         @. v /= δ + max(abs(u[n]), abs(u[n+1])) * ϵ
-        error = norm(v) / sqrt(length(v))
+        error = norm(v) / √length(v)
         power = - 1 / (min(p, q) + 1)
         factor = 0.9 * error ^ power
-        solver.h *= max(0.5, min((m == 1 ? 2.0 : 1.0), factor))
+        h *= max(0.5, min((m == 1 ? 2.0 : 1.0), factor))
         if error < 1 || m ≥ K
-            cache.n += 1
+            n += 1
         else
-            cache.m += 1
+            m += 1
         end
     else
-        cache.n += 1
+        n += 1
     end
+    @↑ cache = n, m
+    @↑ solver = h
 end

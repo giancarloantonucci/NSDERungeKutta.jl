@@ -22,7 +22,8 @@ function step!(solution::RungeKuttaSolution, problem::InitialValueProblem, solve
             @. v += A[i,j] * k[j]
         end
         @. v = u[n] + h * v
-        @← k[i] = f(v, t[n] + h * c[i])
+        # @← k[i] = f(v, t[n] + h * c[i])
+        f!(k[i], v, t[n] + h * c[i])
         t[n+1] = t[n] + h
     end
     # compute step
@@ -51,10 +52,11 @@ function step!(solution::RungeKuttaSolution, problem::InitialValueProblem, solve
     @↓ tableau, h, ϵ, K = solver
     @↓ s, A, c, b = tableau
     v = u[n+1] # avoid allocs
-    @← J = Df(v, u[n], t[n])
+    # @← J = Df(v, u[n], t[n])
+    Df!(J, v, u[n], t[n])
     Z = factorize(I - h * kron(A, J))
-    zero!(k)
     # compute stages
+    zero!(k)
     for l = 1:K
         for i = 1:s
             zero!(v)
@@ -62,18 +64,17 @@ function step!(solution::RungeKuttaSolution, problem::InitialValueProblem, solve
                 @. v += A[i,j] * k[j]
             end
             @. v = u[n] + h * v
-            @← Δk[i] = f(v, t[n] + h * c[i])
+            # @← Δk[i] = f(v, t[n] + h * c[i])
+            f!(Δk[i], v, t[n] + h * c[i])
             @. Δk[i] -= k[i]
         end
-        # temporary workaround to
-        # ldiv!(Z, Δk) # Δk = Z \ Δk
+        # temporary workaround for ldiv!(Z, Δk)
         Δk_ = vcat(Δk...)
-        ldiv!(Z, Δk_) # Z \ Δk
+        ldiv!(Z, Δk_)
         if norm(Δk_) < ϵ * norm(k)
             break
         end
-        # temporary workaround to
-        # k .+= Δk
+        # temporary workaround for k .+= Δk
         for i in eachindex(k)
             L = length(k[i])
             k[i] .+= Δk_[(i-1)*L+1:i*L]
