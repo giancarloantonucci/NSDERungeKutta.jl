@@ -51,3 +51,21 @@ function ButcherTableau(tableau)
         return ButcherTableau(A, b, c, s, p, d, q)
     end
 end
+
+function Base.show(io::IO, tableau::ButcherTableau)
+    if get(io, :compact, false)
+        print(io, "ButcherTableau")
+    else
+        @↓ A, b, c, s, p, d, q = tableau
+        print(io,
+            "ButcherTableau:\n",
+            "  A: ", A, "\n",
+            "  b: ", b, "\n",
+            "  c: ", c, "\n",
+            "  s: ", s, "\n",
+            "  p: ", p, "\n",
+            "  d: ", d, "\n",
+            "  q: ", q, "\n",
+        )
+    end
+end

@@ -33,3 +33,17 @@ function RungeKuttaSolution(problem::InitialValueProblem, solver::RungeKuttaSolv
 end
 
 Base.length(solution::RungeKuttaSolution) = length(solution.t)
+
+function Base.show(io::IO, solution::RungeKuttaSolution)
+    if get(io, :compact, false)
+        print(io, "RungeKuttaSolution")
+    else
+        @↓ u, t, k = solution
+        print(io,
+            "RungeKuttaSolution:\n",
+            "  u: ", u, "\n",
+            "  t: ", t, "\n",
+            "  k: ", k, "\n",
+        )
+    end
+end
