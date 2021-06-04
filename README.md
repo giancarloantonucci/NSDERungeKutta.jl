@@ -70,7 +70,7 @@ Current plans for further developments are:
 
 <details><summary><b>Installation</b></summary>
 
-`RungeKutta` is compatible with Julia `v1.0` and above, and it can be installed by cloning this repository:
+`RungeKutta` is compatible with Julia `v1.0` and above, and it can be installed from the REPL by cloning this repository:
 ```julia
 ]add https://github.com/antonuccig/RungeKutta.jl
 ```
