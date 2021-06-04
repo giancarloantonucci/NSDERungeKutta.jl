@@ -1,5 +1,7 @@
 # RungeKutta
 
+A Julia package implementing Runge-Kutta methods.
+
 [![Build Status](https://github.com/antonuccig/RungeKutta.jl/workflows/CI/badge.svg)](https://github.com/antonuccig/RungeKutta.jl/actions)
 [![Coverage](https://codecov.io/gh/antonuccig/RungeKutta.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/antonuccig/RungeKutta.jl)
 
@@ -35,7 +37,7 @@ plot(
 ```julia
 u0 = [2.0, 3.0, -14.0]
 tspan = (0.0, 10.0)
-problem = Lorenz(u0 = u0, tspan = tspan)
+problem = Lorenz(u0, tspan)
 solver = F45(h = 1e-3)
 solution = solve(problem, solver)
 plot(solution, xlabel = L"t", label = [L"x" L"y" L"z"], legend = true)
@@ -61,9 +63,13 @@ plot(
 
 `RungeKutta.jl` currently supports explicit (`Euler`/`ExplicitEuler`, `Midpoint`/`ExplicitMidpoint`, `Heun2`, `Ralston2`, `Heun3`, `Kutta3`, `Ralston3`, `SSPRK3`, `RK4`, `Rule38`, `HeunEuler`, `Fehlberg45`/`F45`, `DormandPrince54`/`DP54`, `Verner65`/`V65`) and implicit methods (`BackwardEuler`/`ImplicitEuler`, `ImplicitMidpoint`, `CrankNicolson`, `SDIRK3`, `GaussLegendre4`/`GL4`, `GaussLegendre6`/`GL6`, `LobattoIIIA4`, `LobattoIIIB2`, `LobattoIIIB4`, `LobattoIIIC2`, `LobattoIIIC4`, `RadauIA3`, `RadauIA5`, `RadauIIA3`, `RadauIIA5`).
 
+</details>
+
+<details><summary><b>Future</b></summary>
+
 Current plans for further developments are:
-- improve performance and error messages.
-- automatic size detection of stability region.
+- Improve performance and error messages.
+- Automatic size detection of stability region.
 - IMEX methods.
 
 </details>
