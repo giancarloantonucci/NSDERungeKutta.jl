@@ -139,10 +139,14 @@ BenchmarkTools.Trial:
 
 - `Euler`/`ExplicitEuler`
 - `Midpoint`/`ExplicitMidpoint`
-- `Heun2`, `Ralston2`
-- `Heun3`, `Kutta3`
-- `Ralston3`, `SSPRK3`
-- `RK4`, `Rule38`
+- `Heun2`
+- `Ralston2`
+- `Heun3`
+- `Kutta3`
+- `Ralston3`
+- `SSPRK3`
+- `RK4`
+- `Rule38`
 - `HeunEuler`
 - `Fehlberg45`/`F45`
 - `DormandPrince54`/`DP54`
@@ -153,7 +157,8 @@ BenchmarkTools.Trial:
 <details><summary>Implicit</summary>
 
 - `BackwardEuler`/`ImplicitEuler`
-- `ImplicitMidpoint`, `CrankNicolson`
+- `ImplicitMidpoint`
+- `CrankNicolson`
 - `SDIRK3`
 - `GaussLegendre4`/`GL4`
 - `GaussLegendre6`/`GL6`
