@@ -3,7 +3,7 @@
 
 returns the `RungeKuttaSolution` of an `InitialValueProblem`.
 """
-function NSDEBase.solve(problem::InitialValueProblem, solver::RungeKuttaSolver, save_stages=false)
+function NSDEBase.solve(problem::InitialValueProblem, solver::RungeKuttaSolver; save_stages = false)
     solution = RungeKuttaSolution(problem, solver, save_stages)
     cache = RungeKuttaCache(problem, solver)
     @↓ (t0, tN) ← tspan = problem

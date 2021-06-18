@@ -12,7 +12,7 @@ problem = IVP(f!, u0, tspan)
 @testset "Explicit" begin
     solver = ExplicitEuler(h = 1e-2)
     @test solver isa ExplicitRungeKuttaSolver
-    solution = solve(problem, solver)
+    solution = solve(problem, solver, save_stages = true)
     @test solution isa RungeKuttaSolution
     solver = ExplicitMidpoint(h = 1e-2)
     @test solver isa ExplicitRungeKuttaSolver
@@ -71,7 +71,7 @@ end
 @testset "Implicit" begin
     solver = ImplicitEuler(h = 1e-2)
     @test solver isa ImplicitRungeKuttaSolver
-    solution = solve(problem, solver)
+    solution = solve(problem, solver, save_stages = true)
     @test solution isa RungeKuttaSolution
     solver = ImplicitMidpoint(h = 1e-2)
     @test solver isa ImplicitRungeKuttaSolver
