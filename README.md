@@ -5,7 +5,7 @@ A Julia package implementing Runge-Kutta methods.
 [![Build Status](https://github.com/antonuccig/RungeKutta.jl/workflows/CI/badge.svg)](https://github.com/antonuccig/RungeKutta.jl/actions)
 [![Coverage](https://codecov.io/gh/antonuccig/RungeKutta.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/antonuccig/RungeKutta.jl)
 
-<details><summary><b>Usage</b></summary>
+## Usage
 
 Let's say that we want to solve the [simple gravity pendulum problem](https://en.wikipedia.org/wiki/Pendulum_(mathematics)#Simple_gravity_pendulum) using the [midpoint method](https://en.wikipedia.org/wiki/Midpoint_method). Here is how to do it with `RungeKutta`:
 
@@ -60,8 +60,6 @@ plot(
 ```
 
 ![svg](images/regions.svg)
-
-</details>
 
 <details><summary><b>Tests</b></summary>
 
@@ -131,25 +129,58 @@ BenchmarkTools.Trial:
 
 </details>
 
-<details><summary><b>Methods</b></summary>
+## Methods
 
-`RungeKutta.jl` currently supports explicit (`Euler`/`ExplicitEuler`, `Midpoint`/`ExplicitMidpoint`, `Heun2`, `Ralston2`, `Heun3`, `Kutta3`, `Ralston3`, `SSPRK3`, `RK4`, `Rule38`, `HeunEuler`, `Fehlberg45`/`F45`, `DormandPrince54`/`DP54`, `Verner65`/`V65`) and implicit methods (`BackwardEuler`/`ImplicitEuler`, `ImplicitMidpoint`, `CrankNicolson`, `SDIRK3`, `GaussLegendre4`/`GL4`, `GaussLegendre6`/`GL6`, `LobattoIIIA4`, `LobattoIIIB2`, `LobattoIIIB4`, `LobattoIIIC2`, `LobattoIIIC4`, `RadauIA3`, `RadauIA5`, `RadauIIA3`, `RadauIIA5`).
+`RungeKutta` currently supports the following methods:
+
+<!-- explicit (`Euler`/`ExplicitEuler`, `Midpoint`/`ExplicitMidpoint`, `Heun2`, `Ralston2`, `Heun3`, `Kutta3`, `Ralston3`, `SSPRK3`, `RK4`, `Rule38`, `HeunEuler`, `Fehlberg45`/`F45`, `DormandPrince54`/`DP54`, `Verner65`/`V65`) and implicit methods (`BackwardEuler`/`ImplicitEuler`, `ImplicitMidpoint`, `CrankNicolson`, `SDIRK3`, `GaussLegendre4`/`GL4`, `GaussLegendre6`/`GL6`, `LobattoIIIA4`, `LobattoIIIB2`, `LobattoIIIB4`, `LobattoIIIC2`, `LobattoIIIC4`, `RadauIA3`, `RadauIA5`, `RadauIIA3`, `RadauIIA5`). -->
+
+<details><summary>Explicit</summary>
+
+- `Euler`/`ExplicitEuler`
+- `Midpoint`/`ExplicitMidpoint`
+- `Heun2`, `Ralston2`
+- `Heun3`, `Kutta3`
+- `Ralston3`, `SSPRK3`
+- `RK4`, `Rule38`
+- `HeunEuler`
+- `Fehlberg45`/`F45`
+- `DormandPrince54`/`DP54`
+- `Verner65`/`V65`
 
 </details>
 
-<details><summary><b>Next steps</b></summary>
+<details><summary>Implicit</summary>
 
-Current plans for further developments are:
-- Improve performance and error messages.
-- Automatic size detection of stability region.
-- IMEX methods.
+- `BackwardEuler`/`ImplicitEuler`
+- `ImplicitMidpoint`, `CrankNicolson`
+- `SDIRK3`
+- `GaussLegendre4`/`GL4`
+- `GaussLegendre6`/`GL6`
+- `LobattoIIIA4`
+- `LobattoIIIB2`
+- `LobattoIIIB4`
+- `LobattoIIIC2`
+- `LobattoIIIC4`
+- `RadauIA3`
+- `RadauIA5`
+- `RadauIIA3`
+- `RadauIIA5`
 
 </details>
 
-<details><summary><b>Installation</b></summary>
+</details>
 
-`RungeKutta` is compatible with Julia `v1.0` and above, and it can be installed from the REPL by cloning this repository:
+## Installation
+
+`RungeKutta` is compatible with Julia `v1.0` and above, and it can be installed from the REPL by running
 ```julia
 ]add https://github.com/antonuccig/RungeKutta.jl
 ```
-</details>
+
+## What's next?
+
+Current plans for future developments are:
+- Improve performance and error messages.
+- Automatic size detection of stability region.
+- IMEX methods.
