@@ -26,6 +26,8 @@ solver = Midpoint(h = 1e-2)
 solution = solve(problem, solver)
 ```
 
+### Plotting
+
 We can plot the obtained `solution` by extracting its fields `u` and `t`, e.g. with the convenient macro `@↓ u, t = solution` from `ArrowMacros`. Alternatively, we can use the predefined recipes:
 
 ```julia
@@ -41,6 +43,8 @@ plot(
 
 ![svg](images/pendulum.svg)
 
+### Predefined ODE recipes
+
 `RungeKutta` comes with some predefined ODE problems, like the [Lorenz system](https://en.wikipedia.org/wiki/Lorenz_system):
 
 ```julia
@@ -54,6 +58,8 @@ plot(solution, xlabel = L"t", label = [L"x" L"y" L"z"], legend = true)
 ```
 
 ![svg](images/lorenz.svg)
+
+### Stability regions and order stars
 
 `RungeKutta` has also predefined recipes to plot stability regions and order stars:
 
