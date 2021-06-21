@@ -74,7 +74,7 @@ plot(
 
 ![svg](images/regions.svg)
 
-## Methods
+## Available methods
 
 `RungeKutta` currently supports the following methods:
 
