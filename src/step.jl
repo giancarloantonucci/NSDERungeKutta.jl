@@ -6,11 +6,7 @@ computes a step of the `RungeKuttaSolution` of an `InitialValueProblem` using an
 function step!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::ExplicitRungeKuttaSolver, cache::RungeKuttaCache, save_stages)
     @↓ n, v = cache
     @↓ u, t = solution
-    k = if save_stages
-        @↓ k ← k[n] = solution
-    else
-        @↓ k = cache
-    end
+    save_stages ? (@↓ k ← k[n] = solution) : (@↓ k = cache)
     @↓ f! = problem.rhs
     @↓ tableau, h = solver
     @↓ s, A, c, b = tableau
@@ -43,11 +39,7 @@ computes a step of the `RungeKuttaSolution` of an `InitialValueProblem` using an
 function step!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::ImplicitRungeKuttaSolver, cache::RungeKuttaCache, save_stages)
     @↓ n, v, Δk, J = cache
     @↓ u, t = solution
-    k = if save_stages
-        @↓ k ← k[n] = solution
-    else
-        @↓ k = cache
-    end
+    save_stages ? (@↓ k ← k[n] = solution) : (@↓ k = cache)
     @↓ f!, Df! = problem.rhs
     @↓ tableau, h, ϵ, K = solver
     @↓ s, A, c, b = tableau
