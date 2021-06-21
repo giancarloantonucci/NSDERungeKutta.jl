@@ -68,7 +68,52 @@ plot(
 
 ![svg](images/regions.svg)
 
-<details><summary><b>Tests</b></summary>
+## Methods
+
+`RungeKutta` currently supports the following methods:
+
+<!-- explicit (`Euler`/`ExplicitEuler`, `Midpoint`/`ExplicitMidpoint`, `Heun2`, `Ralston2`, `Heun3`, `Kutta3`, `Ralston3`, `SSPRK3`, `RK4`, `Rule38`, `HeunEuler`, `Fehlberg45`/`F45`, `DormandPrince54`/`DP54`, `Verner65`/`V65`) and implicit methods (`BackwardEuler`/`ImplicitEuler`, `ImplicitMidpoint`, `CrankNicolson`, `SDIRK3`, `GaussLegendre4`/`GL4`, `GaussLegendre6`/`GL6`, `LobattoIIIA4`, `LobattoIIIB2`, `LobattoIIIB4`, `LobattoIIIC2`, `LobattoIIIC4`, `RadauIA3`, `RadauIA5`, `RadauIIA3`, `RadauIIA5`). -->
+
+<details><summary>Explicit</summary>
+
+- `Euler`/`ExplicitEuler`
+- `Midpoint`/`ExplicitMidpoint`
+- `Heun2`
+- `Ralston2`
+- `Heun3`
+- `Kutta3`
+- `Ralston3`
+- `SSPRK3`
+- `RK4`
+- `Rule38`
+- `HeunEuler`
+- `Fehlberg45`/`F45`
+- `DormandPrince54`/`DP54`
+- `Verner65`/`V65`
+
+</details>
+
+<details><summary>Implicit</summary>
+
+- `BackwardEuler`/`ImplicitEuler`
+- `ImplicitMidpoint`
+- `CrankNicolson`
+- `SDIRK3`
+- `GaussLegendre4`/`GL4`
+- `GaussLegendre6`/`GL6`
+- `LobattoIIIA4`
+- `LobattoIIIB2`
+- `LobattoIIIB4`
+- `LobattoIIIC2`
+- `LobattoIIIC4`
+- `RadauIA3`
+- `RadauIA5`
+- `RadauIIA3`
+- `RadauIIA5`
+
+</details>
+
+## Tests
 
 [`OrdinaryDiffEq`](https://github.com/SciML/OrdinaryDiffEq.jl) is almost always faster and more efficient than `RungeKutta`, but `RungeKutta` is still competitive in a few cases, thanks to its simple design.
 
@@ -133,53 +178,6 @@ BenchmarkTools.Trial:
   samples:          9973
   evals/sample:     1
 ```
-
-</details>
-
-## Methods
-
-`RungeKutta` currently supports the following methods:
-
-<!-- explicit (`Euler`/`ExplicitEuler`, `Midpoint`/`ExplicitMidpoint`, `Heun2`, `Ralston2`, `Heun3`, `Kutta3`, `Ralston3`, `SSPRK3`, `RK4`, `Rule38`, `HeunEuler`, `Fehlberg45`/`F45`, `DormandPrince54`/`DP54`, `Verner65`/`V65`) and implicit methods (`BackwardEuler`/`ImplicitEuler`, `ImplicitMidpoint`, `CrankNicolson`, `SDIRK3`, `GaussLegendre4`/`GL4`, `GaussLegendre6`/`GL6`, `LobattoIIIA4`, `LobattoIIIB2`, `LobattoIIIB4`, `LobattoIIIC2`, `LobattoIIIC4`, `RadauIA3`, `RadauIA5`, `RadauIIA3`, `RadauIIA5`). -->
-
-<details><summary>Explicit</summary>
-
-- `Euler`/`ExplicitEuler`
-- `Midpoint`/`ExplicitMidpoint`
-- `Heun2`
-- `Ralston2`
-- `Heun3`
-- `Kutta3`
-- `Ralston3`
-- `SSPRK3`
-- `RK4`
-- `Rule38`
-- `HeunEuler`
-- `Fehlberg45`/`F45`
-- `DormandPrince54`/`DP54`
-- `Verner65`/`V65`
-
-</details>
-
-<details><summary>Implicit</summary>
-
-- `BackwardEuler`/`ImplicitEuler`
-- `ImplicitMidpoint`
-- `CrankNicolson`
-- `SDIRK3`
-- `GaussLegendre4`/`GL4`
-- `GaussLegendre6`/`GL6`
-- `LobattoIIIA4`
-- `LobattoIIIB2`
-- `LobattoIIIB4`
-- `LobattoIIIC2`
-- `LobattoIIIC4`
-- `RadauIA3`
-- `RadauIA5`
-- `RadauIIA3`
-- `RadauIIA5`
-
-</details>
 
 ## What's next?
 
