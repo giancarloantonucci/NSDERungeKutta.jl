@@ -30,7 +30,7 @@ We can plot the obtained `solution` by extracting its fields `u` and `t`, e.g. w
 
 ```julia
 using Plots, LaTeXStrings
-default(fontfamily = "Computer Modern", fmt = :svg)
+default(fontfamily = "Computer Modern")
 plot(
   size = (800, 400),
   plot(solution, xlabel = L"t", label = [L"\theta" L"\omega"], legend = true),
