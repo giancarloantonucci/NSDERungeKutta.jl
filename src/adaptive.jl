@@ -48,17 +48,3 @@ function adaptive_step!(solution, solver, cache, save_stages)
     @↑ cache = n, m
     @↑ solver = h
 end
-
-function Base.show(io::IO, adaptive::AdaptiveParameters)
-    if get(io, :compact, false)
-        print(io, "AdaptiveParameters")
-    else
-        @↓ δ, ϵ, K = adaptive
-        print(io,
-            "AdaptiveParameters:\n",
-            "  δ: ", δ, "\n",
-            "  ϵ: ", ϵ, "\n",
-            "  K: ", K, "\n",
-        )
-    end
-end

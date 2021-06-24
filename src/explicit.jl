@@ -18,20 +18,6 @@ end
 ExplicitRungeKuttaSolver(tableau, h) = ExplicitRungeKuttaSolver(tableau, h, nothing)
 @doc (@doc ExplicitRungeKuttaSolver) ERK(args...; kwargs...) = ExplicitRungeKuttaSolver(args...; kwargs...)
 
-function Base.show(io::IO, erk::ExplicitRungeKuttaSolver)
-    if get(io, :compact, false)
-        print(io, "ExplicitRungeKuttaSolver")
-    else
-        @↓ tableau, h, adaptive = erk
-        print(io,
-            "ExplicitRungeKuttaSolver:\n",
-            "  tableau: ",  typeof(tableau), "\n",
-            "  h: ", h, "\n",
-            "  adaptive: ", typeof(adaptive), "\n",
-        )
-    end
-end
-
 """
     Euler(; h = 0.0) -> ExplicitRungeKuttaSolver
     ExplicitEuler(args...; kwargs...) -> ExplicitRungeKuttaSolver

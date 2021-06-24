@@ -22,22 +22,6 @@ end
 ImplicitRungeKuttaSolver(tableau, h, ϵ, K) = ImplicitRungeKuttaSolver(tableau, h, ϵ, K, nothing)
 @doc (@doc ImplicitRungeKuttaSolver) IRK(args...; kwargs...) = ImplicitRungeKuttaSolver(args...; kwargs...)
 
-function Base.show(io::IO, irk::ImplicitRungeKuttaSolver)
-    if get(io, :compact, false)
-        print(io, "ImplicitRungeKuttaSolver")
-    else
-        @↓ tableau, h, ϵ, K, adaptive = irk
-        print(io,
-            "ImplicitRungeKuttaSolver:\n",
-            "  tableau: ",  typeof(tableau), "\n",
-            "  h: ", h, "\n",
-            "  ϵ: ", ϵ, "\n",
-            "  K: ", K, "\n",
-            "  adaptive: ", typeof(adaptive), "\n",
-        )
-    end
-end
-
 """
     BackwardEuler(; h = 0.0, ϵ = 1e-3, K = 10) -> ImplicitRungeKuttaSolver
     ImplicitEuler(args...; kwargs...) -> ImplicitRungeKuttaSolver
