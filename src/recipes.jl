@@ -1,8 +1,8 @@
 @recipe function f(solution::RungeKuttaSolution; vars = nothing)
     # fontfamily     --> "Computer Modern"
     framestyle     --> :box
-    gridalpha      --> 0.1
-    legend         --> false
+    gridalpha      --> 0.2
+    legend         --> :none
     linewidth      --> 1.5
     seriestype     --> :path
     xwiden         --> false
@@ -24,8 +24,8 @@ end
     solution = h.args[1] isa RungeKuttaSolution ? h.args[1] : error("Got $(typeof(h.args)) instead of `RungeKuttaSolution`.")
     # fontfamily     --> "Computer Modern"
     framestyle     --> :box
-    gridalpha      --> 0.1
-    legend         --> false
+    gridalpha      --> 0.2
+    legend         --> :none
     linewidth      --> 1.5
     seriestype     --> :path
     tick_direction --> :out
@@ -49,9 +49,9 @@ end
         error("Got $(typeof(h.args)) instead of `ButcherTableau`, `RungeKuttaSolver` or `Function`.")
     # fontfamily     --> "Computer Modern"
     framestyle     --> :box
-    gridalpha      --> 0.1
+    gridalpha      --> 0.2
     gridstyle      --> :dot
-    legend         --> false
+    legend         --> :none
     levels         --> [1.0]
     linewidth      --> 1.5
     seriestype     --> :contour
@@ -78,8 +78,8 @@ end
     clims          --> (0, 1)
     colorbar       --> true
     framestyle     --> :box
-    gridalpha      --> 0.1
-    legend         --> false
+    gridalpha      --> 0.2
+    legend         --> :none
     seriestype     --> :heatmap
     tick_direction --> :out
     Δx = max(1, abs(xlims[2] - xlims[1]))
@@ -103,8 +103,8 @@ end
         error("Got $(typeof(h.args)) instead of `ButcherTableau`, `RungeKuttaSolver` or `Function`.")
     # fontfamily     --> "Computer Modern"
     framestyle     --> :box
-    gridalpha      --> 0.1
-    legend         --> false
+    gridalpha      --> 0.2
+    legend         --> :none
     levels         --> [1.0]
     linewidth      --> 1.5
     seriestype     --> :contour
@@ -131,8 +131,8 @@ end
     clims          --> (0, 1)
     colorbar       --> true
     framestyle     --> :box
-    gridalpha      --> 0.1
-    legend         --> false
+    gridalpha      --> 0.2
+    legend         --> :none
     seriestype     --> :heatmap
     tick_direction --> :out
     Δx = max(1, abs(xlims[2] - xlims[1]))
