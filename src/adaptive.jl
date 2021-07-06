@@ -21,11 +21,7 @@ function adaptive_step!(solution, solver, cache, save_stages)
     @↓ h = solver
     @↓ n, m, v = cache
     if solver.adaptive isa AdaptiveParameters
-        k = if save_stages
-            @↓ k ← k[n] = solution
-        else
-            @↓ k = cache
-        end
+        save_stages ? (@↓ k ← k[n] = solution) : (@↓ k = cache)
         @↓ b, s, p, d, q = solver.tableau
         @↓ δ, ϵ, K = solver.adaptive
         zero!(v)
