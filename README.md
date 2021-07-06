@@ -17,7 +17,6 @@ A Julia package implementing Runge-Kutta methods.
 Let's say that we want to solve the [simple gravity pendulum problem](https://en.wikipedia.org/wiki/Pendulum_(mathematics)#Simple_gravity_pendulum) using the [midpoint method](https://en.wikipedia.org/wiki/Midpoint_method). Here is how to do it with `RungeKutta`:
 
 ```julia
-using Revise
 using RungeKutta
 f(u, t) = [u[2]; -9.81 * sin(u[1])]
 u0 = [0.0; π/2]
