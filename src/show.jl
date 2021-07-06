@@ -1,4 +1,4 @@
-function Base.show(io::IO, mime::MIME"text/plain", tableau::ButcherTableau)
+function Base.show(io::IO, tableau::ButcherTableau)
     if get(io, :compact, false)
         print(io, "ButcherTableau")
     else
