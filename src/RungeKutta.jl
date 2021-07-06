@@ -1,11 +1,10 @@
 module RungeKutta
 
 export ButcherTableau
-export AdaptiveParameters
 export RungeKuttaSolver, RungeKuttaSolution
 export ExplicitRungeKuttaSolver, ERK
 export ImplicitRungeKuttaSolver, IRK
-export stability_function, ℛ
+export ℛ
 
 export Euler, ExplicitEuler
 export Midpoint, ExplicitMidpoint
@@ -46,8 +45,10 @@ using LinearAlgebra
 using RecipesBase
 
 abstract type RungeKuttaSolver <: InitialValueSolver end
+
 Vector{T}(undef, n, d) where T = Vector{T}[Vector{T}(undef, d) for i = 1:n]
 Vector{T}(undef, m, n, d) where T = Vector{Vector{T}}[Vector{T}(undef, n, d) for i = 1:m]
+
 zero!(v::AbstractVector) = fill!(v, zero(eltype(v)))
 function zero!(v::AbstractVector{<:AbstractVector})
     for i in eachindex(v)
@@ -55,6 +56,7 @@ function zero!(v::AbstractVector{<:AbstractVector})
     end
     return v
 end
+
 function norm!(v::AbstractVector{<:AbstractVector})
     r = zero(eltype(v))
     for i in eachindex(v)
@@ -64,6 +66,7 @@ function norm!(v::AbstractVector{<:AbstractVector})
 end
 
 include("tableau.jl")
+include("stepsize.jl")
 include("adaptive.jl")
 include("explicit.jl")
 include("implicit.jl")

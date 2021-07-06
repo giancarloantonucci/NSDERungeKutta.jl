@@ -18,7 +18,7 @@ AdaptiveParameters(; δ = 0.0, ϵ = 1e-5, K = 100) = AdaptiveParameters(δ, ϵ, 
 
 function adaptive_step!(solution, solver, cache, save_stages)
     @↓ u = solution
-    @↓ h = solver
+    @↓ h = solver.stepsize
     @↓ n, m, v = cache
     if solver.adaptive isa AdaptiveParameters
         save_stages ? (@↓ k ← k[n] = solution) : (@↓ k = cache)
@@ -42,5 +42,5 @@ function adaptive_step!(solution, solver, cache, save_stages)
         n += 1
     end
     @↑ cache = n, m
-    @↑ solver = h
+    @↑ solver.stepsize = h
 end

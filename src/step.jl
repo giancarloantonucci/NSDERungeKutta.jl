@@ -1,15 +1,15 @@
 """
-step!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::ExplicitRungeKuttaSolver, cache::RungeKuttaCache)
+step!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::ExplicitRungeKuttaSolver, cache::Cache)
 
 computes a step of the `RungeKuttaSolution` of an `InitialValueProblem` using an `ExplicitRungeKuttaSolver`.
 """
-function step!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::ExplicitRungeKuttaSolver, cache::RungeKuttaCache, save_stages)
+function step!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::ExplicitRungeKuttaSolver, cache::Cache, save_stages)
     @↓ n, v = cache
     @↓ u, t = solution
     save_stages ? (@↓ k ← k[n] = solution) : (@↓ k = cache)
     @↓ f! = problem.rhs
-    @↓ tableau, h = solver
-    @↓ s, A, c, b = tableau
+    @↓ s, A, c, b = solver.tableau
+    @↓ h = solver.stepsize
     v = u[n+1] # avoid allocs
     # compute stages
     for i = 1:s
@@ -32,17 +32,18 @@ function step!(solution::RungeKuttaSolution, problem::InitialValueProblem, solve
 end
 
 """
-step!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::ImplicitRungeKuttaSolver, cache::RungeKuttaCache)
+step!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::ImplicitRungeKuttaSolver, cache::Cache)
 
 computes a step of the `RungeKuttaSolution` of an `InitialValueProblem` using an `ImplicitRungeKuttaSolver`.
 """
-function step!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::ImplicitRungeKuttaSolver, cache::RungeKuttaCache, save_stages)
+function step!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::ImplicitRungeKuttaSolver, cache::Cache, save_stages)
     @↓ n, v, Δk, J = cache
     @↓ u, t = solution
     save_stages ? (@↓ k ← k[n] = solution) : (@↓ k = cache)
     @↓ f!, Df! = problem.rhs
-    @↓ tableau, h, ϵ, K = solver
-    @↓ s, A, c, b = tableau
+    @↓ ϵ, K = solver
+    @↓ s, A, c, b = solver.tableau
+    @↓ h = solver.stepsize
     v = u[n+1] # avoid allocs
     # @← J = Df(v, u[n], t[n])
     Df!(J, v, u[n], t[n])

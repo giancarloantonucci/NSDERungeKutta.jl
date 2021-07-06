@@ -33,11 +33,11 @@ function Base.show(io::IO, erk::ExplicitRungeKuttaSolver)
     if get(io, :compact, false)
         print(io, "ExplicitRungeKuttaSolver")
     else
-        @↓ tableau, h, adaptive = erk
+        @↓ tableau, stepsize, adaptive = erk
         print(io,
             "ExplicitRungeKuttaSolver:\n",
             "  tableau: ",  tableau, "\n",
-            "  h: ", h, "\n",
+            "  h: ", stepsize.h, "\n",
             "  adaptive: ", typeof(adaptive), "\n",
         )
     end
@@ -47,11 +47,11 @@ function Base.show(io::IO, irk::ImplicitRungeKuttaSolver)
     if get(io, :compact, false)
         print(io, "ImplicitRungeKuttaSolver")
     else
-        @↓ tableau, h, ϵ, K, adaptive = irk
+        @↓ tableau, stepsize, ϵ, K, adaptive = irk
         print(io,
             "ImplicitRungeKuttaSolver:\n",
             "  tableau: ",  typeof(tableau), "\n",
-            "  h: ", h, "\n",
+            "  h: ", stepsize.h, "\n",
             "  ϵ: ", ϵ, "\n",
             "  K: ", K, "\n",
             "  adaptive: ", typeof(adaptive), "\n",

@@ -6,16 +6,17 @@ returns a constructor for an explicit `RungeKuttaSolver`.
 
 # Arguments
 - `tableau  :: ButcherTableau`     : Butcher tableau.
-- `h        :: Real`               : step-size.
+- `stepsize :: StepSize`           : step-size.
 - `adaptive :: AdaptiveParameters` : embedded method's parameters.
 """
-mutable struct ExplicitRungeKuttaSolver{tableau_T, h_T, adaptive_T} <: RungeKuttaSolver
+struct ExplicitRungeKuttaSolver{tableau_T, stepsize_T, adaptive_T} <: RungeKuttaSolver
     tableau::tableau_T
-    h::h_T
+    stepsize::stepsize_T
     adaptive::adaptive_T
 end
 
-ExplicitRungeKuttaSolver(tableau, h) = ExplicitRungeKuttaSolver(tableau, h, nothing)
+ExplicitRungeKuttaSolver(tableau, h::Real, adaptive) = ExplicitRungeKuttaSolver(tableau, StepSize(h), adaptive)
+ExplicitRungeKuttaSolver(tableau, stepsize) = ExplicitRungeKuttaSolver(tableau, stepsize, nothing)
 @doc (@doc ExplicitRungeKuttaSolver) ERK(args...; kwargs...) = ExplicitRungeKuttaSolver(args...; kwargs...)
 
 """

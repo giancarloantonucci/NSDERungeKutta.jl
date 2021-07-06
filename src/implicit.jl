@@ -5,21 +5,22 @@
 returns a constructor for an implicit `RungeKuttaSolver`.
 
 # Arguments
-- `tableau  :: ButcherTableau`     : Butcher tableau.
-- `h        :: Real`               : step-size.
-- `ϵ        :: Real`               : simplified Newton's relative tolerance.
-- `K        :: Integer`            : simplified Newton's maximum number of iterations.
-- `adaptive :: AdaptiveParameters` : embedded method's parameters.
+- `tableau  :: ButcherTableau`      : Butcher tableau.
+- `stepsize :: StepSize`            : step-size.
+- `ϵ        :: Real`                : simplified Newton's relative tolerance.
+- `K        :: Integer`             : simplified Newton's maximum number of iterations.
+- `adaptive :: AdaptiveParameters`  : embedded method's parameters.
 """
-mutable struct ImplicitRungeKuttaSolver{tableau_T, h_T, ϵ_T, K_T, adaptive_T} <: RungeKuttaSolver
+struct ImplicitRungeKuttaSolver{tableau_T, stepsize_T, ϵ_T, K_T, adaptive_T} <: RungeKuttaSolver
     tableau::tableau_T
-    h::h_T
+    stepsize::stepsize_T
     ϵ::ϵ_T
     K::K_T
     adaptive::adaptive_T
 end
 
-ImplicitRungeKuttaSolver(tableau, h, ϵ, K) = ImplicitRungeKuttaSolver(tableau, h, ϵ, K, nothing)
+ImplicitRungeKuttaSolver(tableau, h::Real, ϵ, K, adaptive) = ImplicitRungeKuttaSolver(tableau, StepSize(h), ϵ, K, adaptive)
+ImplicitRungeKuttaSolver(tableau, stepsize, ϵ, K) = ImplicitRungeKuttaSolver(tableau, stepsize, ϵ, K, nothing)
 @doc (@doc ImplicitRungeKuttaSolver) IRK(args...; kwargs...) = ImplicitRungeKuttaSolver(args...; kwargs...)
 
 """

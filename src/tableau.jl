@@ -36,6 +36,7 @@ function ButcherTableau(A, b, c, s, p)
     q = nothing
     return ButcherTableau(A, b, c, s, p, d, q)
 end
+
 function ButcherTableau(tableau)
     nrows, ncols = size(tableau)
     s = ncols - 1
