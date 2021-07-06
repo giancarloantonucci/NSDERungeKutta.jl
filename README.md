@@ -17,6 +17,7 @@ A Julia package implementing Runge-Kutta methods.
 Let's say that we want to solve the [simple gravity pendulum problem](https://en.wikipedia.org/wiki/Pendulum_(mathematics)#Simple_gravity_pendulum) using the [midpoint method](https://en.wikipedia.org/wiki/Midpoint_method). Here is how to do it with `RungeKutta`:
 
 ```julia
+using Revise
 using RungeKutta
 f(u, t) = [u[2]; -9.81 * sin(u[1])]
 u0 = [0.0; π/2]
@@ -33,11 +34,9 @@ We can plot the obtained `solution` by extracting its fields `u` and `t`, e.g. w
 ```julia
 using Plots, LaTeXStrings
 default(fontfamily = "Computer Modern")
-plot(
-  size = (800, 400),
-  plot(solution, xlabel = L"t", label = [L"\theta" L"\omega"], legend = true),
-  phaseplot(solution, vars = (1, 2), xlabel = L"\theta", ylabel = L"\omega")
-)
+p₁ = plot(solution, xlabel = L"t", label = [L"\theta" L"\omega"], legend = true)
+p₂ = phaseplot(solution, vars = (1, 2), xlabel = L"\theta", ylabel = L"\omega")
+plot(size = (800, 400), p₁, p₂)
 # savefig("pendulum.svg")
 ```
 
@@ -64,11 +63,9 @@ plot(solution, xlabel = L"t", label = [L"x" L"y" L"z"], legend = true)
 `RungeKutta` has also predefined recipes to plot stability regions and order stars:
 
 ```julia
-plot(
-  size = (1000, 400),
-  stabilityf(RK4(), xlabel = L"\Re(z)", ylabel = L"\Im(z)", colour = :blues),
-  orderstarf(RK4(), xlabel = L"\Re(z)", ylabel = L"\Im(z)", colour = :blues)
-)
+p₁ = stabilityf(RK4(), xlabel = L"\Re(z)", ylabel = L"\Im(z)", colour = :blues)
+p₂ = orderstarf(RK4(), xlabel = L"\Re(z)", ylabel = L"\Im(z)", colour = :blues)
+plot(size = (1000, 400), p₁, p₂, left_margin = 5Plots.mm, bottom_margin = 5Plots.mm)
 # savefig("regions.svg")
 ```
 
