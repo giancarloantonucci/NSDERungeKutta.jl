@@ -4,6 +4,8 @@
     gridalpha      --> 0.2
     legend         --> :none
     linewidth      --> 1.5
+    minorgrid      --> 0.1
+    minorgridstyle --> :dash
     seriestype     --> :path
     xwiden         --> false
     tick_direction --> :out
@@ -27,6 +29,8 @@ end
     gridalpha      --> 0.2
     legend         --> :none
     linewidth      --> 1.5
+    minorgrid      --> 0.1
+    minorgridstyle --> :dash
     seriestype     --> :path
     tick_direction --> :out
     @↓ u, t = solution
@@ -54,6 +58,8 @@ end
     legend         --> :none
     levels         --> [1.0]
     linewidth      --> 1.5
+    minorgrid      --> 0.1
+    minorgridstyle --> :dash
     seriestype     --> :contour
     tick_direction --> :out
     Δx = max(1, abs(xlims[2] - xlims[1]))
@@ -80,6 +86,8 @@ end
     framestyle     --> :box
     gridalpha      --> 0.2
     legend         --> :none
+    minorgrid      --> 0.1
+    minorgridstyle --> :dash
     seriestype     --> :heatmap
     tick_direction --> :out
     Δx = max(1, abs(xlims[2] - xlims[1]))
@@ -107,6 +115,8 @@ end
     legend         --> :none
     levels         --> [1.0]
     linewidth      --> 1.5
+    minorgrid      --> 0.1
+    minorgridstyle --> :dash
     seriestype     --> :contour
     tick_direction --> :out
     Δx = max(1, abs(xlims[2] - xlims[1]))
@@ -133,6 +143,8 @@ end
     framestyle     --> :box
     gridalpha      --> 0.2
     legend         --> :none
+    minorgrid      --> 0.1
+    minorgridstyle --> :dash
     seriestype     --> :heatmap
     tick_direction --> :out
     Δx = max(1, abs(xlims[2] - xlims[1]))
