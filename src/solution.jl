@@ -30,3 +30,44 @@ function RungeKuttaSolution(problem::InitialValueProblem, solver::RungeKuttaSolv
 end
 
 Base.length(solution::RungeKuttaSolution) = length(solution.t)
+
+function findclosest(t, target)
+    N = length(t)
+    if target ≤ t[1]
+        return (1, t[1])
+    elseif target ≥ t[end]
+        return (N, t[end])
+    end
+    i = 0; j = N; n = 0
+    while i < j
+        n = (i + j) ÷ 2
+        if target == t[n]
+            return t[n]
+        elseif target < t[n]
+            if (n > 1) && (target > t[n - 1])
+                if target - t[n - 1] ≥ t[n] - target
+                    return (n, t[n])
+                else
+                    return (n - 1, t[n - 1])
+                end
+            end
+            j = n
+        else
+            if (n < N) && (target < t[n + 1])
+                if target - t[n] ≥ t[n + 1] - target
+                    return (n + 1, t[n + 1])
+                else
+                    return (n, t[n])
+                end
+            end
+            i = n + 1
+        end
+    end
+    return (n, t[n])
+end
+
+function (solution::RungeKuttaSolution)(t::Real)
+    (n, tₙ) = findclosest(solution.t, t)
+    uₙ = solution.u[n]
+    return tₙ, uₙ
+end
