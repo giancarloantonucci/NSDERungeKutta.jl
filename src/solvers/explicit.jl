@@ -1,6 +1,6 @@
 """
-    ExplicitRungeKuttaSolver(tableau, h[, adaptive]) -> RungeKuttaSolver
-    ERK(args...; kwargs...) -> RungeKuttaSolver
+    ExplicitRungeKuttaSolver(tableau, h[, adaptive]) <: RungeKuttaSolver
+    ERK(args...; kwargs...) <: RungeKuttaSolver
 
 returns a constructor for an explicit `RungeKuttaSolver`.
 
@@ -20,8 +20,8 @@ ExplicitRungeKuttaSolver(tableau, stepsize) = ExplicitRungeKuttaSolver(tableau, 
 @doc (@doc ExplicitRungeKuttaSolver) ERK(args...; kwargs...) = ExplicitRungeKuttaSolver(args...; kwargs...)
 
 """
-    Euler(; h = 0.0) -> ExplicitRungeKuttaSolver
-    ExplicitEuler(args...; kwargs...) -> ExplicitRungeKuttaSolver
+    Euler(; h = 0.0) :: ExplicitRungeKuttaSolver
+    ExplicitEuler(args...; kwargs...) :: ExplicitRungeKuttaSolver
 
 returns an `ExplicitRungeKuttaSolver` for the 1st-order Euler method.
 ```
@@ -36,7 +36,7 @@ end
 @doc (@doc Euler) ExplicitEuler(args...; kwargs...) = Euler(args...; kwargs...)
 
 """
-    Heun2(; h = 0.0) -> ExplicitRungeKuttaSolver
+    Heun2(; h = 0.0) :: ExplicitRungeKuttaSolver
 
 returns an `ExplicitRungeKuttaSolver` for the 2nd-order Heun method.
 """
@@ -50,7 +50,7 @@ function Heun2(; h = 0.0)
 end
 
 """
-    Ralston2(; h = 0.0) -> RungeKuttaSolver
+    Ralston2(; h = 0.0) :: ExplicitRungeKuttaSolver
 
 returns an `ExplicitRungeKuttaSolver` for the 2nd-order Ralston method.
 """
@@ -64,8 +64,8 @@ function Ralston2(; h = 0.0)
 end
 
 """
-    Midpoint(; h = 0.0) -> ExplicitRungeKuttaSolver
-    ExplicitMidpoint(args...; kwargs...) -> ExplicitRungeKuttaSolver
+    Midpoint(; h = 0.0) :: ExplicitRungeKuttaSolver
+    ExplicitMidpoint(args...; kwargs...) :: ExplicitRungeKuttaSolver
 
 returns an `ExplicitRungeKuttaSolver` for the 2nd-order midpoint method.
 """
@@ -80,7 +80,7 @@ end
 @doc (@doc Midpoint) ExplicitMidpoint(args...; kwargs...) = Midpoint(args...; kwargs...)
 
 """
-    Heun3(; h = 0.0) -> RungeKuttaSolver
+    Heun3(; h = 0.0) :: ExplicitRungeKuttaSolver
 
 returns an `ExplicitRungeKuttaSolver` for the 3rd-order Heun method.
 """
@@ -95,7 +95,7 @@ function Heun3(; h = 0.0)
 end
 
 """
-    Kutta3(; h = 0.0) -> RungeKuttaSolver
+    Kutta3(; h = 0.0) :: ExplicitRungeKuttaSolver
 
 returns an `ExplicitRungeKuttaSolver` for the 3rd-order Kutta method.
 """
@@ -110,7 +110,7 @@ function Kutta3(; h = 0.0)
 end
 
 """
-    Ralston3(; h = 0.0) -> RungeKuttaSolver
+    Ralston3(; h = 0.0) :: ExplicitRungeKuttaSolver
 
 returns an `ExplicitRungeKuttaSolver` for the 3rd-order Ralston method.
 """
@@ -125,7 +125,7 @@ function Ralston3(; h = 0.0)
 end
 
 """
-    SSPRK3(; h = 0.0) -> RungeKuttaSolver
+    SSPRK3(; h = 0.0) :: ExplicitRungeKuttaSolver
 
 returns an `ExplicitRungeKuttaSolver` for the 3rd-order Strong-Stability-Preserving Runge-Kutta method.
 """
@@ -142,7 +142,7 @@ end
 # --------------------------- Runge-Kutta, order 4 --------------------------- #
 
 """
-    RK4(; h = 0.0) -> RungeKuttaSolver
+    RK4(; h = 0.0) :: ExplicitRungeKuttaSolver
 
 returns an `ExplicitRungeKuttaSolver` for the 4th-order Runge-Kutta method.
 """
@@ -158,7 +158,7 @@ function RK4(; h = 0.0)
 end
 
 """
-    Rule38(; h = 0.0) -> RungeKuttaSolver
+    Rule38(; h = 0.0) :: ExplicitRungeKuttaSolver
 
 returns an `ExplicitRungeKuttaSolver` for the 4th-order 3/8-rule method.
 """
@@ -174,27 +174,28 @@ function Rule38(; h = 0.0)
 end
 
 """
-    HeunEuler(; h = 0.0, adaptive = AdaptiveParameters(δ = 0.0, ϵ = 1e-5, K = 100)) -> ExplicitRungeKuttaSolver
+    HeunEuler(; h = 0.0, δ = 0.0, ϵ = 1e-5, K = 100) :: ExplicitRungeKuttaSolver
 
 returns an `ExplicitRungeKuttaSolver` for the 2nd-order Heun-Euler method with 1st-order error estimate.
 """
-function HeunEuler(; h = 0.0, adaptive = AdaptiveParameters(δ = 0.0, ϵ = 1e-5, K = 100))
+function HeunEuler(; h = 0.0, δ = 0.0, ϵ = 1e-5, K = 100)
     tableau = ButcherTableau(typeof(h)[
         0   0   0 ;
         1   1   0 ;
         2  1/2 1/2;
         1   1   0 ;
     ])
+    adaptive = AdaptiveParameters(δ=δ, ϵ=ϵ, K=K)
     return ERK(tableau, h, adaptive)
 end
 
 """
-    Fehlberg45(; h = 0.0, adaptive = AdaptiveParameters(δ = 0.0, ϵ = 1e-5, K = 100)) -> ExplicitRungeKuttaSolver
-    F45(args...; kwargs...) -> ExplicitRungeKuttaSolver
+    Fehlberg45(; h = 0.0, δ = 0.0, ϵ = 1e-5, K = 100) :: ExplicitRungeKuttaSolver
+    F45(args...; kwargs...) :: ExplicitRungeKuttaSolver
 
 returns an `ExplicitRungeKuttaSolver` for the 4th-order Fehlberg method with 5th-order error estimate.
 """
-function Fehlberg45(; h = 0.0, adaptive = AdaptiveParameters(δ = 0.0, ϵ = 1e-5, K = 100))
+function Fehlberg45(; h = 0.0, δ = 0.0, ϵ = 1e-5, K = 100)
     tableau = ButcherTableau(typeof(h)[
           0       0          0          0           0         0    0  ;
          1/4     1/4         0          0           0         0    0  ;
@@ -205,17 +206,18 @@ function Fehlberg45(; h = 0.0, adaptive = AdaptiveParameters(δ = 0.0, ϵ = 1e-5
           4     25/216       0      1408/2565   2197/4104   -1/5   0  ;
           5     16/135       0      6656/12825 28561/56430  -9/50 2/55;
     ])
+    adaptive = AdaptiveParameters(δ=δ, ϵ=ϵ, K=K)
     return ERK(tableau, h, adaptive)
 end
 @doc (@doc Fehlberg45) F45(args...; kwargs...) = Fehlberg45(args...; kwargs...)
 
 """
-    DormandPrince54(; h = 0.0, adaptive = AdaptiveParameters(δ = 0.0, ϵ = 1e-5, K = 100)) -> ExplicitRungeKuttaSolver
-    DP54(args...; kwargs...) -> ExplicitRungeKuttaSolver
+    DormandPrince54(; h = 0.0, δ = 0.0, ϵ = 1e-5, K = 100) :: ExplicitRungeKuttaSolver
+    DP54(args...; kwargs...) :: ExplicitRungeKuttaSolver
 
 returns an `ExplicitRungeKuttaSolver` for the 5th-order Dormand-Prince method with 4th-order error estimate.
 """
-function DormandPrince54(; h = 0.0, adaptive = AdaptiveParameters(δ = 0.0, ϵ = 1e-5, K = 100))
+function DormandPrince54(; h = 0.0, δ = 0.0, ϵ = 1e-5, K = 100)
     tableau = ButcherTableau(typeof(h)[
          0        0            0          0          0          0          0      0  ;
         1/5      1/5           0          0          0          0          0      0  ;
@@ -227,17 +229,18 @@ function DormandPrince54(; h = 0.0, adaptive = AdaptiveParameters(δ = 0.0, ϵ =
          5      35/384         0       500/1113   125/192  -2187/6784    11/84    0  ;
          4    5179/57600       0      7571/16695  393/640 -92097/339200 187/2100 1/40;
     ])
+    adaptive = AdaptiveParameters(δ=δ, ϵ=ϵ, K=K)
     return ERK(tableau, h, adaptive)
 end
 @doc (@doc DormandPrince54) DP54(args...; kwargs...) = DormandPrince54(args...; kwargs...)
 
 """
-    Verner65(; h = 0.0, adaptive = AdaptiveParameters(δ = 0.0, ϵ = 1e-5, K = 100)) -> ExplicitRungeKuttaSolver
-    V65(args...; kwargs...) -> ExplicitRungeKuttaSolver
+    Verner65(; h = 0.0, δ = 0.0, ϵ = 1e-5, K = 100) :: ExplicitRungeKuttaSolver
+    V65(args...; kwargs...) :: ExplicitRungeKuttaSolver
 
 returns an `ExplicitRungeKuttaSolver` for the 6th-order Verner method with 5th-order error estimate.
 """
-function Verner65(; h = 0.0, adaptive = AdaptiveParameters(δ = 0.0, ϵ = 1e-5, K = 100))
+function Verner65(; h = 0.0, δ = 0.0, ϵ = 1e-5, K = 100)
     tableau = ButcherTableau(typeof(h)[
          0        0          0         0          0          0       0       0        0   ;
         1/6      1/6         0         0          0          0       0       0        0   ;
@@ -250,6 +253,7 @@ function Verner65(; h = 0.0, adaptive = AdaptiveParameters(δ = 0.0, ϵ = 1e-5, 
          6       3/40        0      875/2244    23/72     264/1955   0    125/11592 43/616;
          5      13/160       0     2375/5984     5/16      12/85    3/44     0        0   ;
     ])
+    adaptive = AdaptiveParameters(δ=δ, ϵ=ϵ, K=K)
     return ERK(tableau, h, adaptive)
 end
 @doc (@doc Verner65) V65(args...; kwargs...) = Verner65(args...; kwargs...)

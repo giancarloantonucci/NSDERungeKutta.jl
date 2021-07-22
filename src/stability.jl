@@ -1,5 +1,5 @@
 @doc raw"""
-    ℛ(z::Number, solver::RungeKuttaSolver) -> Number
+    ℛ(z::Number, solver::RungeKuttaSolver) :: Number
 
 returns the stability function of a `RungeKuttaSolver`:
 ```math

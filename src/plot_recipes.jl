@@ -1,5 +1,4 @@
 @recipe function f(solution::RungeKuttaSolution; vars = nothing)
-    # fontfamily     --> "Computer Modern"
     framestyle     --> :box
     gridalpha      --> 0.2
     legend         --> :none
@@ -24,7 +23,6 @@ end
 @recipe function f(h::PHASEPLOT; vars = nothing)
     length(h.args) == 1 ? true : error("Got too many arguments: $(length(h.args)).")
     solution = h.args[1] isa RungeKuttaSolution ? h.args[1] : error("Got $(typeof(h.args)) instead of `RungeKuttaSolution`.")
-    # fontfamily     --> "Computer Modern"
     framestyle     --> :box
     gridalpha      --> 0.2
     legend         --> :none
@@ -51,7 +49,6 @@ end
         h.args[1] isa RungeKuttaSolver ? z -> ℛ(z, h.args[1].tableau) :
         h.args[1] isa Function         ? h.args[1]                    :
         error("Got $(typeof(h.args)) instead of `ButcherTableau`, `RungeKuttaSolver` or `Function`.")
-    # fontfamily     --> "Computer Modern"
     framestyle     --> :box
     gridalpha      --> 0.2
     gridstyle      --> :dot
@@ -80,7 +77,6 @@ end
         h.args[1] isa RungeKuttaSolver ? z -> ℛ(z, h.args[1].tableau) :
         h.args[1] isa Function         ? h.args[1]                    :
         error("Got $(typeof(h.args)) instead of `ButcherTableau`, `RungeKuttaSolver` or `Function`.")
-    # fontfamily     --> "Computer Modern"
     clims          --> (0, 1)
     colorbar       --> true
     framestyle     --> :box
@@ -109,7 +105,6 @@ end
         h.args[1] isa RungeKuttaSolver ? z -> ℛ(z, h.args[1].tableau) :
         h.args[1] isa Function         ? h.args[1]                    :
         error("Got $(typeof(h.args)) instead of `ButcherTableau`, `RungeKuttaSolver` or `Function`.")
-    # fontfamily     --> "Computer Modern"
     framestyle     --> :box
     gridalpha      --> 0.2
     legend         --> :none
@@ -137,7 +132,6 @@ end
         h.args[1] isa RungeKuttaSolver ? z -> ℛ(z, h.args[1].tableau) :
         h.args[1] isa Function         ? h.args[1]                    :
         error("Got $(typeof(h.args)) instead of `ButcherTableau`, `RungeKuttaSolver` or `Function`.")
-    # fontfamily     --> "Computer Modern"
     clims          --> (0, 1)
     colorbar       --> true
     framestyle     --> :box

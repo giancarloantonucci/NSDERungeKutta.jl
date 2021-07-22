@@ -1,5 +1,5 @@
 """
-    AdaptiveParameters(; δ = 0.0, ϵ = 1e-5, K = 100) -> AdaptiveParameters
+    AdaptiveParameters(; δ = 0.0, ϵ = 1e-5, K = 100) <: RungeKuttaParameters
 
 returns a constructor containing the parameters of an adaptive `RungeKuttaSolver`.
 
@@ -22,7 +22,7 @@ function adaptive_step!(solution, solver, cache, save_stages)
     @↓ n, m, v = cache
     if solver.adaptive isa AdaptiveParameters
         save_stages ? (@↓ k ← k[n] = solution) : (@↓ k = cache)
-        @↓ b, s, p, d, q = solver.tableau
+        @↓ s, b, p, d, q = solver.tableau
         @↓ δ, ϵ, K = solver.adaptive
         zero!(v)
         for i = 1:s

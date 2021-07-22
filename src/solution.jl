@@ -1,5 +1,5 @@
 """
-    RungeKuttaSolution(u, t[, k]) -> RungeKuttaSolution
+    RungeKuttaSolution(u, t[, k]) <: InitialValueSolution
 
 returns a constructor for the numerical solution of an `InitialValueProblem`.
 
@@ -17,57 +17,64 @@ end
 RungeKuttaSolution(u, t) = RungeKuttaSolution(u, t, nothing)
 
 function RungeKuttaSolution(problem::InitialValueProblem, solver::RungeKuttaSolver, save_stages)
-    @↓ u0, (t0, tN) ← tspan = problem
+    @↓ u₀, (t₀, T) ← tspan = problem
     @↓ h = solver.stepsize
     @↓ s = solver.tableau
-    N = floor(Int, (tN - t0) / h) + 1
-    u = Vector{eltype(u0)}(undef, N, length(u0))
-    u[1] = u0
-    t = Vector{typeof(t0)}(undef, N)
-    t[1] = t0
-    k = save_stages ? Vector{uT}(undef, N, s, L) : nothing
+    N = floor(Int, (T - t₀) / h) + 1
+    u₀_T = eltype(u₀)
+    u = Vector{u₀_T}(undef, N, length(u₀))
+    u[1] = u₀
+    t = Vector{typeof(t₀)}(undef, N)
+    t[1] = t₀
+    k = if save_stages
+        Vector{u₀_T}(undef, N, s, L)
+    else
+        nothing
+    end
     return RungeKuttaSolution(u, t, k)
 end
 
+# Utility functions
 Base.length(solution::RungeKuttaSolution) = length(solution.t)
 
-function findclosest(t, target)
-    N = length(t)
-    if target ≤ t[1]
-        return (1, t[1])
-    elseif target ≥ t[end]
-        return (N, t[end])
+# Make solution callable
+function find_closest(target, vector)
+    N = length(vector)
+    if target ≤ vector[1]
+        return (1, vector[1])
+    elseif target ≥ vector[end]
+        return (N, vector[end])
     end
     i = 0; j = N; n = 0
     while i < j
         n = (i + j) ÷ 2
-        if target == t[n]
-            return t[n]
-        elseif target < t[n]
-            if (n > 1) && (target > t[n - 1])
-                if target - t[n - 1] ≥ t[n] - target
-                    return (n, t[n])
+        if target == vector[n]
+            return vector[n]
+        elseif target < vector[n]
+            if (n > 1) && (target > vector[n - 1])
+                if target - vector[n - 1] ≥ vector[n] - target
+                    return (n, vector[n])
                 else
-                    return (n - 1, t[n - 1])
+                    return (n - 1, vector[n - 1])
                 end
             end
             j = n
         else
-            if (n < N) && (target < t[n + 1])
-                if target - t[n] ≥ t[n + 1] - target
-                    return (n + 1, t[n + 1])
+            if (n < N) && (target < vector[n + 1])
+                if target - vector[n] ≥ vector[n + 1] - target
+                    return (n + 1, vector[n + 1])
                 else
-                    return (n, t[n])
+                    return (n, vector[n])
                 end
             end
             i = n + 1
         end
     end
-    return (n, t[n])
+    return n, vector[n]
 end
 
 function (solution::RungeKuttaSolution)(t::Real)
-    (n, tₙ) = findclosest(solution.t, t)
+    (n, tₙ) = find_closest(t, solution.t)
     uₙ = solution.u[n]
     return tₙ, uₙ
 end

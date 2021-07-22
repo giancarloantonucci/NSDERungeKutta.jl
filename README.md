@@ -2,12 +2,12 @@
 
 A Julia package implementing Runge-Kutta methods.
 
-[![Build Status](https://github.com/antonuccig/RungeKutta.jl/workflows/CI/badge.svg)](https://github.com/antonuccig/RungeKutta.jl/actions)
-[![Coverage](https://codecov.io/gh/antonuccig/RungeKutta.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/antonuccig/RungeKutta.jl)
+[![Build Status](https://github.com/antonuccig/RungeKutta.jl/workflows/CI/badge.svg)](https://github.com/antonuccig/RungeKutta.jl/actions) [![Coverage](https://codecov.io/gh/antonuccig/RungeKutta.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/antonuccig/RungeKutta.jl)
 
 ## Installation
 
 `RungeKutta` is compatible with Julia `v1.0` and above. From the Julia REPL,
+
 ```julia
 ]add https://github.com/antonuccig/RungeKutta.jl
 ```
@@ -78,46 +78,45 @@ plot(size = (1000, 400), p₁, p₂, left_margin = 5Plots.mm, bottom_margin = 5P
 
 <details><summary>Explicit</summary>
 
-- `Euler`/`ExplicitEuler`
-- `Midpoint`/`ExplicitMidpoint`
-- `Heun2`
-- `Ralston2`
-- `Heun3`
-- `Kutta3`
-- `Ralston3`
-- `SSPRK3`
-- `RK4`
-- `Rule38`
-- `HeunEuler`
-- `Fehlberg45`/`F45`
-- `DormandPrince54`/`DP54`
-- `Verner65`/`V65`
+- <code>Euler</code>/<code>ExplicitEuler</code>
+- <code>Midpoint</code>/<code>ExplicitMidpoint</code>
+- <code>Heun2</code>
+- <code>Ralston2</code>
+- <code>Heun3</code>
+- <code>Kutta3</code>
+- <code>Ralston3</code>
+- <code>SSPRK3</code>
+- <code>RK4</code>
+- <code>Rule38</code>
+- <code>HeunEuler</code>
+- <code>Fehlberg45</code>/<code>F45</code>
+- <code>DormandPrince54</code>/<code>DP54</code>
+- <code>Verner65</code>/<code>V65</code></details>
 
-</details>
+
 
 <details><summary>Implicit</summary>
 
-- `BackwardEuler`/`ImplicitEuler`
-- `ImplicitMidpoint`
-- `CrankNicolson`
-- `SDIRK3`
-- `GaussLegendre4`/`GL4`
-- `GaussLegendre6`/`GL6`
-- `LobattoIIIA4`
-- `LobattoIIIB2`
-- `LobattoIIIB4`
-- `LobattoIIIC2`
-- `LobattoIIIC4`
-- `RadauIA3`
-- `RadauIA5`
-- `RadauIIA3`
-- `RadauIIA5`
-
-</details>
+- <code>BackwardEuler</code>/<code>ImplicitEuler</code>
+- <code>ImplicitMidpoint</code>
+- <code>CrankNicolson</code>
+- <code>SDIRK3</code>
+- <code>GaussLegendre4</code>/<code>GL4</code>
+- <code>GaussLegendre6</code>/<code>GL6</code>
+- <code>LobattoIIIA4</code>
+- <code>LobattoIIIB2</code>
+- <code>LobattoIIIB4</code>
+- <code>LobattoIIIC2</code>
+- <code>LobattoIIIC4</code>
+- <code>RadauIA3</code>
+- <code>RadauIA5</code>
+- <code>RadauIIA3</code>
+- <code>RadauIIA5</code></details>
 
 ## What's next?
 
 Current plans for future developments are:
+
 - Improve performance and error messages.
 - Automatic size detection of stability region.
 - IMEX methods.

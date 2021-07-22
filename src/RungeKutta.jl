@@ -45,9 +45,10 @@ using LinearAlgebra
 using RecipesBase
 
 abstract type RungeKuttaSolver <: InitialValueSolver end
+abstract type RungeKuttaParameters <: InitialValueParameters end
 
-Vector{T}(undef, n, d) where T = Vector{T}[Vector{T}(undef, d) for i = 1:n]
-Vector{T}(undef, m, n, d) where T = Vector{Vector{T}}[Vector{T}(undef, n, d) for i = 1:m]
+Vector{u_T}(undef, n, d) where u_T = Vector{u_T}[Vector{u_T}(undef, d) for i = 1:n]
+Vector{u_T}(undef, n₂, n₁, d) where u_T = Vector{Vector{u_T}}[Vector{u_T}(undef, n₁, d) for i = 1:n₂]
 
 zero!(v::AbstractVector) = fill!(v, zero(eltype(v)))
 function zero!(v::AbstractVector{<:AbstractVector})
@@ -65,17 +66,17 @@ function norm!(v::AbstractVector{<:AbstractVector})
     return r
 end
 
-include("tableau.jl")
-include("stepsize.jl")
-include("adaptive.jl")
-include("explicit.jl")
-include("implicit.jl")
-include("cache.jl")
+include("parameters/tableau.jl")
+include("parameters/stepsize.jl")
+include("parameters/adaptive.jl")
+include("parameters/newton.jl")
+include("solvers/explicit.jl")
+include("solvers/implicit.jl")
+include("parameters/cache.jl")
 include("solution.jl")
 include("step.jl")
 include("solve.jl")
 include("stability.jl")
-include("recipes.jl")
-# include("show.jl")
+include("plot_recipes.jl")
 
 end

@@ -1,6 +1,6 @@
 @doc raw"""
-    ButcherTableau(A, b, c, s, p[, d, q]) -> ButcherTableau
-    ButcherTableau(tableau::AbstractMatrix) -> ButcherTableau
+    ButcherTableau(A, b, c, s, p[, d, q]) <: RungeKuttaParameters
+    ButcherTableau(tableau::AbstractMatrix) <: RungeKuttaParameters
 
 returns a constructor for the Butcher tableau of a `RungeKuttaSolver`:
 ```math
@@ -21,7 +21,7 @@ returns a constructor for the Butcher tableau of a `RungeKuttaSolver`:
 - `d :: AbstractVector` : embedding's vector of weights.
 - `q :: Integer`        : embedding's order of accuracy.
 """
-struct ButcherTableau{A_T, b_T, c_T, s_T, p_T, d_T, q_T}
+struct ButcherTableau{A_T, b_T, c_T, s_T, p_T, d_T, q_T} <: RungeKuttaParameters
     A::A_T
     b::b_T
     c::c_T
