@@ -17,17 +17,17 @@ end
 RungeKuttaSolution(u, t) = RungeKuttaSolution(u, t, nothing)
 
 function RungeKuttaSolution(problem::InitialValueProblem, solver::RungeKuttaSolver, save_stages)
-    @↓ u₀, (t₀, T) ← tspan = problem
+    @↓ u0, (t0, tN) ← tspan = problem
     @↓ h = solver.stepsize
     @↓ s = solver.tableau
-    N = floor(Int, (T - t₀) / h) + 1
-    u₀_T = eltype(u₀)
-    u = Vector{u₀_T}(undef, N, length(u₀))
-    u[1] = u₀
-    t = Vector{typeof(t₀)}(undef, N)
-    t[1] = t₀
+    N = floor(Int, (tN - t0) / h) + 1
+    u0_T = eltype(u0)
+    u = Vector{u0_T}(undef, N, length(u0))
+    u[1] = u0
+    t = Vector{typeof(t0)}(undef, N)
+    t[1] = t0
     k = if save_stages
-        Vector{u₀_T}(undef, N, s, L)
+        Vector{u0_T}(undef, N, s, L)
     else
         nothing
     end

@@ -6,12 +6,12 @@ returns the `RungeKuttaSolution` of an `InitialValueProblem`.
 function NSDEBase.solve(problem::InitialValueProblem, solver::RungeKuttaSolver; save_stages = false)
     solution = RungeKuttaSolution(problem, solver, save_stages)
     cache = Cache(problem, solver)
-    @↓ (t₀, T) ← tspan = problem
+    @↓ (t0, tN) ← tspan = problem
     @↓ u, t = solution
     @↓ n = cache
     # WHILE instead of FOR loop -> adaptive methods
     N = length(t)
-    while n < N && t[n] < T
+    while n < N && t[n] < tN
         step!(solution, problem, solver, cache, save_stages)
         adaptive_step!(solution, solver, cache, save_stages)
         @↓ n = cache

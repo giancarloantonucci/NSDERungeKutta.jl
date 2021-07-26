@@ -23,23 +23,23 @@ end
 Cache(n, m, v, k) = Cache(n, m, v, k, nothing, nothing)
 
 function Cache(problem::InitialValueProblem, solver::ExplicitRungeKuttaSolver)
-    @↓ u₀ = problem
+    @↓ u0 = problem
     @↓ s = solver.tableau
     n = m = 1
-    v = similar(u₀)
-    k = Vector{eltype(u₀)}(undef, s, length(u₀))
+    v = similar(u0)
+    k = Vector{eltype(u0)}(undef, s, length(u0))
     return Cache(n, m, v, k)
 end
 
 function Cache(problem::InitialValueProblem, solver::ImplicitRungeKuttaSolver)
-    @↓ u₀ = problem
+    @↓ u0 = problem
     @↓ s = solver.tableau
     n = m = 1
-    v = similar(u₀)
-    u₀_T = eltype(u₀)
-    L = length(u₀)
-    k = Vector{u₀_T}(undef, s, L)
-    Δk = Vector{u₀_T}(undef, s, L)
-    J = Matrix{u₀_T}(undef, L, L)
+    v = similar(u0)
+    u0_T = eltype(u0)
+    L = length(u0)
+    k = Vector{u0_T}(undef, s, L)
+    Δk = Vector{u0_T}(undef, s, L)
+    J = Matrix{u0_T}(undef, L, L)
     return Cache(n, m, v, k, Δk, J)
 end

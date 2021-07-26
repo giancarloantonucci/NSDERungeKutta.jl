@@ -2,12 +2,12 @@ using LinearAlgebra
 using RungeKutta
 using Test
 
-u₀ = [1.0, 1.0, 1.0]
+u0 = [1.0, 1.0, 1.0]
 tspan = (0.0, 1e-2)
 function f!(du, u, t)
     du .= Matrix(1.0I, 3, 3) * u
 end
-problem = IVP(f!, u₀, tspan)
+problem = IVP(f!, u0, tspan)
 
 @testset "Explicit" begin
     solver = ExplicitEuler(h = 1e-2)
