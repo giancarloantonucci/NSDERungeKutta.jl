@@ -20,7 +20,7 @@ returns a `ButcherTableau` with:
 
     ButcherTableau(tableau::AbstractMatrix)
 
-returns a `ButcherTableau` from a matrix `tableau` structured as
+returns a `ButcherTableau` from a matrix `tableau` with structure:
 ```math
 \begin{array}{c|c}
     c & A \\

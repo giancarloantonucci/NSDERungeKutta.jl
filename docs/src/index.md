@@ -9,7 +9,6 @@
 
 ```@docs
 ButcherTableau
-RungeKuttaSolver
 ExplicitRungeKuttaSolver
 ImplicitRungeKuttaSolver
 RungeKuttaSolution
