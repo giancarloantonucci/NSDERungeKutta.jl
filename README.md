@@ -2,7 +2,7 @@
 
 A Julia package implementing Runge-Kutta methods.
 
-[![Build Status](https://github.com/antonuccig/RungeKutta.jl/workflows/CI/badge.svg)](https://github.com/antonuccig/RungeKutta.jl/actions) [![Coverage](https://codecov.io/gh/antonuccig/RungeKutta.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/antonuccig/RungeKutta.jl)
+[![Docs Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://antonuccig.github.io/RungeKutta.jl/stable) [![Docs Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://antonuccig.github.io/RungeKutta.jl/dev) [![Build Status](https://img.shields.io/github/workflow/status/antonuccig/RungeKutta.jl/CI)](https://github.com/antonuccig/RungeKutta.jl/actions) [![Coverage](https://img.shields.io/codecov/c/github/antonuccig/RungeKutta.jl?label=codecov)](https://codecov.io/gh/antonuccig/RungeKutta.jl)
 
 ## Installation
 
