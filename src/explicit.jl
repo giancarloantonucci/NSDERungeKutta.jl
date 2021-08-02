@@ -337,7 +337,6 @@ function step!(solution::RungeKuttaSolution, problem::InitialValueProblem, solve
         @. v = u[n] + h * v
         # @← k[i] = f(v, t[n] + h * c[i])
         f!(k[i], v, t[n] + h * c[i])
-        t[n+1] = t[n] + h
     end
     # Compute step
     zero!(v)
