@@ -1,13 +1,13 @@
 @doc raw"""
     ButcherTableau{A_T, b_T, c_T, s_T, p_T, d_T, q_T}
 
-defines a constructor for the Butcher tableau of a `RungeKuttaSolver`.
+defines a constructor for the Butcher tableau of a [`RungeKuttaSolver`](@ref).
 
 ---
 
     ButcherTableau(A, b, c, s, p[, d, q])
 
-returns a `ButcherTableau` with:
+returns a [`ButcherTableau`](@ref) with:
 - `A :: AbstractMatrix` : matrix of coefficients.
 - `b :: AbstractVector` : vector of weights.
 - `c :: AbstractVector` : vector of nodes.
@@ -20,7 +20,7 @@ returns a `ButcherTableau` with:
 
     ButcherTableau(tableau::AbstractMatrix)
 
-returns a `ButcherTableau` from a matrix `tableau` with structure:
+returns a [`ButcherTableau`](@ref) from a matrix `tableau` with structure:
 ```math
 \begin{array}{c|c}
     c & A \\
@@ -81,7 +81,7 @@ end
 @doc raw"""
     ℛ(z::Number, solver::RungeKuttaSolver) :: Number
 
-returns the stability function of a `RungeKuttaSolver`:
+returns the stability function of a [`RungeKuttaSolver`](@ref):
 ```math
     R(z) = \frac{\det(I - z(A - \mathbb{1}b^\intercal))}{\det(I - zA)}.
 ```
@@ -110,13 +110,13 @@ end
 """
     StepSize{h_T}
 
-returns a constructor containing the step-size of a `RungeKuttaSolver`.
+returns a constructor containing the step-size of a [`RungeKuttaSolver`](@ref).
 
 ---
 
     StepSize(; h)
 
-returns a `StepSize` with:
+returns a [`StepSize`](@ref) with:
 - `h :: Real` : step-size.
 """
 mutable struct StepSize{h_T}
@@ -150,13 +150,13 @@ end
 """
     AdaptiveParameters{δ_T, ϵ_T, K_T}
 
-returns a constructor containing the parameters of an adaptive `RungeKuttaSolver`.
+returns a constructor containing the parameters of an adaptive [`RungeKuttaSolver`](@ref).
 
 ---
 
     AdaptiveParameters(; δ = 0.0, ϵ = 1e-5, K = 100)
 
-returns an `AdaptiveParameters` with:
+returns an [`AdaptiveParameters`](@ref) with:
 - `δ :: Real`    : absolute tolerance.
 - `ϵ :: Real`    : relative tolerance.
 - `K :: Integer` : maximum number of iterations.
@@ -217,13 +217,13 @@ end
 """
     NewtonParameters{ϵ_T, K_T}
 
-returns a constructor containing the parameters of simplified Newton in `ImplicitRungeKuttaSolver`.
+returns a constructor containing the parameters of simplified Newton in [`ImplicitRungeKuttaSolver`](@ref).
 
 ---
 
     NewtonParameters(; ϵ = 1e-3, K = 10)
 
-returns a `NewtonParameters` with:
+returns a [`NewtonParameters`](@ref) with:
 - `ϵ :: Real`    : relative tolerance
 - `K :: Integer` : maximum number of iterations.
 """

@@ -1,14 +1,14 @@
 """
     ImplicitRungeKuttaSolver{tableau_T, stepsize_T, newton_T, adaptive_T} <: RungeKuttaSolver
 
-returns a constructor for an implicit `RungeKuttaSolver`.
+returns a constructor for an implicit [`RungeKuttaSolver`](@ref).
 
 ---
 
     ImplicitRungeKuttaSolver(tableau, h, newton[, adaptive])
     IRK(args...; kwargs...) :: ImplicitRungeKuttaSolver
 
-returns an `ImplicitRungeKuttaSolver` with:
+returns an [`ImplicitRungeKuttaSolver`](@ref) with:
 - `tableau  :: ButcherTableau`     : Butcher tableau.
 - `stepsize :: StepSize`           : step-size.
 - `newton   :: NewtonParameters`   : simplified Newton's parameters
@@ -45,7 +45,7 @@ end
     BackwardEuler(; h = 0.0, ϵ = 1e-3, K = 10) :: ImplicitRungeKuttaSolver
     ImplicitEuler(args...; kwargs...) :: ImplicitRungeKuttaSolver
 
-returns an `ImplicitRungeKuttaSolver` for the 1st-order backward Euler method.
+returns an [`ImplicitRungeKuttaSolver`](@ref) for the 1st-order backward Euler method.
 """
 function BackwardEuler(; h = 0.0, ϵ = 1e-3, K = 10)
     tableau = ButcherTableau(typeof(h)[
@@ -60,7 +60,7 @@ end
 """
     ImplicitMidpoint(; h = 0.0, ϵ = 1e-3, K = 10) :: ImplicitRungeKuttaSolver
 
-returns an `ImplicitRungeKuttaSolver` for the 2nd-order implicit midpoint method.
+returns an [`ImplicitRungeKuttaSolver`](@ref) for the 2nd-order implicit midpoint method.
 """
 function ImplicitMidpoint(; h = 0.0, ϵ = 1e-3, K = 10)
     tableau = ButcherTableau(typeof(h)[
@@ -74,7 +74,7 @@ end
 """
     CrankNicolson(; h = 0.0, ϵ = 1e-3, K = 10) :: ImplicitRungeKuttaSolver
 
-returns an `ImplicitRungeKuttaSolver` for the 2nd-order Crank-Nicolson method.
+returns an [`ImplicitRungeKuttaSolver`](@ref) for the 2nd-order Crank-Nicolson method.
 """
 function CrankNicolson(; h = 0.0, ϵ = 1e-3, K = 10)
     tableau = ButcherTableau(typeof(h)[
@@ -89,7 +89,7 @@ end
 """
     SDIRK3(; h = 0.0, ϵ = 1e-3, K = 10) :: ImplicitRungeKuttaSolver
 
-returns an `ImplicitRungeKuttaSolver` for the 3rd-order SDIRK method.
+returns an [`ImplicitRungeKuttaSolver`](@ref) for the 3rd-order SDIRK method.
 """
 function SDIRK3(; h = 0.0, ϵ = 1e-3, K = 10)
     γ = 1/2 + √3/6
@@ -106,7 +106,7 @@ end
     GaussLegendre4(; h = 0.0, ϵ = 1e-3, K = 10) :: ImplicitRungeKuttaSolver
     GL4(args...; kwargs...) :: ImplicitRungeKuttaSolver
 
-returns an `ImplicitRungeKuttaSolver` for the 4th-order Gauss-Legendre method.
+returns an [`ImplicitRungeKuttaSolver`](@ref) for the 4th-order Gauss-Legendre method.
 """
 function GaussLegendre4(; h = 0.0, ϵ = 1e-3, K = 10)
     tableau = ButcherTableau(typeof(h)[
@@ -123,7 +123,7 @@ end
     GaussLegendre6(; h = 0.0, ϵ = 1e-3, K = 10) :: ImplicitRungeKuttaSolver
     GL6(args...; kwargs...) :: ImplicitRungeKuttaSolver
 
-returns an `ImplicitRungeKuttaSolver` for the 6th-order Gauss–Legendre method.
+returns an [`ImplicitRungeKuttaSolver`](@ref) for the 6th-order Gauss–Legendre method.
 """
 function GaussLegendre6(; h = 0.0, ϵ = 1e-3, K = 10)
     tableau = ButcherTableau(typeof(h)[
@@ -140,7 +140,7 @@ end
 """
     LobattoIIIA4(; h = 0.0, ϵ = 1e-3, K = 10) :: ImplicitRungeKuttaSolver
 
-returns an `ImplicitRungeKuttaSolver` for the 4th-order Lobatto IIIA method.
+returns an [`ImplicitRungeKuttaSolver`](@ref) for the 4th-order Lobatto IIIA method.
 """
 function LobattoIIIA4(; h = 0.0, ϵ = 1e-3, K = 10)
     tableau = ButcherTableau(typeof(h)[
@@ -156,7 +156,7 @@ end
 """
     LobattoIIIB2(; h = 0.0, ϵ = 1e-3, K = 10) :: ImplicitRungeKuttaSolver
 
-returns an `ImplicitRungeKuttaSolver` for the 2nd-order Lobatto IIIB method.
+returns an [`ImplicitRungeKuttaSolver`](@ref) for the 2nd-order Lobatto IIIB method.
 """
 function LobattoIIIB2(; h = 0.0, ϵ = 1e-3, K = 10)
     tableau = ButcherTableau(typeof(h)[
@@ -171,7 +171,7 @@ end
 """
     LobattoIIIB4(; h = 0.0, ϵ = 1e-3, K = 10) :: ImplicitRungeKuttaSolver
 
-returns an `ImplicitRungeKuttaSolver` for the 4th-order Lobatto IIIB method.
+returns an [`ImplicitRungeKuttaSolver`](@ref) for the 4th-order Lobatto IIIB method.
 """
 function LobattoIIIB4(; h = 0.0, ϵ = 1e-3, K = 10)
     tableau = ButcherTableau(typeof(h)[
@@ -187,7 +187,7 @@ end
 """
     LobattoIIIC2(; h = 0.0, ϵ = 1e-3, K = 10) :: ImplicitRungeKuttaSolver
 
-returns an `ImplicitRungeKuttaSolver` for the 2nd-order Lobatto IIIC method.
+returns an [`ImplicitRungeKuttaSolver`](@ref) for the 2nd-order Lobatto IIIC method.
 """
 function LobattoIIIC2(; h = 0.0, ϵ = 1e-3, K = 10)
     tableau = ButcherTableau(typeof(h)[
@@ -202,7 +202,7 @@ end
 """
     LobattoIIIC4(; h = 0.0, ϵ = 1e-3, K = 10) :: ImplicitRungeKuttaSolver
 
-returns an `ImplicitRungeKuttaSolver` for the 4th-order Lobatto IIIC method.
+returns an [`ImplicitRungeKuttaSolver`](@ref) for the 4th-order Lobatto IIIC method.
 """
 function LobattoIIIC4(; h = 0.0, ϵ = 1e-3, K = 10)
     tableau = ButcherTableau(typeof(h)[
@@ -218,7 +218,7 @@ end
 """
     RadauIA3(; h = 0.0, ϵ = 1e-3, K = 10) :: ImplicitRungeKuttaSolver
 
-returns an `ImplicitRungeKuttaSolver` for the 3rd-order Radau IA method.
+returns an [`ImplicitRungeKuttaSolver`](@ref) for the 3rd-order Radau IA method.
 """
 function RadauIA3(; h = 0.0, ϵ = 1e-3, K = 10)
     tableau = ButcherTableau(typeof(h)[
@@ -233,7 +233,7 @@ end
 """
     RadauIA5(; h = 0.0, ϵ = 1e-3, K = 10) :: ImplicitRungeKuttaSolver
 
-returns an `ImplicitRungeKuttaSolver` for the 5th-order Radau IA method.
+returns an [`ImplicitRungeKuttaSolver`](@ref) for the 5th-order Radau IA method.
 """
 function RadauIA5(; h = 0.0, ϵ = 1e-3, K = 10)
     tableau = ButcherTableau(typeof(h)[
@@ -249,7 +249,7 @@ end
 """
     RadauIIA3(; h = 0.0, ϵ = 1e-3, K = 10) :: ImplicitRungeKuttaSolver
 
-returns an `ImplicitRungeKuttaSolver` for the 3rd-order Radau IIA method.
+returns an [`ImplicitRungeKuttaSolver`](@ref) for the 3rd-order Radau IIA method.
 """
 function RadauIIA3(; h = 0.0, ϵ = 1e-3, K = 10)
     tableau = ButcherTableau(typeof(h)[
@@ -264,7 +264,7 @@ end
 """
     RadauIIA5(; h = 0.0, ϵ = 1e-3, K = 10) :: ImplicitRungeKuttaSolver
 
-returns an `ImplicitRungeKuttaSolver` for the 5th-order Radau IIA method.
+returns an [`ImplicitRungeKuttaSolver`](@ref) for the 5th-order Radau IIA method.
 """
 function RadauIIA5(; h = 0.0, ϵ = 1e-3, K = 10)
     tableau = ButcherTableau(typeof(h)[
@@ -280,13 +280,13 @@ end
 """
     ImplicitRungeKuttaCache{n_T, m_T, v_T, k_T, Δk_T, J_T} <: RungeKuttaCache
 
-returns a constructor containing the temp objects needed of an `ImplicitRungeKuttaSolver`.
+returns a constructor containing the temp objects needed of an [`ImplicitRungeKuttaSolver`](@ref).
 
 ---
 
     ImplicitRungeKuttaCache(n, m, v, k, Δk, J)
 
-returns an `ImplicitRungeKuttaCache` with:
+returns an [`ImplicitRungeKuttaCache`](@ref) with:
 - `n  :: Integer`                                               : step counter.
 - `m  :: Integer`                                               : adaptive correction counter.
 - `v  :: AbstractVector{Union{Number, AbstractVector{Number}}}` : temp for `solution.u[n]`.
@@ -298,7 +298,7 @@ returns an `ImplicitRungeKuttaCache` with:
 
     ImplicitRungeKuttaCache(problem::InitialValueProblem, solver::ImplicitRungeKuttaSolver)
 
-returns an `ImplicitRungeKuttaCache` for an `ImplicitRungeKuttaSolver` given an `InitialValueProblem`.
+returns an [`ImplicitRungeKuttaCache`](@ref) for an [`ImplicitRungeKuttaSolver`](@ref) given an [`InitialValueProblem`](@ref).
 """
 mutable struct ImplicitRungeKuttaCache{n_T, m_T, v_T, k_T, Δk_T, J_T} <: RungeKuttaCache
     n::n_T
@@ -325,7 +325,7 @@ end
 """
     step!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::ImplicitRungeKuttaSolver, cache::ImplicitRungeKuttaCache)
 
-computes a step of the `RungeKuttaSolution` of an `InitialValueProblem` using an `ImplicitRungeKuttaSolver`.
+computes a step of the [`RungeKuttaSolution`](@ref) of an [`InitialValueProblem`](@ref) using an [`ImplicitRungeKuttaSolver`](@ref).
 """
 function step!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::ImplicitRungeKuttaSolver, cache::ImplicitRungeKuttaCache)
     @↓ n, v, Δk, J = cache

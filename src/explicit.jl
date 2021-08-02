@@ -1,14 +1,14 @@
 """
     ExplicitRungeKuttaSolver{tableau_T, stepsize_T, adaptive_T} <: RungeKuttaSolver
 
-returns a constructor for an explicit `RungeKuttaSolver`.
+returns a constructor for an explicit [`RungeKuttaSolver`](@ref).
 
 ---
 
     ExplicitRungeKuttaSolver(tableau, h[, adaptive])
     ERK(args...; kwargs...) :: ExplicitRungeKuttaSolver
 
-returns an `ExplicitRungeKuttaSolver` with:
+returns an [`ExplicitRungeKuttaSolver`](@ref) with:
 - `tableau  :: ButcherTableau`     : Butcher tableau.
 - `stepsize :: StepSize`           : step-size.
 - `adaptive :: AdaptiveParameters` : embedded method's parameters.
@@ -43,7 +43,7 @@ end
     Euler(; h = 0.0) :: ExplicitRungeKuttaSolver
     ExplicitEuler(args...; kwargs...) :: ExplicitRungeKuttaSolver
 
-returns an `ExplicitRungeKuttaSolver` for the 1st-order Euler method.
+returns an [`ExplicitRungeKuttaSolver`](@ref) for the 1st-order Euler method.
 ```
 """
 function Euler(; h = 0.0)
@@ -58,7 +58,7 @@ end
 """
     Heun2(; h = 0.0) :: ExplicitRungeKuttaSolver
 
-returns an `ExplicitRungeKuttaSolver` for the 2nd-order Heun method.
+returns an [`ExplicitRungeKuttaSolver`](@ref) for the 2nd-order Heun method.
 """
 function Heun2(; h = 0.0)
     tableau = ButcherTableau(typeof(h)[
@@ -72,7 +72,7 @@ end
 """
     Ralston2(; h = 0.0) :: ExplicitRungeKuttaSolver
 
-returns an `ExplicitRungeKuttaSolver` for the 2nd-order Ralston method.
+returns an [`ExplicitRungeKuttaSolver`](@ref) for the 2nd-order Ralston method.
 """
 function Ralston2(; h = 0.0)
     tableau = ButcherTableau(typeof(h)[
@@ -87,7 +87,7 @@ end
     Midpoint(; h = 0.0) :: ExplicitRungeKuttaSolver
     ExplicitMidpoint(args...; kwargs...) :: ExplicitRungeKuttaSolver
 
-returns an `ExplicitRungeKuttaSolver` for the 2nd-order midpoint method.
+returns an [`ExplicitRungeKuttaSolver`](@ref) for the 2nd-order midpoint method.
 """
 function Midpoint(; h = 0.0)
     tableau = ButcherTableau(typeof(h)[
@@ -102,7 +102,7 @@ end
 """
     Heun3(; h = 0.0) :: ExplicitRungeKuttaSolver
 
-returns an `ExplicitRungeKuttaSolver` for the 3rd-order Heun method.
+returns an [`ExplicitRungeKuttaSolver`](@ref) for the 3rd-order Heun method.
 """
 function Heun3(; h = 0.0)
     tableau = ButcherTableau(typeof(h)[
@@ -117,7 +117,7 @@ end
 """
     Kutta3(; h = 0.0) :: ExplicitRungeKuttaSolver
 
-returns an `ExplicitRungeKuttaSolver` for the 3rd-order Kutta method.
+returns an [`ExplicitRungeKuttaSolver`](@ref) for the 3rd-order Kutta method.
 """
 function Kutta3(; h = 0.0)
     tableau = ButcherTableau(typeof(h)[
@@ -132,7 +132,7 @@ end
 """
     Ralston3(; h = 0.0) :: ExplicitRungeKuttaSolver
 
-returns an `ExplicitRungeKuttaSolver` for the 3rd-order Ralston method.
+returns an [`ExplicitRungeKuttaSolver`](@ref) for the 3rd-order Ralston method.
 """
 function Ralston3(; h = 0.0)
     tableau = ButcherTableau(typeof(h)[
@@ -147,7 +147,7 @@ end
 """
     SSPRK3(; h = 0.0) :: ExplicitRungeKuttaSolver
 
-returns an `ExplicitRungeKuttaSolver` for the 3rd-order Strong-Stability-Preserving Runge-Kutta method.
+returns an [`ExplicitRungeKuttaSolver`](@ref) for the 3rd-order Strong-Stability-Preserving Runge-Kutta method.
 """
 function SSPRK3(; h = 0.0)
     tableau = ButcherTableau(typeof(h)[
@@ -164,7 +164,7 @@ end
 """
     RK4(; h = 0.0) :: ExplicitRungeKuttaSolver
 
-returns an `ExplicitRungeKuttaSolver` for the 4th-order Runge-Kutta method.
+returns an [`ExplicitRungeKuttaSolver`](@ref) for the 4th-order Runge-Kutta method.
 """
 function RK4(; h = 0.0)
     tableau = ButcherTableau(typeof(h)[
@@ -180,7 +180,7 @@ end
 """
     Rule38(; h = 0.0) :: ExplicitRungeKuttaSolver
 
-returns an `ExplicitRungeKuttaSolver` for the 4th-order 3/8-rule method.
+returns an [`ExplicitRungeKuttaSolver`](@ref) for the 4th-order 3/8-rule method.
 """
 function Rule38(; h = 0.0)
     tableau = ButcherTableau(typeof(h)[
@@ -196,7 +196,7 @@ end
 """
     HeunEuler(; h = 0.0, δ = 0.0, ϵ = 1e-5, K = 100) :: ExplicitRungeKuttaSolver
 
-returns an `ExplicitRungeKuttaSolver` for the 2nd-order Heun-Euler method with 1st-order error estimate.
+returns an [`ExplicitRungeKuttaSolver`](@ref) for the 2nd-order Heun-Euler method with 1st-order error estimate.
 """
 function HeunEuler(; h = 0.0, δ = 0.0, ϵ = 1e-5, K = 100)
     tableau = ButcherTableau(typeof(h)[
@@ -213,7 +213,7 @@ end
     Fehlberg45(; h = 0.0, δ = 0.0, ϵ = 1e-5, K = 100) :: ExplicitRungeKuttaSolver
     F45(args...; kwargs...) :: ExplicitRungeKuttaSolver
 
-returns an `ExplicitRungeKuttaSolver` for the 4th-order Fehlberg method with 5th-order error estimate.
+returns an [`ExplicitRungeKuttaSolver`](@ref) for the 4th-order Fehlberg method with 5th-order error estimate.
 """
 function Fehlberg45(; h = 0.0, δ = 0.0, ϵ = 1e-5, K = 100)
     tableau = ButcherTableau(typeof(h)[
@@ -235,7 +235,7 @@ end
     DormandPrince54(; h = 0.0, δ = 0.0, ϵ = 1e-5, K = 100) :: ExplicitRungeKuttaSolver
     DP54(args...; kwargs...) :: ExplicitRungeKuttaSolver
 
-returns an `ExplicitRungeKuttaSolver` for the 5th-order Dormand-Prince method with 4th-order error estimate.
+returns an [`ExplicitRungeKuttaSolver`](@ref) for the 5th-order Dormand-Prince method with 4th-order error estimate.
 """
 function DormandPrince54(; h = 0.0, δ = 0.0, ϵ = 1e-5, K = 100)
     tableau = ButcherTableau(typeof(h)[
@@ -258,7 +258,7 @@ end
     Verner65(; h = 0.0, δ = 0.0, ϵ = 1e-5, K = 100) :: ExplicitRungeKuttaSolver
     V65(args...; kwargs...) :: ExplicitRungeKuttaSolver
 
-returns an `ExplicitRungeKuttaSolver` for the 6th-order Verner method with 5th-order error estimate.
+returns an [`ExplicitRungeKuttaSolver`](@ref) for the 6th-order Verner method with 5th-order error estimate.
 """
 function Verner65(; h = 0.0, δ = 0.0, ϵ = 1e-5, K = 100)
     tableau = ButcherTableau(typeof(h)[
@@ -281,13 +281,13 @@ end
 """
     ExplicitRungeKuttaCache{n_T, m_T, v_T, k_T} <: RungeKuttaCache
 
-returns a constructor containing the temp objects of an `ExplicitRungeKuttaSolver`.
+returns a constructor containing the temp objects of an [`ExplicitRungeKuttaSolver`](@ref).
 
 ---
 
     ExplicitRungeKuttaCache(n, m, v, k)
 
-returns an `ExplicitRungeKuttaCache` with:
+returns an [`ExplicitRungeKuttaCache`](@ref) with:
 - `n  :: Integer`                                               : step counter.
 - `m  :: Integer`                                               : adaptive correction counter.
 - `v  :: AbstractVector{Union{Number, AbstractVector{Number}}}` : temp for `solution.u[n]`.
@@ -297,7 +297,7 @@ returns an `ExplicitRungeKuttaCache` with:
 
     ExplicitRungeKuttaCache(problem::InitialValueProblem, solver::ExplicitRungeKuttaSolver)
 
-returns an `ExplicitRungeKuttaCache` for an `ExplicitRungeKuttaSolver` given an `InitialValueProblem`.
+returns an [`ExplicitRungeKuttaCache`](@ref) for an [`ExplicitRungeKuttaSolver`](@ref) given an [`InitialValueProblem`](@ref).
 """
 mutable struct ExplicitRungeKuttaCache{n_T, m_T, v_T, k_T} <: RungeKuttaCache
     n::n_T
@@ -318,7 +318,7 @@ end
 """
     step!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::ExplicitRungeKuttaSolver, cache::ExplicitRungeKuttaCache)
 
-computes a step of the `RungeKuttaSolution` of an `InitialValueProblem` using an `ExplicitRungeKuttaSolver`.
+computes a step of the [`RungeKuttaSolution`](@ref) of an [`InitialValueProblem`](@ref) using an [`ExplicitRungeKuttaSolver`](@ref).
 """
 function step!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::ExplicitRungeKuttaSolver, cache::ExplicitRungeKuttaCache)
     @↓ n, v = cache

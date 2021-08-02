@@ -1,13 +1,13 @@
 """
     RungeKuttaSolution{u_T, t_T, k_T} <: InitialValueSolution
 
-returns a constructor for the numerical solution of an `InitialValueProblem`.
+returns a constructor for the numerical solution of an [`InitialValueProblem`](@ref) obtained with a [`RungeKuttaSolver`](@ref).
 
 ---
 
     RungeKuttaSolution(u, t[, k])
 
-returns a `RungeKuttaSolution` with:
+returns a [`RungeKuttaSolution`](@ref) with:
 - `u` : numerical solution.
 - `t` : time grid.
 - `k` : stages.
@@ -16,7 +16,7 @@ returns a `RungeKuttaSolution` with:
 
     RungeKuttaSolution(problem::InitialValueProblem, solver::RungeKuttaSolver; save_stages::Bool = false)
 
-returns an initialised `RungeKuttaSolution` given an `InitialValueProblem` and a `RungeKuttaSolver`. `save_stages` flags when to save all stages into `k`.
+returns an initialised [`RungeKuttaSolution`](@ref) given an [`InitialValueProblem`](@ref) and a [`RungeKuttaSolver`](@ref). `save_stages` flags when to save all stages into `k`.
 """
 struct RungeKuttaSolution{u_T, t_T, k_T} <: InitialValueSolution
     u::u_T

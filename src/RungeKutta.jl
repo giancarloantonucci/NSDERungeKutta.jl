@@ -6,7 +6,10 @@ using LinearAlgebra
 @reexport using NSDEBase
 using RecipesBase
 
+"Abstract type of a solver based on a Runge-Kutta method. See [`ExplicitRungeKuttaSolver`](@ref) and [`ImplicitRungeKuttaSolver`](@ref) for specific instantiations."
 abstract type RungeKuttaSolver <: InitialValueSolver end
+
+"Abstract type for the cache required by a [`RungeKuttaSolver`](@ref)."
 abstract type RungeKuttaCache end
 
 include("utilities.jl")
