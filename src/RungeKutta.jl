@@ -18,11 +18,11 @@ include("solve.jl")
 include("stability.jl")
 include("plot.jl")
 
-export ButcherTableau
-export RungeKuttaSolver, RungeKuttaSolution, extract
+export ButcherTableau, ℛ
+export RungeKuttaSolver, RungeKuttaSolution
 export ExplicitRungeKuttaSolver, ERK
 export ImplicitRungeKuttaSolver, IRK
-export ℛ
+export extract
 
 export Euler, ExplicitEuler
 export Midpoint, ExplicitMidpoint
