@@ -1,5 +1,5 @@
-Cache(problem, solver::ExplicitRungeKuttaSolver) = ExplicitRungeKuttaCache(problem, solver)
-Cache(problem, solver::ImplicitRungeKuttaSolver) = ImplicitRungeKuttaCache(problem, solver)
+_RungeKuttaCache(problem, solver::ExplicitRungeKuttaSolver) = ExplicitRungeKuttaCache(problem, solver)
+_RungeKuttaCache(problem, solver::ImplicitRungeKuttaSolver) = ImplicitRungeKuttaCache(problem, solver)
 
 """
     solve!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::RungeKuttaSolver)
@@ -7,7 +7,7 @@ Cache(problem, solver::ImplicitRungeKuttaSolver) = ImplicitRungeKuttaCache(probl
 returns the `RungeKuttaSolution` of an `InitialValueProblem`.
 """
 function NSDEBase.solve!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::RungeKuttaSolver)
-    cache = Cache(problem, solver)
+    cache = _RungeKuttaCache(problem, solver)
     @↓ u0, (t0, tN) ← tspan = problem
     @↓ u, t = solution
     @↓ n = cache
@@ -39,12 +39,12 @@ function NSDEBase.solve!(solution::RungeKuttaSolution, problem::InitialValueProb
 end
 
 """
-    solve(problem::InitialValueProblem, solver::RungeKuttaSolver[; save_stages::Bool = false) :: RungeKuttaSolution
+    solve(problem::InitialValueProblem, solver::RungeKuttaSolver; save_stages::Bool = false) :: RungeKuttaSolution
 
-returns the `RungeKuttaSolution` of an `InitialValueProblem`.
+returns the `RungeKuttaSolution` of an `InitialValueProblem`. `save_stages` flags when to save all stages into `solution.k`.
 """
 function NSDEBase.solve(problem::InitialValueProblem, solver::RungeKuttaSolver; save_stages::Bool = false)
-    solution = RungeKuttaSolution(problem, solver, save_stages)
+    solution = RungeKuttaSolution(problem, solver; save_stages=save_stages)
     NSDEBase.solve!(solution, problem, solver)
     return solution
 end

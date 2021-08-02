@@ -14,9 +14,9 @@ returns a `RungeKuttaSolution` with:
 
 ---
 
-    RungeKuttaSolution(problem::InitialValueProblem, solver::RungeKuttaSolver[, save_stages::Bool = false])
+    RungeKuttaSolution(problem::InitialValueProblem, solver::RungeKuttaSolver; save_stages::Bool = false)
 
-returns an initialised `RungeKuttaSolution` given an `InitialValueProblem` and a `RungeKuttaSolver`. `save_stages ` is a flags when to save all stages into `solution.k`.
+returns an initialised `RungeKuttaSolution` given an `InitialValueProblem` and a `RungeKuttaSolver`. `save_stages` flags when to save all stages into `k`.
 """
 struct RungeKuttaSolution{u_T, t_T, k_T} <: InitialValueSolution
     u::u_T
@@ -26,7 +26,7 @@ end
 
 RungeKuttaSolution(u, t) = RungeKuttaSolution(u, t, nothing)
 
-function RungeKuttaSolution(problem::InitialValueProblem, solver::RungeKuttaSolver, save_stages::Bool = false)
+function RungeKuttaSolution(problem::InitialValueProblem, solver::RungeKuttaSolver; save_stages::Bool = false)
     @↓ u0, (t0, tN) ← tspan = problem
     @↓ h = solver.stepsize
     @↓ s = solver.tableau
@@ -56,23 +56,12 @@ function Base.show(io::IO, solution::RungeKuttaSolution)
 end
 
 Base.length(solution::RungeKuttaSolution) = length(solution.t)
-function Base.getindex(solution::RungeKuttaSolution, k::Int)
-    @↓ u, t = solution
-    return RungeKuttaSolution(u[k], t[k])
-end
-function Base.getindex(solution::RungeKuttaSolution, K::Vararg{Int, N}) where N
-    @↓ u, t = solution
-    return RungeKuttaSolution(u[K], t[K])
-end
-function Base.getindex(solution::RungeKuttaSolution, K...)
-    @↓ u, t = solution
-    return RungeKuttaSolution(u[K...], t[K...])
-end
+Base.getindex(solution::RungeKuttaSolution, k::Int) = RungeKuttaSolution(solution.u[k], solution.t[k])
+Base.getindex(solution::RungeKuttaSolution, K::Vararg{Int, N}) where N = RungeKuttaSolution(solution.u[K], solution.t[K])
+Base.getindex(solution::RungeKuttaSolution, K...) = RungeKuttaSolution(solution.u[K...], solution.t[K...])
 function Base.setindex!(solution::RungeKuttaSolution, value::Tuple, k::Int)
-    @↓ u, t = solution
-    u[k] = value[1]
-    t[k] = value[2]
-    @↑ solution = u, t
+    solution.u[k] = value[1]
+    solution.t[k] = value[2]
     return solution
 end
 Base.lastindex(solution::RungeKuttaSolution) = lastindex(solution.t)
