@@ -25,6 +25,8 @@ ImplicitRungeKuttaSolver(tableau, h::Real, newton, adaptive) = ImplicitRungeKutt
 ImplicitRungeKuttaSolver(tableau, stepsize, newton) = ImplicitRungeKuttaSolver(tableau, stepsize, newton, nothing)
 @doc (@doc ImplicitRungeKuttaSolver) IRK(args...; kwargs...) = ImplicitRungeKuttaSolver(args...; kwargs...)
 
+(solver::ImplicitRungeKuttaSolver)(problem::InitialValueProblem; save_stages::Bool = false) = solve(problem, solver; save_stages=save_stages)
+
 Base.summary(io::IO, solver::ImplicitRungeKuttaSolver) = print(io, "ImplicitRungeKuttaSolver")
 
 function Base.show(io::IO, solver::ImplicitRungeKuttaSolver)

@@ -23,6 +23,8 @@ ExplicitRungeKuttaSolver(tableau, h::Real, adaptive) = ExplicitRungeKuttaSolver(
 ExplicitRungeKuttaSolver(tableau, stepsize) = ExplicitRungeKuttaSolver(tableau, stepsize, nothing)
 @doc (@doc ExplicitRungeKuttaSolver) ERK(args...; kwargs...) = ExplicitRungeKuttaSolver(args...; kwargs...)
 
+(solver::ExplicitRungeKuttaSolver)(problem::InitialValueProblem; save_stages::Bool = false) = solve(problem, solver; save_stages=save_stages)
+
 Base.summary(io::IO, solver::ExplicitRungeKuttaSolver) = print(io, "ExplicitRungeKuttaSolver")
 
 function Base.show(io::IO, solver::ExplicitRungeKuttaSolver)
