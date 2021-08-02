@@ -9,13 +9,12 @@ using RecipesBase
 abstract type RungeKuttaSolver <: InitialValueSolver end
 abstract type RungeKuttaCache end
 
-include("parameters.jl")
+include("utilities.jl")
 include("vector.jl")
 include("solution.jl")
 include("explicit.jl")
 include("implicit.jl")
 include("solve.jl")
-include("stability.jl")
 include("plot.jl")
 
 export ButcherTableau, ℛ
