@@ -8,13 +8,12 @@
 ### Constructors
 
 ```@docs
-ButcherTableau
+solve
+solve!
 RungeKuttaSolver
 ExplicitRungeKuttaSolver
 ImplicitRungeKuttaSolver
 RungeKuttaSolution
-solve
-solve!
 ```
 
 ### Solvers
@@ -61,6 +60,7 @@ RadauIIA5
 ### Utilities
 
 ```@docs
+ButcherTableau
 ℛ
 ```
 
