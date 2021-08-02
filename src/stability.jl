@@ -5,6 +5,12 @@ returns the stability function of a `RungeKuttaSolver`:
 ```math
     R(z) = \frac{\det(I - z(A - \mathbb{1}b^\intercal))}{\det(I - zA)}.
 ```
+
+---
+
+    ℛ(Z::AbstractMatrix, tableau::ButcherTableau) :: AbstractMatrix
+
+...
 """
 function ℛ(z::Number, tableau::ButcherTableau)
     @↓ A, b, s = tableau

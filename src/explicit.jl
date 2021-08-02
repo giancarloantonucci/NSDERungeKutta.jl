@@ -1,10 +1,14 @@
 """
-    ExplicitRungeKuttaSolver(tableau, h[, adaptive]) <: RungeKuttaSolver
-    ERK(args...; kwargs...) <: RungeKuttaSolver
+    ExplicitRungeKuttaSolver{tableau_T, stepsize_T, adaptive_T} <: RungeKuttaSolver
 
 returns a constructor for an explicit `RungeKuttaSolver`.
 
-# Arguments
+---
+
+    ExplicitRungeKuttaSolver(tableau, h[, adaptive])
+    ERK(args...; kwargs...) :: ExplicitRungeKuttaSolver
+
+returns an `ExplicitRungeKuttaSolver` with:
 - `tableau  :: ButcherTableau`     : Butcher tableau.
 - `stepsize :: StepSize`           : step-size.
 - `adaptive :: AdaptiveParameters` : embedded method's parameters.
@@ -18,6 +22,22 @@ end
 ExplicitRungeKuttaSolver(tableau, h::Real, adaptive) = ExplicitRungeKuttaSolver(tableau, StepSize(h), adaptive)
 ExplicitRungeKuttaSolver(tableau, stepsize) = ExplicitRungeKuttaSolver(tableau, stepsize, nothing)
 @doc (@doc ExplicitRungeKuttaSolver) ERK(args...; kwargs...) = ExplicitRungeKuttaSolver(args...; kwargs...)
+
+Base.summary(io::IO, solver::ExplicitRungeKuttaSolver) = print(io, "ExplicitRungeKuttaSolver")
+
+function Base.show(io::IO, solver::ExplicitRungeKuttaSolver)
+    print(io, "ExplicitRungeKuttaSolver:\n")
+    pad = get(io, :pad, "")
+    newline = get(io, :newline, "\n")
+    names = propertynames(solver)
+    N = length(names)
+    for (n, name) in enumerate(names)
+        field = getproperty(solver, name)
+        print(io, pad, "   ‣ " * string(name) * " := ")
+        show(IOContext(io, :pad => "   ", :newline => ""), field)
+        n == N ? print(io, newline) : print(io, "\n")
+    end
+end
 
 """
     Euler(; h = 0.0) :: ExplicitRungeKuttaSolver
@@ -257,3 +277,74 @@ function Verner65(; h = 0.0, δ = 0.0, ϵ = 1e-5, K = 100)
     return ERK(tableau, h, adaptive)
 end
 @doc (@doc Verner65) V65(args...; kwargs...) = Verner65(args...; kwargs...)
+
+"""
+    ExplicitRungeKuttaCache{n_T, m_T, v_T, k_T} <: RungeKuttaCache
+
+returns a constructor containing the temp objects of an `ExplicitRungeKuttaSolver`.
+
+---
+
+    ExplicitRungeKuttaCache(n, m, v, k)
+
+returns an `ExplicitRungeKuttaCache` with:
+- `n  :: Integer`                                               : step counter.
+- `m  :: Integer`                                               : adaptive correction counter.
+- `v  :: AbstractVector{Union{Number, AbstractVector{Number}}}` : temp for `solution.u[n]`.
+- `k  :: AbstractVector{Union{Number, AbstractVector{Number}}}` : stages.
+
+---
+
+    ExplicitRungeKuttaCache(problem::InitialValueProblem, solver::ExplicitRungeKuttaSolver)
+
+returns an `ExplicitRungeKuttaCache` for an `ExplicitRungeKuttaSolver` given an `InitialValueProblem`.
+"""
+mutable struct ExplicitRungeKuttaCache{n_T, m_T, v_T, k_T} <: RungeKuttaCache
+    n::n_T
+    m::m_T
+    v::v_T
+    k::k_T
+end
+
+function ExplicitRungeKuttaCache(problem::InitialValueProblem, solver::ExplicitRungeKuttaSolver)
+    @↓ u0 = problem
+    @↓ s = solver.tableau
+    n = m = 1
+    v = similar(u0)
+    k = Vector{eltype(u0)}(undef, s, length(u0))
+    return ExplicitRungeKuttaCache(n, m, v, k)
+end
+
+"""
+    step!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::ExplicitRungeKuttaSolver, cache::ExplicitRungeKuttaCache)
+
+computes a step of the `RungeKuttaSolution` of an `InitialValueProblem` using an `ExplicitRungeKuttaSolver`.
+"""
+function step!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::ExplicitRungeKuttaSolver, cache::ExplicitRungeKuttaCache)
+    @↓ n, v = cache
+    @↓ u, t = solution
+    k = solution.k isa Nothing ? cache.k : solution.k[n]
+    @↓ f! = problem.rhs
+    @↓ s, A, c, b = solver.tableau
+    @↓ h = solver.stepsize
+    v = u[n+1] # avoid allocs
+    # Compute stages
+    for i = 1:s
+        zero!(v)
+        for j = 1:i-1
+            @. v += A[i,j] * k[j]
+        end
+        @. v = u[n] + h * v
+        # @← k[i] = f(v, t[n] + h * c[i])
+        f!(k[i], v, t[n] + h * c[i])
+        t[n+1] = t[n] + h
+    end
+    # Compute step
+    zero!(v)
+    for i = 1:s
+        @. v += b[i] * k[i]
+    end
+    @. v = u[n] + h * v
+    t[n+1] = t[n] + h
+    return u[n+1], t[n+1]
+end

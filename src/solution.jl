@@ -1,12 +1,22 @@
 """
-    RungeKuttaSolution(u, t[, k]) <: InitialValueSolution
+    RungeKuttaSolution{u_T, t_T, k_T} <: InitialValueSolution
 
 returns a constructor for the numerical solution of an `InitialValueProblem`.
 
-# Arguments
+---
+
+    RungeKuttaSolution(u, t[, k])
+
+returns a `RungeKuttaSolution` with:
 - `u` : numerical solution.
 - `t` : time grid.
 - `k` : stages.
+
+---
+
+    RungeKuttaSolution(problem::InitialValueProblem, solver::RungeKuttaSolver[, save_stages::Bool = false])
+
+returns an initialised `RungeKuttaSolution` given an `InitialValueProblem` and a `RungeKuttaSolver`. `save_stages ` is a flags when to save all stages into `solution.k`.
 """
 struct RungeKuttaSolution{u_T, t_T, k_T} <: InitialValueSolution
     u::u_T
@@ -16,26 +26,63 @@ end
 
 RungeKuttaSolution(u, t) = RungeKuttaSolution(u, t, nothing)
 
-function RungeKuttaSolution(problem::InitialValueProblem, solver::RungeKuttaSolver, save_stages)
+function RungeKuttaSolution(problem::InitialValueProblem, solver::RungeKuttaSolver, save_stages::Bool = false)
     @↓ u0, (t0, tN) ← tspan = problem
     @↓ h = solver.stepsize
     @↓ s = solver.tableau
-    N = floor(Int, (tN - t0) / h) + 1
+    N = round(Int, (tN - t0) / h) + 1
     u0_T = eltype(u0)
-    u = Vector{u0_T}(undef, N, length(u0))
-    u[1] = u0
-    t = Vector{typeof(t0)}(undef, N)
-    t[1] = t0
-    k = if save_stages
-        Vector{u0_T}(undef, N, s, L)
-    else
-        nothing
-    end
+    L = length(u0)
+    u = Vector{u0_T}(undef, N, L); u[1] = u0
+    t = Vector{typeof(t0)}(undef, N); t[1] = t0
+    k = save_stages ? Vector{u0_T}(undef, N, s, L) : nothing
     return RungeKuttaSolution(u, t, k)
 end
 
-# Utility functions
+Base.summary(io::IO, solution::RungeKuttaSolution) = print(io, "RungeKuttaSolution")
+
+function Base.show(io::IO, solution::RungeKuttaSolution)
+    print(io, "RungeKuttaSolution:\n")
+    pad = get(io, :pad, "")
+    newline = get(io, :newline, "\n")
+    names = propertynames(solution)
+    N = length(names)
+    for (n, name) in enumerate(names)
+        field = getproperty(solution, name)
+        print(io, pad, "   ‣ " * string(name) * " := ")
+        show(IOContext(io, :pad => "   ", :newline => ""), field)
+        n == N ? print(io, newline) : print(io, "\n")
+    end
+end
+
 Base.length(solution::RungeKuttaSolution) = length(solution.t)
+function Base.getindex(solution::RungeKuttaSolution, k::Int)
+    @↓ u, t = solution
+    return RungeKuttaSolution(u[k], t[k])
+end
+function Base.getindex(solution::RungeKuttaSolution, K::Vararg{Int, N}) where N
+    @↓ u, t = solution
+    return RungeKuttaSolution(u[K], t[K])
+end
+function Base.getindex(solution::RungeKuttaSolution, K...)
+    @↓ u, t = solution
+    return RungeKuttaSolution(u[K...], t[K...])
+end
+function Base.setindex!(solution::RungeKuttaSolution, value::Tuple, k::Int)
+    @↓ u, t = solution
+    u[k] = value[1]
+    t[k] = value[2]
+    @↑ solution = u, t
+    return solution
+end
+Base.lastindex(solution::RungeKuttaSolution) = lastindex(solution.t)
+
+function extract(solution::RungeKuttaSolution, i)
+    @↓ u, t = solution
+    L = length(u[1])
+    N = length(t)
+    return RungeKuttaSolution([u[n][i] for n = 1:N], t)
+end
 
 # Make solution callable
 function find_closest(target, vector)
