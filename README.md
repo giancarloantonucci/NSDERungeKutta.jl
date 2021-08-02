@@ -119,4 +119,4 @@ Current plans for future developments are:
 
 - Improve performance and error messages.
 - Automatic size detection of stability region.
-- IMEX methods.
+- IMEX methods, etc.
