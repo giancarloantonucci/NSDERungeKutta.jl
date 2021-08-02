@@ -42,16 +42,16 @@ end
 Base.summary(io::IO, solution::RungeKuttaSolution) = print(io, "RungeKuttaSolution")
 
 function Base.show(io::IO, solution::RungeKuttaSolution)
-    print(io, "RungeKuttaSolution:\n")
+    print(io, "RungeKuttaSolution:")
     pad = get(io, :pad, "")
-    newline = get(io, :newline, "\n")
     names = propertynames(solution)
     N = length(names)
     for (n, name) in enumerate(names)
         field = getproperty(solution, name)
-        print(io, pad, "   ‣ " * string(name) * " := ")
-        show(IOContext(io, :pad => "   ", :newline => ""), field)
-        n == N ? print(io, newline) : print(io, "\n")
+        if field !== nothing
+            print(io, "\n", pad, "   ‣ " * string(name) * " ≔ ")
+            show(IOContext(io, :pad => "   "), field)
+        end
     end
 end
 

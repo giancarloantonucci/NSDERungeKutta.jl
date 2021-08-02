@@ -28,16 +28,16 @@ ImplicitRungeKuttaSolver(tableau, stepsize, newton) = ImplicitRungeKuttaSolver(t
 Base.summary(io::IO, solver::ImplicitRungeKuttaSolver) = print(io, "ImplicitRungeKuttaSolver")
 
 function Base.show(io::IO, solver::ImplicitRungeKuttaSolver)
-    print(io, "ImplicitRungeKuttaSolver:\n")
+    print(io, "ImplicitRungeKuttaSolver:")
     pad = get(io, :pad, "")
-    newline = get(io, :newline, "\n")
     names = propertynames(solver)
     N = length(names)
     for (n, name) in enumerate(names)
         field = getproperty(solver, name)
-        print(io, pad, "   ‣ " * string(name) * " := ")
-        show(IOContext(io, :pad => "   ", :newline => ""), field)
-        n == N ? print(io, newline) : print(io, "\n")
+        if field !== nothing
+            print(io, "\n", pad, "   ‣ " * string(name) * " ≔ ")
+            show(IOContext(io, :pad => "   "), field)
+        end
     end
 end
 

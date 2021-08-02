@@ -65,16 +65,16 @@ end
 Base.summary(io::IO, tableau::ButcherTableau) = print(io, "ButcherTableau")
 
 function Base.show(io::IO, tableau::ButcherTableau)
-    print(io, "ButcherTableau:\n")
+    print(io, "ButcherTableau:")
     pad = get(io, :pad, "")
-    newline = get(io, :newline, "\n")
     names = propertynames(tableau)
     N = length(names)
     for (n, name) in enumerate(names)
         field = getproperty(tableau, name)
-        print(io, pad, "   ‣ " * string(name) * " := ")
-        show(IOContext(io, :pad => "   ", :newline => ""), field)
-        n == N ? print(io, newline) : print(io, "\n")
+        if field !== nothing
+            print(io, "\n", pad, "   ‣ " * string(name) * " ≔ ")
+            show(IOContext(io, :pad => "   "), field)
+        end
     end
 end
 
@@ -97,18 +97,26 @@ end
 Base.summary(io::IO, stepsize::StepSize) = print(io, "StepSize")
 
 function Base.show(io::IO, stepsize::StepSize)
-    print(io, "StepSize:\n")
+    print(io, "StepSize:")
     pad = get(io, :pad, "")
-    newline = get(io, :newline, "\n")
     names = propertynames(stepsize)
     N = length(names)
     for (n, name) in enumerate(names)
         field = getproperty(stepsize, name)
-        print(io, pad, "   ‣ " * string(name) * " := ")
-        show(IOContext(io, :pad => "   ", :newline => ""), field)
-        n == N ? print(io, newline) : print(io, "\n")
+        if field !== nothing
+            print(io, "\n", pad, "   ‣ " * string(name) * " ≔ ")
+            show(IOContext(io, :pad => "   "), field)
+        end
     end
 end
+
+# Base.summary(io::IO, stepsize::StepSize) = print(io, stepsize.h)
+#
+# function Base.show(io::IO, stepsize::StepSize)
+#     print(io, stepsize.h)
+#     newline = get(io, :newline, "\n")
+#     print(io, newline)
+# end
 
 """
     AdaptiveParameters{δ_T, ϵ_T, K_T}
@@ -164,16 +172,16 @@ end
 Base.summary(io::IO, adaptive::AdaptiveParameters) = print(io, "AdaptiveParameters")
 
 function Base.show(io::IO, adaptive::AdaptiveParameters)
-    print(io, "AdaptiveParameters:\n")
+    print(io, "AdaptiveParameters:")
     pad = get(io, :pad, "")
-    newline = get(io, :newline, "\n")
     names = propertynames(adaptive)
     N = length(names)
     for (n, name) in enumerate(names)
         field = getproperty(adaptive, name)
-        print(io, pad, "   ‣ " * string(name) * " := ")
-        show(IOContext(io, :pad => "   ", :newline => ""), field)
-        n == N ? print(io, newline) : print(io, "\n")
+        if field !== nothing
+            print(io, "\n", pad, "   ‣ " * string(name) * " ≔ ")
+            show(IOContext(io, :pad => "   "), field)
+        end
     end
 end
 
@@ -200,15 +208,15 @@ NewtonParameters(; ϵ = 1e-3, K = 10) = NewtonParameters(ϵ, K)
 Base.summary(io::IO, newton::NewtonParameters) = print(io, "NewtonParameters")
 
 function Base.show(io::IO, newton::NewtonParameters)
-    print(io, "NewtonParameters:\n")
+    print(io, "NewtonParameters:")
     pad = get(io, :pad, "")
-    newline = get(io, :newline, "\n")
     names = propertynames(newton)
     N = length(names)
     for (n, name) in enumerate(names)
         field = getproperty(newton, name)
-        print(io, pad, "   ‣ " * string(name) * " := ")
-        show(IOContext(io, :pad => "   ", :newline => ""), field)
-        n == N ? print(io, newline) : print(io, "\n")
+        if field !== nothing
+            print(io, "\n", pad, "   ‣ " * string(name) * " ≔ ")
+            show(IOContext(io, :pad => "   "), field)
+        end
     end
 end
