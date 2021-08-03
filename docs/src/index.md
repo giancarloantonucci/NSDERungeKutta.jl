@@ -25,10 +25,8 @@ RungeKuttaSolution
 ### Functions
 
 ```@docs
-RungeKuttaSolver
-ExplicitRungeKuttaSolver
-ImplicitRungeKuttaSolver
-RungeKuttaSolution
+solve
+solve!
 ```
 
 ### Solvers
