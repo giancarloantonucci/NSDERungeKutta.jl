@@ -1,22 +1,25 @@
 """
-    RungeKuttaSolution{u_T, t_T, k_T} <: InitialValueSolution
+    RungeKuttaSolution <: InitialValueSolution
 
-returns a constructor for the numerical solution of an [`InitialValueProblem`](@ref) obtained with a [`RungeKuttaSolver`](@ref).
+A composite type for the solution of an [`InitialValueProblem`](@ref) obtained with a [`RungeKuttaSolver`](@ref).
 
----
+# Constructors
+```julia
+RungeKuttaSolution(u, t[, k])
+RungeKuttaSolution(problem, solver; save_stages = false)
+```
 
-    RungeKuttaSolution(u, t[, k])
-
-returns a [`RungeKuttaSolution`](@ref) with:
+# Arguments
 - `u` : numerical solution.
 - `t` : time grid.
 - `k` : stages.
+- `problem :: InitialValueProblem`.
+- `solver :: RungeKuttaSolver`.
+- `save_stages :: Bool` : flags when to save all stages into `k`.
 
----
-
-    RungeKuttaSolution(problem::InitialValueProblem, solver::RungeKuttaSolver; save_stages::Bool = false)
-
-returns an initialised [`RungeKuttaSolution`](@ref) given an [`InitialValueProblem`](@ref) and a [`RungeKuttaSolver`](@ref). `save_stages` flags when to save all stages into `k`.
+# Functions
+- [`show`](@ref) : shows name and contents.
+- [`summary`](@ref) : shows name.
 """
 struct RungeKuttaSolution{u_T, t_T, k_T} <: InitialValueSolution
     u::u_T
@@ -39,37 +42,82 @@ function RungeKuttaSolution(problem::InitialValueProblem, solver::RungeKuttaSolv
     return RungeKuttaSolution(u, t, k)
 end
 
-Base.summary(io::IO, solution::RungeKuttaSolution) = print(io, "RungeKuttaSolution")
+# ---------------------------------------------------------------------------- #
+#                                   Functions                                  #
+# ---------------------------------------------------------------------------- #
 
-function Base.show(io::IO, solution::RungeKuttaSolution)
-    print(io, "RungeKuttaSolution:")
-    pad = get(io, :pad, "")
-    names = propertynames(solution)
-    N = length(names)
-    for (n, name) in enumerate(names)
-        field = getproperty(solution, name)
-        if field !== nothing
-            print(io, "\n", pad, "   ‣ " * string(name) * " ≔ ")
-            show(IOContext(io, :pad => "   "), field)
-        end
+"""
+    length(solution::RungeKuttaSolution)
+
+returns the number of time steps of `solution`.
+"""
+function Base.length(solution::RungeKuttaSolution)
+    @↓ t = solution
+    return length(t)
+end
+
+"""
+    size(solution::RungeKuttaSolution)
+
+returns a tuple containing the number of variables and of time steps of `solution`.
+"""
+function Base.size(solution::RungeKuttaSolution)
+    @↓ u, t = solution
+    return (length(u[1]), length(t))
+end
+
+"""
+    getindex(solution::RungeKuttaSolution, i::Integer)
+
+returns a [`RungeKuttaSolution`](@ref) containing the fields of `solution` indexed at `i`.
+"""
+function Base.getindex(solution::RungeKuttaSolution, i::Integer)
+    @↓ u, t, k = solution
+    if k isa Nothing
+        return RungeKuttaSolution(u[i], t[i])
+    else
+        return RungeKuttaSolution(u[i], t[i], k[i])
     end
 end
 
-Base.length(solution::RungeKuttaSolution) = length(solution.t)
-Base.getindex(solution::RungeKuttaSolution, k::Int) = RungeKuttaSolution(solution.u[k], solution.t[k])
-Base.getindex(solution::RungeKuttaSolution, K::Vararg{Int, N}) where N = RungeKuttaSolution(solution.u[K], solution.t[K])
-Base.getindex(solution::RungeKuttaSolution, K...) = RungeKuttaSolution(solution.u[K...], solution.t[K...])
-function Base.setindex!(solution::RungeKuttaSolution, value::Tuple, k::Int)
-    solution.u[k] = value[1]
-    solution.t[k] = value[2]
+"""
+    setindex!(solution::RungeKuttaSolution, tuple::Tuple, i::Integer)
+
+stores the values of `tuple` into the fields of `solution` indexed at `i`.
+"""
+function Base.setindex!(solution::RungeKuttaSolution, tuple::Tuple, i::Integer)
+    @↓ u, t, k = solution
+    u[i] = tuple[1]
+    t[i] = tuple[2]
+    if length(tuple) > 2 && !(k isa Nothing)
+        k[i] = tuple[3]
+    end
     return solution
 end
+
 Base.lastindex(solution::RungeKuttaSolution) = lastindex(solution.t)
+
+"""
+    show(io::IO, solution::RungeKuttaSolution)
+
+prints a full description of `solution` and its contents to a stream `io`.
+"""
+Base.show(io::IO, solution::RungeKuttaSolution) = _show(io, solution)
+
+"""
+    summary(io::IO, solution::RungeKuttaSolution)
+
+prints a brief description of `solution` to a stream `io`.
+"""
+Base.summary(io::IO, solution::RungeKuttaSolution) = _summary(io, solution)
+
+# ---------------------------------------------------------------------------- #
+#                                    Methods                                   #
+# ---------------------------------------------------------------------------- #
 
 function extract(solution::RungeKuttaSolution, i)
     @↓ u, t = solution
-    L = length(u[1])
-    N = length(t)
+    (L, N) = size(solution)
     return RungeKuttaSolution([u[n][i] for n = 1:N], t)
 end
 

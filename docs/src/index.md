@@ -1,15 +1,30 @@
 # RungeKutta.jl
 
+This is the documentation of [RungeKutta.jl](https://github.com/antonuccig/RungeKutta.jl), a Julia package implementing Runge-Kutta methods.
+
+## Manual
+
 ```@contents
+Depth = 3
 ```
 
-## Public API
+## API
 
-### Constructors
+All exported types and functions are considered part of the public API and thus documented in this manual.
+
+### Types
 
 ```@docs
-solve
-solve!
+ButcherTableau
+RungeKuttaSolver
+ExplicitRungeKuttaSolver
+ImplicitRungeKuttaSolver
+RungeKuttaSolution
+```
+
+### Functions
+
+```@docs
 RungeKuttaSolver
 ExplicitRungeKuttaSolver
 ImplicitRungeKuttaSolver
@@ -60,7 +75,6 @@ RadauIIA5
 ### Utilities
 
 ```@docs
-ButcherTableau
 ℛ
 ```
 

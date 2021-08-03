@@ -1,4 +1,4 @@
-# RungeKutta
+# RungeKutta.jl
 
 A Julia package implementing Runge-Kutta methods.
 
@@ -6,7 +6,7 @@ A Julia package implementing Runge-Kutta methods.
 
 ## Installation
 
-`RungeKutta` is compatible with Julia `v1.0` and above. From the Julia REPL,
+RungeKutta is compatible with Julia v1.0 and above. From the Julia REPL,
 
 ```julia
 ]add https://github.com/antonuccig/RungeKutta.jl
@@ -14,7 +14,7 @@ A Julia package implementing Runge-Kutta methods.
 
 ## Usage
 
-Let's say that we want to solve the [simple gravity pendulum problem](https://en.wikipedia.org/wiki/Pendulum_(mathematics)#Simple_gravity_pendulum) using the [midpoint method](https://en.wikipedia.org/wiki/Midpoint_method). Here is how to do it with `RungeKutta`:
+Let's say that we want to solve the [simple gravity pendulum problem](https://en.wikipedia.org/wiki/Pendulum_(mathematics)#Simple_gravity_pendulum) using the [midpoint method](https://en.wikipedia.org/wiki/Midpoint_method). Here is how to do it with RungeKutta:
 
 ```julia
 using RungeKutta
@@ -26,9 +26,7 @@ solver = Midpoint(h = 1e-2)
 solution = solve(problem, solver)
 ```
 
-### Plotting
-
-We can plot the obtained `solution` by extracting its fields `u` and `t`, e.g. with the convenient macro `@↓ u, t = solution` from `ArrowMacros`. Alternatively, we can use the predefined recipes:
+We can plot the obtained `solution` by extracting its fields `u` and `t`, e.g. with the convenient macro `@↓ u, t = solution` from [ArrowMacros.jl](https://github.com/antonuccig/ArrowMacros.jl). Alternatively, we can use the available predefined recipes:
 
 ```julia
 using Plots, LaTeXStrings
@@ -41,9 +39,7 @@ plot(size = (800, 400), p₁, p₂)
 
 ![svg](images/pendulum.svg)
 
-### Predefined ODE recipes
-
-`RungeKutta` comes with some predefined ODE problems, like the [Lorenz system](https://en.wikipedia.org/wiki/Lorenz_system):
+For convenience, RungeKutta re-exports all ODE problems (pre-)defined in [NSDEBase.jl](https://github.com/antonuccig/NSDEBase.jl), e.g. `Lorenz` for [Lorenz's ODEs](https://en.wikipedia.org/wiki/Lorenz_system):
 
 ```julia
 u0 = [2.0, 3.0, -14.0]
@@ -57,9 +53,7 @@ plot(solution, xlabel = L"t", label = [L"x" L"y" L"z"], legend = true)
 
 ![svg](images/lorenz.svg)
 
-### Stability regions and order stars
-
-`RungeKutta` has also predefined recipes to plot stability regions and order stars:
+RungeKutta also has some predefined recipes to plot stability regions and order stars:
 
 ```julia
 p₁ = stabilityf(RK4(), xlabel = L"\Re(z)", ylabel = L"\Im(z)", colour = :blues)
@@ -72,46 +66,50 @@ plot(size = (1000, 400), p₁, p₂, left_margin = 5Plots.mm, bottom_margin = 5P
 
 ## Available methods
 
-`RungeKutta` currently supports the following methods:
+RungeKutta currently supports the following methods:
 
-<!-- explicit (`Euler`/`ExplicitEuler`, `Midpoint`/`ExplicitMidpoint`, `Heun2`, `Ralston2`, `Heun3`, `Kutta3`, `Ralston3`, `SSPRK3`, `RK4`, `Rule38`, `HeunEuler`, `Fehlberg45`/`F45`, `DormandPrince54`/`DP54`, `Verner65`/`V65`) and implicit methods (`BackwardEuler`/`ImplicitEuler`, `ImplicitMidpoint`, `CrankNicolson`, `SDIRK3`, `GaussLegendre4`/`GL4`, `GaussLegendre6`/`GL6`, `LobattoIIIA4`, `LobattoIIIB2`, `LobattoIIIB4`, `LobattoIIIC2`, `LobattoIIIC4`, `RadauIA3`, `RadauIA5`, `RadauIIA3`, `RadauIIA5`). -->
+**Explicit**: `Euler`/`ExplicitEuler`, `Midpoint`/`ExplicitMidpoint`, `Heun2`, `Ralston2`, `Heun3`, `Kutta3`, `Ralston3`, `SSPRK3`, `RK4`, `Rule38`, `HeunEuler`, `Fehlberg45`/`F45`, `DormandPrince54`/`DP54`, `Verner65`/`V65`.
 
-<details><summary>Explicit</summary>
+**Implicit**: `BackwardEuler`/`ImplicitEuler`, `ImplicitMidpoint`, `CrankNicolson`, `SDIRK3`, `GaussLegendre4`/`GL4`, `GaussLegendre6`/`GL6`, `LobattoIIIA4`, `LobattoIIIB2`, `LobattoIIIB4`, `LobattoIIIC2`, `LobattoIIIC4`, `RadauIA3`, `RadauIA5`, `RadauIIA3`, `RadauIIA5`.
 
-- <code>Euler</code>/<code>ExplicitEuler</code>
-- <code>Midpoint</code>/<code>ExplicitMidpoint</code>
-- <code>Heun2</code>
-- <code>Ralston2</code>
-- <code>Heun3</code>
-- <code>Kutta3</code>
-- <code>Ralston3</code>
-- <code>SSPRK3</code>
-- <code>RK4</code>
-- <code>Rule38</code>
-- <code>HeunEuler</code>
-- <code>Fehlberg45</code>/<code>F45</code>
-- <code>DormandPrince54</code>/<code>DP54</code>
-- <code>Verner65</code>/<code>V65</code></details>
+<!-- <details><summary>Explicit</summary>
 
+- `Euler`/`ExplicitEuler`
+- `Midpoint`/`ExplicitMidpoint`
+- `Heun2`
+- `Ralston2`
+- `Heun3`
+- `Kutta3`
+- `Ralston3`
+- `SSPRK3`
+- `RK4`
+- `Rule38`
+- `HeunEuler`
+- `Fehlberg45`/`F45`
+- `DormandPrince54`/`DP54`
+- `Verner65`/`V65`
 
+</details>
 
 <details><summary>Implicit</summary>
 
-- <code>BackwardEuler</code>/<code>ImplicitEuler</code>
-- <code>ImplicitMidpoint</code>
-- <code>CrankNicolson</code>
-- <code>SDIRK3</code>
-- <code>GaussLegendre4</code>/<code>GL4</code>
-- <code>GaussLegendre6</code>/<code>GL6</code>
-- <code>LobattoIIIA4</code>
-- <code>LobattoIIIB2</code>
-- <code>LobattoIIIB4</code>
-- <code>LobattoIIIC2</code>
-- <code>LobattoIIIC4</code>
-- <code>RadauIA3</code>
-- <code>RadauIA5</code>
-- <code>RadauIIA3</code>
-- <code>RadauIIA5</code></details>
+- `BackwardEuler`/`ImplicitEuler`
+- `ImplicitMidpoint`
+- `CrankNicolson`
+- `SDIRK3`
+- `GaussLegendre4`/`GL4`
+- `GaussLegendre6`/`GL6`
+- `LobattoIIIA4`
+- `LobattoIIIB2`
+- `LobattoIIIB4`
+- `LobattoIIIC2`
+- `LobattoIIIC4`
+- `RadauIA3`
+- `RadauIA5`
+- `RadauIIA3`
+- `RadauIIA5`
+
+</details> -->
 
 ## What's next?
 

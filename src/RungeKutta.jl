@@ -1,25 +1,5 @@
 module RungeKutta
 
-using Reexport
-using ArrowMacros
-using LinearAlgebra
-@reexport using NSDEBase
-using RecipesBase
-
-"Abstract type of a solver based on a Runge-Kutta method. See [`ExplicitRungeKuttaSolver`](@ref) and [`ImplicitRungeKuttaSolver`](@ref) for specific instantiations."
-abstract type RungeKuttaSolver <: InitialValueSolver end
-
-"Abstract type for the cache required by a [`RungeKuttaSolver`](@ref)."
-abstract type RungeKuttaCache end
-
-include("utilities.jl")
-include("vector.jl")
-include("solution.jl")
-include("explicit.jl")
-include("implicit.jl")
-include("solve.jl")
-include("plot.jl")
-
 export ButcherTableau, ℛ
 export RungeKuttaSolver, RungeKuttaSolution
 export ExplicitRungeKuttaSolver, ERK
@@ -57,5 +37,30 @@ export RadauIA3
 export RadauIA5
 export RadauIIA3
 export RadauIIA5
+
+using Reexport
+using ArrowMacros
+using LinearAlgebra
+@reexport using NSDEBase
+using RecipesBase
+
+"An abstract type for Runge-Kutta solvers."
+abstract type RungeKuttaSolver <: InitialValueSolver end
+
+"An abstract type for the cache of a [`RungeKuttaSolver`](@ref)."
+abstract type RungeKuttaCache end
+
+include("vector.jl")
+include("solution.jl")
+include("adaptive.jl")
+include("tableau.jl")
+include("stepsize.jl")
+include("explicit.jl")
+include("newton.jl")
+include("implicit.jl")
+include("solvers.jl")
+include("solve.jl")
+include("utils.jl")
+include("plot.jl")
 
 end

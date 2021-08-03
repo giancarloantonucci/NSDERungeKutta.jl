@@ -4,7 +4,7 @@ using RungeKutta
 PAGES = ["Home" => "index.md"]
 
 makedocs(;
-    sitename = "RungeKutta",
+    sitename = "RungeKutta.jl",
     format = Documenter.HTML(),
     modules = [RungeKutta],
     pages = PAGES,
