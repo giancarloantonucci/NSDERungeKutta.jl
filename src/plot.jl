@@ -10,10 +10,14 @@
     xwiden         --> false
     tick_direction --> :out
     (L, N) = size(solution)
-    if vars !== nothing && !(vars isa Tuple && length(vars) > 1)
-        error("Got $(typeof(vars)) instead of `Tuple` with length > 1.")
-    elseif vars === nothing
+    if vars isa Tuple && length(vars) ≥ 1
+        vars = vars
+    elseif vars isa Integer
+        vars = (vars, )
+    elseif vars isa Nothing
         vars = 1:L
+    else
+        error("Got $(typeof(vars)) instead of `Tuple` with `length(vars)` ≥ 1 or `Integer`.")
     end
     @↓ u, t = solution
     [(t, [u[n][i] for n = 1:N]) for i in vars]
@@ -33,10 +37,14 @@ end
     seriestype     --> :path
     tick_direction --> :out
     (L, N) = size(solution)
-    if vars !== nothing && !(vars isa Tuple && length(vars) > 1)
-        error("Got $(typeof(vars)) instead of `Tuple` with length > 1.")
-    elseif vars === nothing
+    if vars isa Tuple && length(vars) ≥ 1
+        vars = vars
+    elseif vars isa Integer
+        vars = (vars, )
+    elseif vars isa Nothing
         vars = 1:L
+    else
+        error("Got $(typeof(vars)) instead of `Tuple` with `length(vars)` ≥ 1 or `Integer`.")
     end
     @↓ u, t = solution
     tuple([[u[n][i] for n = 1:N] for i in vars]...)
