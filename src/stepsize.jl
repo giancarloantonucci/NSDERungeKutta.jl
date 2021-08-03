@@ -28,11 +28,11 @@ end
 
 prints a full description of `stepsize` and its contents to a stream `io`.
 """
-Base.show(io::IO, stepsize::StepSize) = _show(io, stepsize)
+Base.show(io::IO, stepsize::StepSize) = NSDEBase._show(io, stepsize)
 
 """
     summary(io::IO, stepsize::StepSize)
 
 prints a brief description of `stepsize` to a stream `io`.
 """
-Base.summary(io::IO, stepsize::StepSize) = _summary(io, stepsize)
+Base.summary(io::IO, stepsize::StepSize) = NSDEBase._summary(io, stepsize)

@@ -32,11 +32,11 @@ NewtonParameters(; ϵ = 1e-3, K = 10) = NewtonParameters(ϵ, K)
 
 prints a full description of `newton` and its contents to a stream `io`.
 """
-Base.show(io::IO, newton::NewtonParameters) = _show(io, newton)
+Base.show(io::IO, newton::NewtonParameters) = NSDEBase._show(io, newton)
 
 """
     summary(io::IO, newton::NewtonParameters)
 
 prints a brief description of `newton` to a stream `io`.
 """
-Base.summary(io::IO, newton::NewtonParameters) = _summary(io, newton)
+Base.summary(io::IO, newton::NewtonParameters) = NSDEBase._summary(io, newton)

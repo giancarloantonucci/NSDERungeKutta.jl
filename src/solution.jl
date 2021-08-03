@@ -102,14 +102,14 @@ Base.lastindex(solution::RungeKuttaSolution) = lastindex(solution.t)
 
 prints a full description of `solution` and its contents to a stream `io`.
 """
-Base.show(io::IO, solution::RungeKuttaSolution) = _show(io, solution)
+Base.show(io::IO, solution::RungeKuttaSolution) = NSDEBase._show(io, solution)
 
 """
     summary(io::IO, solution::RungeKuttaSolution)
 
 prints a brief description of `solution` to a stream `io`.
 """
-Base.summary(io::IO, solution::RungeKuttaSolution) = _summary(io, solution)
+Base.summary(io::IO, solution::RungeKuttaSolution) = NSDEBase._summary(io, solution)
 
 # ---------------------------------------------------------------------------- #
 #                                    Methods                                   #

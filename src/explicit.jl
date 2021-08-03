@@ -37,14 +37,14 @@ ExplicitRungeKuttaSolver(tableau, stepsize) = ExplicitRungeKuttaSolver(tableau, 
 
 prints a full description of `solver` and its contents to a stream `io`.
 """
-Base.show(io::IO, solver::ExplicitRungeKuttaSolver) = _show(io, solver)
+Base.show(io::IO, solver::ExplicitRungeKuttaSolver) = NSDEBase._show(io, solver)
 
 """
     summary(io::IO, solver::ExplicitRungeKuttaSolver)
 
 prints a brief description of `solver` to a stream `io`.
 """
-Base.summary(io::IO, solver::ExplicitRungeKuttaSolver) = _summary(io, solver)
+Base.summary(io::IO, solver::ExplicitRungeKuttaSolver) = NSDEBase._summary(io, solver)
 
 # ---------------------------------------------------------------------------- #
 #                                    Methods                                   #

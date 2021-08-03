@@ -72,11 +72,11 @@ end
 
 prints a full description of `tableau` and its contents to a stream `io`.
 """
-Base.show(io::IO, tableau::ButcherTableau) = _show(io, tableau)
+Base.show(io::IO, tableau::ButcherTableau) = NSDEBase._show(io, tableau)
 
 """
     summary(io::IO, tableau::ButcherTableau)
 
 prints a brief description of `tableau` to a stream `io`.
 """
-Base.summary(io::IO, tableau::ButcherTableau) = _summary(io, tableau)
+Base.summary(io::IO, tableau::ButcherTableau) = NSDEBase._summary(io, tableau)

@@ -67,11 +67,11 @@ adaptive_step!(solution::RungeKuttaSolution, solver::RungeKuttaSolver, cache::Ru
 
 prints a full description of `adaptive` and its contents to a stream `io`.
 """
-Base.show(io::IO, adaptive::AdaptiveParameters) = _show(io, adaptive)
+Base.show(io::IO, adaptive::AdaptiveParameters) = NSDEBase._show(io, adaptive)
 
 """
     summary(io::IO, adaptive::AdaptiveParameters)
 
 prints a brief description of `adaptive` to a stream `io`.
 """
-Base.summary(io::IO, adaptive::AdaptiveParameters) = _summary(io, adaptive)
+Base.summary(io::IO, adaptive::AdaptiveParameters) = NSDEBase._summary(io, adaptive)
