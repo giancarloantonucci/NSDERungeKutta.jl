@@ -9,14 +9,13 @@
     seriestype     --> :path
     xwiden         --> false
     tick_direction --> :out
-    @↓ u, t = solution
-    L = length(u[1])
-    N = length(t)
+    (L, N) = size(solution)
     if vars !== nothing && !(vars isa Tuple && length(vars) > 1)
         error("Got $(typeof(vars)) instead of `Tuple` with length > 1.")
     elseif vars === nothing
         vars = 1:L
     end
+    @↓ u, t = solution
     [(t, [u[n][i] for n = 1:N]) for i in vars]
 end
 
@@ -33,14 +32,13 @@ end
     minorgridstyle --> :dash
     seriestype     --> :path
     tick_direction --> :out
-    @↓ u, t = solution
-    L = length(u[1])
-    N = length(t)
+    (L, N) = size(solution)
     if vars !== nothing && !(vars isa Tuple && length(vars) > 1)
         error("Got $(typeof(vars)) instead of `Tuple` with length > 1.")
     elseif vars === nothing
         vars = 1:L
     end
+    @↓ u, t = solution
     tuple([[u[n][i] for n = 1:N] for i in vars]...)
 end
 

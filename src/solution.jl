@@ -18,7 +18,12 @@ RungeKuttaSolution(problem, solver; save_stages = false)
 - `save_stages :: Bool` : flags when to save all stages into `k`.
 
 # Functions
+- [`getindex`](@ref) : get value(s) and time.
+- [`lastindex`](@ref) : last index.
+- [`length`](@ref) : number of time steps.
+- [`setindex!`](@ref) : set value(s) and time.
 - [`show`](@ref) : shows name and contents.
+- [`size`](@ref) : number of variables and time steps.
 - [`summary`](@ref) : shows name.
 """
 struct RungeKuttaSolution{u_T, t_T, k_T} <: InitialValueSolution
@@ -95,7 +100,15 @@ function Base.setindex!(solution::RungeKuttaSolution, tuple::Tuple, i::Integer)
     return solution
 end
 
-Base.lastindex(solution::RungeKuttaSolution) = lastindex(solution.t)
+"""
+    lastindex(solution::RungeKuttaSolution)
+
+returns the last index of `solution`.
+"""
+function Base.lastindex(solution::RungeKuttaSolution)
+    @↓ t = solution
+    return lastindex(t)
+end
 
 """
     show(io::IO, solution::RungeKuttaSolution)

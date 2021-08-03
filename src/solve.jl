@@ -2,7 +2,7 @@ _RungeKuttaCache(problem, solver::ExplicitRungeKuttaSolver) = ExplicitRungeKutta
 _RungeKuttaCache(problem, solver::ImplicitRungeKuttaSolver) = ImplicitRungeKuttaCache(problem, solver)
 
 """
-    solve!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::RungeKuttaSolver)
+    solve!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::RungeKuttaSolver) :: RungeKuttaSolution
 
 returns the [`RungeKuttaSolution`](@ref) of an [`InitialValueProblem`](@ref).
 """
