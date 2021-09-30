@@ -1,4 +1,5 @@
 @doc raw"""
+    ℛ(z::Number, tableau::ButcherTableau) :: Number
     ℛ(z::Number, solver::RungeKuttaSolver) :: Number
 
 returns the stability function of a [`RungeKuttaSolver`](@ref):
@@ -11,11 +12,13 @@ function ℛ(z::Number, tableau::ButcherTableau)
     e = ones(s)
     return det(I - z * (A - e * b')) / det(I - z * A)
 end
+ℛ(z::Number, solver::RungeKuttaSolver) = ℛ(z, solver.tableau)
 
 
 
 """
     ℛ(Z::AbstractMatrix, tableau::ButcherTableau) :: AbstractMatrix
+    ℛ(Z::AbstractMatrix, solver::RungeKuttaSolver) :: AbstractMatrix
 
 returns the stability function of a [`RungeKuttaSolver`](@ref).
 """
@@ -27,3 +30,4 @@ function ℛ(Z::AbstractMatrix, tableau::ButcherTableau)
     tmp = kron(b', Matrix(1.0I, size(Z)...)) * tmp
     return I + tmp
 end
+ℛ(Z::AbstractMatrix, solver::RungeKuttaSolver) = ℛ(Z, solver.tableau)

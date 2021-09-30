@@ -1,5 +1,6 @@
 _RungeKuttaCache(problem, solver::ExplicitRungeKuttaSolver) = ExplicitRungeKuttaCache(problem, solver)
 _RungeKuttaCache(problem, solver::ImplicitRungeKuttaSolver) = ImplicitRungeKuttaCache(problem, solver)
+_RungeKuttaCache(problem, solver::ExplicitExponentialRungeKuttaSolver) = ExplicitExponentialRungeKuttaCache(problem, solver)
 
 """
     solve!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::RungeKuttaSolver) :: RungeKuttaSolution

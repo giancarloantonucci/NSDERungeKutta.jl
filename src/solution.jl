@@ -37,13 +37,17 @@ RungeKuttaSolution(u, t) = RungeKuttaSolution(u, t, nothing)
 function RungeKuttaSolution(problem::InitialValueProblem, solver::RungeKuttaSolver; save_stages::Bool = false)
     @↓ u0, (t0, tN) ← tspan = problem
     @↓ h = solver.stepsize
-    @↓ s = solver.tableau
     N = round(Int, (tN - t0) / h) + 1
     u0_T = eltype(u0)
     L = length(u0)
     u = Vector{u0_T}(undef, N, L); u[1] = u0
     t = Vector{typeof(t0)}(undef, N); t[1] = t0
-    k = save_stages ? Vector{u0_T}(undef, N, s, L) : nothing
+    k = if save_stages
+        @↓ s = solver.tableau
+        Vector{u0_T}(undef, N, s, L)
+    else
+        nothing
+    end
     return RungeKuttaSolution(u, t, k)
 end
 
@@ -170,8 +174,18 @@ function find_closest(target, vector)
     return n, vector[n]
 end
 
-function (solution::RungeKuttaSolution)(t::Real)
-    (n, tₙ) = find_closest(t, solution.t)
-    uₙ = solution.u[n]
+function (solution::RungeKuttaSolution)(tₚ::Real)
+    @↓ u, t = solution
+    (n, tₙ) = find_closest(tₚ, t)
+    uₙ = u[n]
     return tₙ, uₙ
 end
+
+function (solution::RungeKuttaSolution)(tspan::Tuple{Real, Real})
+    @↓ u, t = solution
+    n₁, _ = find_closest(tspan[1], t)
+    n₂, _ = find_closest(tspan[2], t)
+    return RungeKuttaSolution(u[n₁:n₂], t[n₁:n₂])
+end
+
+(solution::RungeKuttaSolution)(t₁::Real, t₂::Real) = solution((t₁, t₂))

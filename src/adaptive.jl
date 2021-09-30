@@ -60,8 +60,6 @@ function adaptive_step!(solution::RungeKuttaSolution, solver::RungeKuttaSolver, 
     return solution
 end
 
-adaptive_step!(solution::RungeKuttaSolution, solver::RungeKuttaSolver, cache::RungeKuttaCache) = adaptive_step!(solution, solver, solver.adaptive, cache)
-
 """
     show(io::IO, adaptive::AdaptiveParameters)
 

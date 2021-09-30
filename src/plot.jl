@@ -1,4 +1,4 @@
-@recipe function f(solution::RungeKuttaSolution; vars = nothing)
+@recipe function f(solution::RungeKuttaSolution; vars = nothing, is_complex = false)
     fontfamily     --> "Computer Modern"
     framestyle     --> :box
     gridalpha      --> 0.2
@@ -7,7 +7,6 @@
     minorgrid      --> 0.1
     minorgridstyle --> :dash
     seriestype     --> :path
-    xwiden         --> false
     tick_direction --> :out
     (L, N) = size(solution)
     if vars isa Tuple && length(vars) ≥ 1
@@ -20,7 +19,15 @@
         error("Got $(typeof(vars)) instead of `Tuple` with `length(vars)` ≥ 1 or `Integer`.")
     end
     @↓ u, t = solution
-    [(t, [u[n][i] for n = 1:N]) for i in vars]
+    if is_complex
+        xwiden --> true
+        for i in vars
+            @series [u[n][i] for n = 1:N]
+        end
+    else
+        xwiden --> false
+        [(t, [u[n][i] for n = 1:N]) for i in vars]
+    end
 end
 
 @userplot PHASEPLOT

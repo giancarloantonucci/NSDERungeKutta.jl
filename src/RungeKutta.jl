@@ -4,6 +4,7 @@ export ButcherTableau, ℛ
 export RungeKuttaSolver, RungeKuttaSolution
 export ExplicitRungeKuttaSolver, ERK
 export ImplicitRungeKuttaSolver, IRK
+export ExplicitExponentialRungeKuttaSolver, EERK
 export extract
 
 export Euler, ExplicitEuler
@@ -38,6 +39,8 @@ export RadauIA5
 export RadauIIA3
 export RadauIIA5
 
+export ExponentialRK4, ERK4
+
 using Reexport
 using ArrowMacros
 using LinearAlgebra
@@ -58,7 +61,7 @@ include("stepsize.jl")
 include("explicit.jl")
 include("newton.jl")
 include("implicit.jl")
-include("solvers.jl")
+include("exponential.jl")
 include("solve.jl")
 include("utils.jl")
 include("plot.jl")
