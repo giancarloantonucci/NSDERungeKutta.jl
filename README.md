@@ -2,14 +2,14 @@
 
 A Julia package implementing Runge-Kutta methods.
 
-[![Docs Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://antonuccig.github.io/RungeKutta.jl/stable) [![Docs Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://antonuccig.github.io/RungeKutta.jl/dev) [![Build Status](https://img.shields.io/github/workflow/status/antonuccig/RungeKutta.jl/CI)](https://github.com/antonuccig/RungeKutta.jl/actions) [![Coverage](https://img.shields.io/codecov/c/github/antonuccig/RungeKutta.jl?label=coverage)](https://codecov.io/gh/antonuccig/RungeKutta.jl)
+[![Docs Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://giancarloantonucci.github.io/RungeKutta.jl/stable) [![Docs Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://giancarloantonucci.github.io/RungeKutta.jl/dev) [![Build Status](https://img.shields.io/github/workflow/status/giancarloantonucci/RungeKutta.jl/CI)](https://github.com/giancarloantonucci/RungeKutta.jl/actions) [![Coverage](https://img.shields.io/codecov/c/github/giancarloantonucci/RungeKutta.jl?label=coverage)](https://codecov.io/gh/giancarloantonucci/RungeKutta.jl)
 
 ## Installation
 
 RungeKutta is compatible with Julia v1.0 and above. From the Julia REPL,
 
 ```julia
-]add https://github.com/antonuccig/RungeKutta.jl
+]add https://github.com/giancarloantonucci/RungeKutta.jl
 ```
 
 ## Usage
@@ -26,7 +26,7 @@ solver = Midpoint(h = 1e-2)
 solution = solve(problem, solver)
 ```
 
-We can plot the obtained `solution` by extracting its fields `u` and `t`, e.g. with the convenient macro `@↓ u, t = solution` from [ArrowMacros.jl](https://github.com/antonuccig/ArrowMacros.jl). Alternatively, we can use the available predefined recipes:
+We can plot the obtained `solution` by extracting its fields `u` and `t`, e.g. with the convenient macro `@↓ u, t = solution` from [ArrowMacros.jl](https://github.com/giancarloantonucci/ArrowMacros.jl). Alternatively, we can use the available predefined recipes:
 
 ```julia
 using Plots, LaTeXStrings
@@ -39,7 +39,7 @@ plot(size = (800, 400), p₁, p₂)
 
 ![svg](images/pendulum.svg)
 
-For convenience, RungeKutta re-exports all ODE problems (pre-)defined in [NSDEBase.jl](https://github.com/antonuccig/NSDEBase.jl), e.g. `Lorenz` for [Lorenz's ODEs](https://en.wikipedia.org/wiki/Lorenz_system):
+For convenience, RungeKutta re-exports all ODE problems (pre-)defined in [NSDEBase.jl](https://github.com/giancarloantonucci/NSDEBase.jl), e.g. `Lorenz` for [Lorenz's ODEs](https://en.wikipedia.org/wiki/Lorenz_system):
 
 ```julia
 u0 = [2.0, 3.0, -14.0]
