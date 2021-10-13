@@ -1,5 +1,4 @@
 @recipe function f(solution::RungeKuttaSolution; vars = nothing, is_complex = false)
-    fontfamily     --> "Computer Modern"
     framestyle     --> :box
     gridalpha      --> 0.2
     legend         --> :none
@@ -7,7 +6,7 @@
     minorgrid      --> 0.1
     minorgridstyle --> :dash
     seriestype     --> :path
-    tick_direction --> :out
+    # tick_direction --> :out
     (L, N) = size(solution)
     if vars isa Tuple && length(vars) ≥ 1
         vars = vars
@@ -34,7 +33,6 @@ end
 @recipe function f(h::PHASEPLOT; vars = nothing)
     length(h.args) == 1 ? true : error("Got too many arguments: $(length(h.args)).")
     solution = h.args[1] isa RungeKuttaSolution ? h.args[1] : error("Got $(typeof(h.args)) instead of `RungeKuttaSolution`.")
-    fontfamily     --> "Computer Modern"
     framestyle     --> :box
     gridalpha      --> 0.2
     legend         --> :none
@@ -42,7 +40,7 @@ end
     minorgrid      --> 0.1
     minorgridstyle --> :dash
     seriestype     --> :path
-    tick_direction --> :out
+    # tick_direction --> :out
     (L, N) = size(solution)
     if vars isa Tuple && length(vars) ≥ 1
         vars = vars
@@ -64,7 +62,6 @@ end
         h.args[1] isa RungeKuttaSolver ? z -> ℛ(z, h.args[1].tableau) :
         h.args[1] isa Function         ? h.args[1]                    :
         error("Got $(typeof(h.args)) instead of `ButcherTableau`, `RungeKuttaSolver` or `Function`.")
-    fontfamily     --> "Computer Modern"
     framestyle     --> :box
     gridalpha      --> 0.2
     gridstyle      --> :dot
@@ -74,7 +71,7 @@ end
     minorgrid      --> 0.1
     minorgridstyle --> :dash
     seriestype     --> :contour
-    tick_direction --> :out
+    # tick_direction --> :out
     Δx = max(1, abs(xlims[2] - xlims[1]))
     Δy = max(1, abs(ylims[2] - ylims[1]))
     x = length(xlims) == 2 ? LinRange(xlims..., Int(Δx * 101)) : LinRange(xlims...)
@@ -93,7 +90,6 @@ end
         h.args[1] isa RungeKuttaSolver ? z -> ℛ(z, h.args[1].tableau) :
         h.args[1] isa Function         ? h.args[1]                    :
         error("Got $(typeof(h.args)) instead of `ButcherTableau`, `RungeKuttaSolver` or `Function`.")
-    fontfamily     --> "Computer Modern"
     clims          --> (0, 1)
     colorbar       --> true
     framestyle     --> :box
@@ -102,7 +98,7 @@ end
     minorgrid      --> 0.1
     minorgridstyle --> :dash
     seriestype     --> :heatmap
-    tick_direction --> :out
+    # tick_direction --> :out
     Δx = max(1, abs(xlims[2] - xlims[1]))
     Δy = max(1, abs(ylims[2] - ylims[1]))
     x = length(xlims) == 2 ? LinRange(xlims..., Int(Δx * 101)) : LinRange(xlims...)
@@ -122,7 +118,6 @@ end
         h.args[1] isa RungeKuttaSolver ? z -> ℛ(z, h.args[1].tableau) :
         h.args[1] isa Function         ? h.args[1]                    :
         error("Got $(typeof(h.args)) instead of `ButcherTableau`, `RungeKuttaSolver` or `Function`.")
-    fontfamily     --> "Computer Modern"
     framestyle     --> :box
     gridalpha      --> 0.2
     legend         --> :none
@@ -131,7 +126,7 @@ end
     minorgrid      --> 0.1
     minorgridstyle --> :dash
     seriestype     --> :contour
-    tick_direction --> :out
+    # tick_direction --> :out
     Δx = max(1, abs(xlims[2] - xlims[1]))
     Δy = max(1, abs(ylims[2] - ylims[1]))
     x = length(xlims) == 2 ? LinRange(xlims..., Int(Δx * 101)) : LinRange(xlims...)
@@ -150,7 +145,6 @@ end
         h.args[1] isa RungeKuttaSolver ? z -> ℛ(z, h.args[1].tableau) :
         h.args[1] isa Function         ? h.args[1]                    :
         error("Got $(typeof(h.args)) instead of `ButcherTableau`, `RungeKuttaSolver` or `Function`.")
-    fontfamily     --> "Computer Modern"
     clims          --> (0, 1)
     colorbar       --> true
     framestyle     --> :box
@@ -159,7 +153,7 @@ end
     minorgrid      --> 0.1
     minorgridstyle --> :dash
     seriestype     --> :heatmap
-    tick_direction --> :out
+    # tick_direction --> :out
     Δx = max(1, abs(xlims[2] - xlims[1]))
     Δy = max(1, abs(ylims[2] - ylims[1]))
     x = length(xlims) == 2 ? LinRange(xlims..., Int(Δx * 101)) : LinRange(xlims...)
