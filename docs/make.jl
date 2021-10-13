@@ -12,5 +12,5 @@ makedocs(;
 )
 
 deploydocs(;
-    repo = "https://github.com/antonuccig/RungeKutta.jl"
+    repo = "https://github.com/giancarloantonucci/RungeKutta.jl"
 )

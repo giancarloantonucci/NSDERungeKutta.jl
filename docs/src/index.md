@@ -1,6 +1,6 @@
 # RungeKutta.jl
 
-This is the documentation of [RungeKutta.jl](https://github.com/antonuccig/RungeKutta.jl), a Julia package implementing Runge-Kutta methods.
+This is the documentation of [RungeKutta.jl](https://github.com/giancarloantonucci/RungeKutta.jl), a Julia package implementing Runge-Kutta methods.
 
 ## Manual
 

@@ -153,7 +153,7 @@ uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
 deps = ["ArrowMacros", "FiniteDifferences", "ForwardDiff", "LinearAlgebra"]
 git-tree-sha1 = "32b63e09c21cd6e4a5fa525f28fca854d67f7ecc"
 repo-rev = "master"
-repo-url = "https://github.com/antonuccig/NSDEBase.jl"
+repo-url = "https://github.com/giancarloantonucci/NSDEBase.jl"
 uuid = "5aa61ba9-7752-4810-b2ec-484f26c3f007"
 version = "0.2.4"
 
