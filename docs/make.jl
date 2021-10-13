@@ -1,7 +1,10 @@
 using Documenter
 using RungeKutta
 
-PAGES = ["Home" => "index.md"]
+PAGES = [
+    "Home" => "index.md",
+    "Examples" => "examples.md"
+]
 
 makedocs(;
     sitename = "RungeKutta.jl",
