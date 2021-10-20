@@ -12,14 +12,28 @@ Depth = 3
 
 All exported types and functions are considered part of the public API and thus documented in this manual.
 
-### Types
+### Abstract types
 
-```@docs
-ButcherTableau
-RungeKuttaSolver
-ExplicitRungeKuttaSolver
-ImplicitRungeKuttaSolver
-RungeKuttaSolution
+```@autodocs
+Modules = [RungeKutta]
+Pages = ["abstract.jl"]
+```
+
+### Composite Types
+
+```@autodocs
+Modules = [RungeKutta]
+Pages = [
+  "tableau.jl",
+  "stepsize.jl",
+  "adaptive.jl",
+  "newton.jl",
+  "explicit.jl",
+  "implicit.jl",
+  "exponential.jl",
+  "solution.jl",
+  "cache.jl",
+]
 ```
 
 ### Functions
@@ -27,53 +41,21 @@ RungeKuttaSolution
 ```@docs
 solve
 solve!
+step!
 ```
 
 ### Solvers
 
-#### Explicit
-
-```@docs
-Euler
-Midpoint
-Heun2
-Ralston2
-Heun3
-Kutta3
-Ralston3
-SSPRK3
-RK4
-Rule38
-HeunEuler
-Fehlberg45
-DormandPrince54
-Verner65
-```
-
-#### Implicit
-
-```@docs
-BackwardEuler
-ImplicitMidpoint
-CrankNicolson
-SDIRK3
-GaussLegendre4
-GaussLegendre6
-LobattoIIIA4
-LobattoIIIB2
-LobattoIIIB4
-LobattoIIIC2
-LobattoIIIC4
-RadauIA3
-RadauIA5
-RadauIIA3
-RadauIIA5
+```@autodocs
+Modules = [RungeKutta]
+Pages = ["methods.jl"]
 ```
 
 ### Utilities
 
-```@docs
-ℛ
+```@autodocs
+Modules = [RungeKutta]
+Pages = ["stability.jl"]
 ```
 
 ## Index
