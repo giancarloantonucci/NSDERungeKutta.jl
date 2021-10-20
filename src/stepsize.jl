@@ -1,7 +1,7 @@
 """
     StepSize
 
-A composite type for the step-size of a [`RungeKuttaSolver`](@ref).
+A composite type for the step-size of an [`AbstractRungeKuttaSolver`](@ref).
 
 # Constructors
 ```julia
@@ -12,16 +12,16 @@ StepSize(; h)
 - `h :: Real` : step-size.
 
 # Functions
-- [`show`](@ref) : shows name and contents.
+- [`show`   ](@ref) : shows name and contents.
 - [`summary`](@ref) : shows name.
 """
 mutable struct StepSize{h_T}
     h::h_T
 end
 
-# ---------------------------------------------------------------------------- #
-#                                   Functions                                  #
-# ---------------------------------------------------------------------------- #
+############################################################################################
+#                                         FUNCTIONS                                        #
+############################################################################################
 
 """
     show(io::IO, stepsize::StepSize)

@@ -1,7 +1,7 @@
 @doc raw"""
-    ButcherTableau
+    ButcherTableau <: AbstractButcherTableau
 
-A composite type for the Butcher tableau of a [`RungeKuttaSolver`](@ref).
+A composite type for the Butcher tableau of an [`AbstractRungeKuttaSolver`](@ref).
 
 # Constructors
 ```julia
@@ -10,13 +10,13 @@ ButcherTableau(tableau)
 ```
 
 # Arguments
-- `A :: AbstractMatrix` : matrix of coefficients.
-- `b :: AbstractVector` : vector of weights.
-- `c :: AbstractVector` : vector of nodes.
-- `s :: Integer` : number of stages.
-- `p :: Integer` : order of accuracy.
-- `d :: AbstractVector` : embedding's vector of weights.
-- `q :: Integer` : embedding's order of accuracy.
+- `A :: AbstractMatrix`       : matrix of coefficients.
+- `b :: AbstractVector`       : vector of weights.
+- `c :: AbstractVector`       : vector of nodes.
+- `s :: Integer`              : number of stages.
+- `p :: Integer`              : order of accuracy.
+- `d :: AbstractVector`       : embedding's vector of weights.
+- `q :: Integer`              : embedding's order of accuracy.
 - `tableau :: AbstractMatrix` : matrix from which all other fields are automatically constructed, with structure:
 ```math
 \begin{array}{c|c}
@@ -31,7 +31,7 @@ ButcherTableau(tableau)
 - [`show`](@ref) : shows name and contents.
 - [`summary`](@ref) : shows name.
 """
-struct ButcherTableau{A_T, b_T, c_T, s_T, p_T, d_T, q_T}
+struct ButcherTableau{A_T, b_T, c_T, s_T, p_T, d_T, q_T} <: AbstractButcherTableau
     A::A_T
     b::b_T
     c::c_T
@@ -63,20 +63,20 @@ function ButcherTableau(tableau::AbstractMatrix)
     end
 end
 
-# ---------------------------------------------------------------------------- #
-#                                   Functions                                  #
-# ---------------------------------------------------------------------------- #
+############################################################################################
+#                                         PRINTING                                         #
+############################################################################################
 
 """
-    show(io::IO, tableau::ButcherTableau)
+    show(io::IO, tableau::AbstractButcherTableau)
 
 prints a full description of `tableau` and its contents to a stream `io`.
 """
-Base.show(io::IO, tableau::ButcherTableau) = NSDEBase._show(io, tableau)
+Base.show(io::IO, tableau::AbstractButcherTableau) = NSDEBase._show(io, tableau)
 
 """
-    summary(io::IO, tableau::ButcherTableau)
+    summary(io::IO, tableau::AbstractButcherTableau)
 
 prints a brief description of `tableau` to a stream `io`.
 """
-Base.summary(io::IO, tableau::ButcherTableau) = NSDEBase._summary(io, tableau)
+Base.summary(io::IO, tableau::AbstractButcherTableau) = NSDEBase._summary(io, tableau)

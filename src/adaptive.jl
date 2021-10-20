@@ -1,7 +1,7 @@
 """
-    AdaptiveParameters
+    AdaptiveParameters <: AbstractAdaptiveParameters
 
-A composite type for the parameters of an adaptive [`RungeKuttaSolver`](@ref).
+A composite type for the parameters of an adaptive [`AbstractRungeKuttaSolver`](@ref).
 
 # Constructors
 ```julia
@@ -9,15 +9,15 @@ AdaptiveParameters(; δ = 0.0, ϵ = 1e-5, K = 100)
 ```
 
 # Arguments
-- `δ :: Real` : absolute tolerance.
-- `ϵ :: Real` : relative tolerance.
+- `δ :: Real`    : absolute tolerance.
+- `ϵ :: Real`    : relative tolerance.
 - `K :: Integer` : maximum number of iterations.
 
 # Methods
-- [`show`](@ref) : shows name and contents.
+- [`show`   ](@ref) : shows name and contents.
 - [`summary`](@ref) : shows name.
 """
-mutable struct AdaptiveParameters{δ_T, ϵ_T, K_T}
+mutable struct AdaptiveParameters{δ_T, ϵ_T, K_T} <: AbstractAdaptiveParameters
     δ::δ_T
     ϵ::ϵ_T
     K::K_T
@@ -25,11 +25,34 @@ end
 
 AdaptiveParameters(; δ = 0.0, ϵ = 1e-5, K = 100) = AdaptiveParameters(δ, ϵ, K)
 
-# ---------------------------------------------------------------------------- #
-#                                   Functions                                  #
-# ---------------------------------------------------------------------------- #
+############################################################################################
+#                                         PRINTING                                         #
+############################################################################################
 
-function adaptive_step!(solution::RungeKuttaSolution, solver::RungeKuttaSolver, adaptive::AdaptiveParameters, cache::RungeKuttaCache)
+"""
+    show(io::IO, adaptive::AbstractAdaptiveParameters)
+
+prints a full description of `adaptive` and its contents to a stream `io`.
+"""
+Base.show(io::IO, adaptive::AbstractAdaptiveParameters) = NSDEBase._show(io, adaptive)
+
+"""
+    summary(io::IO, adaptive::AbstractAdaptiveParameters)
+
+prints a brief description of `adaptive` to a stream `io`.
+"""
+Base.summary(io::IO, adaptive::AbstractAdaptiveParameters) = NSDEBase._summary(io, adaptive)
+
+############################################################################################
+#                                         FUNCTIONS                                        #
+############################################################################################
+
+function adaptive_step!(
+    solution::AbstractRungeKuttaSolution,
+    solver::AbstractRungeKuttaSolver,
+    adaptive::AbstractAdaptiveParameters,
+    cache::AbstractRungeKuttaCache
+)
     @↓ u = solution
     @↓ h = solver.stepsize
     @↓ n, m, v = cache
@@ -55,21 +78,20 @@ function adaptive_step!(solution::RungeKuttaSolution, solver::RungeKuttaSolver, 
     return solution
 end
 
-function adaptive_step!(solution::RungeKuttaSolution, solver::RungeKuttaSolver, adaptive::Nothing, cache::RungeKuttaCache)
+function adaptive_step!(
+    solution::AbstractRungeKuttaSolution,
+    solver::AbstractRungeKuttaSolver,
+    adaptive::Nothing,
+    cache::AbstractRungeKuttaCache
+)
     cache.n += 1
     return solution
 end
 
-"""
-    show(io::IO, adaptive::AdaptiveParameters)
-
-prints a full description of `adaptive` and its contents to a stream `io`.
-"""
-Base.show(io::IO, adaptive::AdaptiveParameters) = NSDEBase._show(io, adaptive)
-
-"""
-    summary(io::IO, adaptive::AdaptiveParameters)
-
-prints a brief description of `adaptive` to a stream `io`.
-"""
-Base.summary(io::IO, adaptive::AdaptiveParameters) = NSDEBase._summary(io, adaptive)
+function adaptive_step!(
+    solution::AbstractRungeKuttaSolution,
+    solver::AbstractRungeKuttaSolver,
+    cache::AbstractRungeKuttaCache
+)
+    return adaptive_step!(solution, solver, solver.adaptive, cache)
+end

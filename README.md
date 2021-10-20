@@ -49,7 +49,7 @@ plot(size = (1000, 400), p₁, p₂, left_margin = 5Plots.mm, bottom_margin = 5P
 
 ![svg](imgs/regions.svg)
 
-Further, more in-depth details on usage are available in the [documentation](https://giancarloantonucci.github.io/RungeKutta.jl/dev).
+More in-depth details on usage are available in the [documentation](https://giancarloantonucci.github.io/RungeKutta.jl/dev).
 
 ## Available methods
 

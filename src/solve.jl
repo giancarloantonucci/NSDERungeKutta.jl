@@ -1,21 +1,17 @@
-_RungeKuttaCache(problem, solver::ExplicitRungeKuttaSolver) = ExplicitRungeKuttaCache(problem, solver)
-_RungeKuttaCache(problem, solver::ImplicitRungeKuttaSolver) = ImplicitRungeKuttaCache(problem, solver)
-_RungeKuttaCache(problem, solver::ExplicitExponentialRungeKuttaSolver) = ExplicitExponentialRungeKuttaCache(problem, solver)
-
 """
-    solve!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::RungeKuttaSolver) :: RungeKuttaSolution
+    solve!(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver) :: AbstractRungeKuttaSolution
 
-returns the [`RungeKuttaSolution`](@ref) of an [`InitialValueProblem`](@ref).
+returns the [`AbstractRungeKuttaSolution`](@ref) of an [`AbstractInitialValueProblem`](@ref).
 """
-function NSDEBase.solve!(solution::RungeKuttaSolution, problem::InitialValueProblem, solver::RungeKuttaSolver)
-    cache = _RungeKuttaCache(problem, solver)
+function NSDEBase.solve!(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver)
+    cache = RungeKuttaCache(problem, solver)
     @↓ u0, (t0, tN) ← tspan = problem
     @↓ u, t = solution
     @↓ n = cache
     u0_T = eltype(u0)
     u0_L = length(u0)
-    # WHILE instead of FOR loop -> adaptive methods
     N = length(t)
+    # WHILE instead of FOR loop -> adaptive methods
     while n < N && t[n] < tN
         step!(solution, problem, solver, cache)
         adaptive_step!(solution, solver, cache)
@@ -40,12 +36,12 @@ function NSDEBase.solve!(solution::RungeKuttaSolution, problem::InitialValueProb
 end
 
 """
-    solve(problem::InitialValueProblem, solver::RungeKuttaSolver; save_stages::Bool = false) :: RungeKuttaSolution
+    solve(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; savestages::Bool = false) :: AbstractRungeKuttaSolution
 
-returns the [`RungeKuttaSolution`](@ref) of an [`InitialValueProblem`](@ref). `save_stages` flags when to save all stages into `solution.k`.
+returns the [`AbstractRungeKuttaSolution`](@ref) of an [`AbstractInitialValueProblem`](@ref). `savestages` flags when to save all stages into `solution.k`.
 """
-function NSDEBase.solve(problem::InitialValueProblem, solver::RungeKuttaSolver; save_stages::Bool = false)
-    solution = RungeKuttaSolution(problem, solver; save_stages=save_stages)
+function NSDEBase.solve(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; savestages::Bool = false)
+    solution = RungeKuttaSolution(problem, solver; savestages=savestages)
     NSDEBase.solve!(solution, problem, solver)
     return solution
 end

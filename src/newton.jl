@@ -13,7 +13,7 @@ NewtonParameters(; ϵ = 1e-3, K = 10)
 - `K :: Integer` : maximum number of iterations.
 
 # Functions
-- [`show`](@ref) : shows name and contents.
+- [`show`   ](@ref) : shows name and contents.
 - [`summary`](@ref) : shows name.
 """
 mutable struct NewtonParameters{ϵ_T, K_T}
@@ -23,9 +23,9 @@ end
 
 NewtonParameters(; ϵ = 1e-3, K = 10) = NewtonParameters(ϵ, K)
 
-# ---------------------------------------------------------------------------- #
-#                                   Functions                                  #
-# ---------------------------------------------------------------------------- #
+############################################################################################
+#                                         FUNCTIONS                                        #
+############################################################################################
 
 """
     show(io::IO, newton::NewtonParameters)

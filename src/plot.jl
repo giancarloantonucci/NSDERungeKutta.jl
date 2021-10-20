@@ -1,4 +1,4 @@
-@recipe function f(solution::RungeKuttaSolution; vars = nothing, is_complex = false)
+@recipe function f(solution::AbstractRungeKuttaSolution; vars = nothing, is_complex = false)
     framestyle     --> :box
     gridalpha      --> 0.2
     legend         --> :none
@@ -32,7 +32,7 @@ end
 @userplot PHASEPLOT
 @recipe function f(h::PHASEPLOT; vars = nothing)
     length(h.args) == 1 ? true : error("Got too many arguments: $(length(h.args)).")
-    solution = h.args[1] isa RungeKuttaSolution ? h.args[1] : error("Got $(typeof(h.args)) instead of `RungeKuttaSolution`.")
+    solution = h.args[1] isa AbstractRungeKuttaSolution ? h.args[1] : error("Got $(typeof(h.args)) instead of `AbstractRungeKuttaSolution`.")
     framestyle     --> :box
     gridalpha      --> 0.2
     legend         --> :none
@@ -59,9 +59,9 @@ end
 @recipe function f(h::STABILITY; lims = (-4, 4), xlims = lims, ylims = lims)
     length(h.args) == 1 ? true : error("Got too many arguments: $(length(h.args)).")
     R = h.args[1] isa ButcherTableau   ? z -> ℛ(z, h.args[1])         :
-        h.args[1] isa RungeKuttaSolver ? z -> ℛ(z, h.args[1].tableau) :
+        h.args[1] isa AbstractRungeKuttaSolver ? z -> ℛ(z, h.args[1].tableau) :
         h.args[1] isa Function         ? h.args[1]                    :
-        error("Got $(typeof(h.args)) instead of `ButcherTableau`, `RungeKuttaSolver` or `Function`.")
+        error("Got $(typeof(h.args)) instead of `ButcherTableau`, `AbstractRungeKuttaSolver` or `Function`.")
     framestyle     --> :box
     gridalpha      --> 0.2
     gridstyle      --> :dot
@@ -87,9 +87,9 @@ end
 @recipe function f(h::STABILITYF; lims = (-4, 4), xlims = lims, ylims = lims)
     length(h.args) == 1 ? true : error("Got too many arguments: $(length(h.args)).")
     R = h.args[1] isa ButcherTableau   ? z -> ℛ(z, h.args[1])         :
-        h.args[1] isa RungeKuttaSolver ? z -> ℛ(z, h.args[1].tableau) :
+        h.args[1] isa AbstractRungeKuttaSolver ? z -> ℛ(z, h.args[1].tableau) :
         h.args[1] isa Function         ? h.args[1]                    :
-        error("Got $(typeof(h.args)) instead of `ButcherTableau`, `RungeKuttaSolver` or `Function`.")
+        error("Got $(typeof(h.args)) instead of `ButcherTableau`, `AbstractRungeKuttaSolver` or `Function`.")
     clims          --> (0, 1)
     colorbar       --> true
     framestyle     --> :box
@@ -115,9 +115,9 @@ end
 @recipe function f(h::ORDERSTAR; lims = (-4, 4), xlims = lims, ylims = lims)
     length(h.args) == 1 ? true : error("Got too many arguments: $(length(h.args)).")
     R = h.args[1] isa ButcherTableau   ? z -> ℛ(z, h.args[1])         :
-        h.args[1] isa RungeKuttaSolver ? z -> ℛ(z, h.args[1].tableau) :
+        h.args[1] isa AbstractRungeKuttaSolver ? z -> ℛ(z, h.args[1].tableau) :
         h.args[1] isa Function         ? h.args[1]                    :
-        error("Got $(typeof(h.args)) instead of `ButcherTableau`, `RungeKuttaSolver` or `Function`.")
+        error("Got $(typeof(h.args)) instead of `ButcherTableau`, `AbstractRungeKuttaSolver` or `Function`.")
     framestyle     --> :box
     gridalpha      --> 0.2
     legend         --> :none
@@ -142,9 +142,9 @@ end
 @recipe function f(h::ORDERSTARF; lims = (-4, 4), xlims = lims, ylims = lims)
     length(h.args) == 1 ? true : error("Got too many arguments: $(length(h.args)).")
     R = h.args[1] isa ButcherTableau   ? z -> ℛ(z, h.args[1])         :
-        h.args[1] isa RungeKuttaSolver ? z -> ℛ(z, h.args[1].tableau) :
+        h.args[1] isa AbstractRungeKuttaSolver ? z -> ℛ(z, h.args[1].tableau) :
         h.args[1] isa Function         ? h.args[1]                    :
-        error("Got $(typeof(h.args)) instead of `ButcherTableau`, `RungeKuttaSolver` or `Function`.")
+        error("Got $(typeof(h.args)) instead of `ButcherTableau`, `AbstractRungeKuttaSolver` or `Function`.")
     clims          --> (0, 1)
     colorbar       --> true
     framestyle     --> :box

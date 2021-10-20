@@ -10,7 +10,7 @@ tspan = (0.0, 10.0)
 problem = Lorenz(u0, tspan)
 solver = F45(h = 1e-3)
 solution = solve(problem, solver)
-plot(solution, xlabel = L"t", label = [L"x" L"y" L"z"], legend = true)
+plot(solution, xlabel = L"t", label = [L"x" L"y" L"z"])
 ```
 
 ![svg](imgs/lorenz.svg)
