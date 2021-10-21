@@ -3,130 +3,131 @@ using NSDEBase
 using RungeKutta
 using Test
 
-u0 = [1.0, 1.0, 1.0]
-tspan = (0.0, 1e-2)
+u0 = ones(3)
+tspan = (0.0, 1e-3)
 function f!(du, u, t)
-    du .= Matrix(1.0I, 3, 3) * u
+    I₃ = Matrix(1.0I, 3, 3)
+    du .=  I₃ * u
 end
 problem = IVP(f!, u0, tspan)
 
 @testset "Explicit" begin
-    solver = ExplicitEuler(h = 1e-2)
+    solver = ExplicitEuler(h = 1e-3)
     @test solver isa ExplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = ExplicitMidpoint(h = 1e-2)
+    solver = ExplicitMidpoint(h = 1e-3)
     @test solver isa ExplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = Heun2(h = 1e-2)
+    solver = Heun2(h = 1e-3)
     @test solver isa ExplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = Ralston2(h = 1e-2)
+    solver = Ralston2(h = 1e-3)
     @test solver isa ExplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = Heun3(h = 1e-2)
+    solver = Heun3(h = 1e-3)
     @test solver isa ExplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = Kutta3(h = 1e-2)
+    solver = Kutta3(h = 1e-3)
     @test solver isa ExplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = Ralston3(h = 1e-2)
+    solver = Ralston3(h = 1e-3)
     @test solver isa ExplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = SSPRK3(h = 1e-2)
+    solver = SSPRK3(h = 1e-3)
     @test solver isa ExplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = RK4(h = 1e-2)
+    solver = RK4(h = 1e-3)
     @test solver isa ExplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = Rule38(h = 1e-2)
+    solver = Rule38(h = 1e-3)
     @test solver isa ExplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = HeunEuler(h = 1e-2)
+    solver = HeunEuler(h = 1e-3)
     @test solver isa ExplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = F45(h = 1e-2)
+    solver = F45(h = 1e-3)
     @test solver isa ExplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = DP54(h = 1e-2)
+    solver = DP54(h = 1e-3)
     @test solver isa ExplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = V65(h = 1e-2)
+    solver = V65(h = 1e-3)
     @test solver isa ExplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
 end
 
 @testset "Implicit" begin
-    solver = ImplicitEuler(h = 1e-2)
+    solver = ImplicitEuler(h = 1e-3)
     @test solver isa ImplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = ImplicitMidpoint(h = 1e-2)
+    solver = ImplicitMidpoint(h = 1e-3)
     @test solver isa ImplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = CrankNicolson(h = 1e-2)
+    solver = CrankNicolson(h = 1e-3)
     @test solver isa ImplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = SDIRK3(h = 1e-2)
+    solver = SDIRK3(h = 1e-3)
     @test solver isa ImplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = GL4(h = 1e-2)
+    solver = GL4(h = 1e-3)
     @test solver isa ImplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = GL6(h = 1e-2)
+    solver = GL6(h = 1e-3)
     @test solver isa ImplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = LobattoIIIA4(h = 1e-2)
+    solver = LobattoIIIA4(h = 1e-3)
     @test solver isa ImplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = LobattoIIIB2(h = 1e-2)
+    solver = LobattoIIIB2(h = 1e-3)
     @test solver isa ImplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = LobattoIIIB4(h = 1e-2)
+    solver = LobattoIIIB4(h = 1e-3)
     @test solver isa ImplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = LobattoIIIC2(h = 1e-2)
+    solver = LobattoIIIC2(h = 1e-3)
     @test solver isa ImplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = LobattoIIIC4(h = 1e-2)
+    solver = LobattoIIIC4(h = 1e-3)
     @test solver isa ImplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = RadauIA3(h = 1e-2)
+    solver = RadauIA3(h = 1e-3)
     @test solver isa ImplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = RadauIA5(h = 1e-2)
+    solver = RadauIA5(h = 1e-3)
     @test solver isa ImplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = RadauIIA3(h = 1e-2)
+    solver = RadauIIA3(h = 1e-3)
     @test solver isa ImplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = RadauIIA5(h = 1e-2)
+    solver = RadauIIA5(h = 1e-3)
     @test solver isa ImplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
