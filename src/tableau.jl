@@ -10,14 +10,14 @@ ButcherTableau(tableau)
 ```
 
 # Arguments
-- `A :: AbstractMatrix`       : matrix of coefficients.
-- `b :: AbstractVector`       : vector of weights.
-- `c :: AbstractVector`       : vector of nodes.
-- `s :: Integer`              : number of stages.
-- `p :: Integer`              : order of accuracy.
-- `d :: AbstractVector`       : embedding's vector of weights.
-- `q :: Integer`              : embedding's order of accuracy.
-- `tableau :: AbstractMatrix` : matrix from which all other fields are automatically constructed, with structure:
+- `A :: AbstractMatrix` : matrix of coefficients.
+- `b :: AbstractVector` : vector of weights.
+- `c :: AbstractVector` : vector of nodes.
+- `s :: Integer` : number of stages.
+- `p :: Integer` : order of accuracy.
+- `d :: AbstractVector` : embedding's vector of weights.
+- `q :: Integer` : embedding's order of accuracy.
+- `tableau :: AbstractMatrix` : Butcher tableau, from which all other fields can be extracted:
 ```math
 \begin{array}{c|c}
     c & A \\
@@ -62,21 +62,3 @@ function ButcherTableau(tableau::AbstractMatrix)
         return ButcherTableau(A, b, c, s, p, d, q)
     end
 end
-
-############################################################################################
-#                                         PRINTING                                         #
-############################################################################################
-
-"""
-    show(io::IO, tableau::AbstractButcherTableau)
-
-prints a full description of `tableau` and its contents to a stream `io`.
-"""
-Base.show(io::IO, tableau::AbstractButcherTableau) = NSDEBase._show(io, tableau)
-
-"""
-    summary(io::IO, tableau::AbstractButcherTableau)
-
-prints a brief description of `tableau` to a stream `io`.
-"""
-Base.summary(io::IO, tableau::AbstractButcherTableau) = NSDEBase._summary(io, tableau)

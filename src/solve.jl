@@ -1,9 +1,4 @@
-"""
-    solve!(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver) :: AbstractRungeKuttaSolution
-
-returns the [`AbstractRungeKuttaSolution`](@ref) of an [`AbstractInitialValueProblem`](@ref).
-"""
-function NSDEBase.solve!(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver)
+function (solver::AbstractRungeKuttaSolver)(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem; savestages::Bool=false)
     cache = RungeKuttaCache(problem, solver)
     @↓ u0, (t0, tN) ← tspan = problem
     @↓ u, t = solution
@@ -13,11 +8,11 @@ function NSDEBase.solve!(solution::AbstractRungeKuttaSolution, problem::Abstract
     N = length(t)
     # WHILE instead of FOR loop -> adaptive methods
     while n < N && t[n] < tN
-        step!(solution, problem, solver, cache)
-        adaptive_step!(solution, solver, cache)
+        step!(cache, solution, problem, solver; savestages=savestages)
+        adaptivecheck!(cache, solution, solver; savestages=savestages)
         @↓ n = cache
         # Stop if update is too small -> adaptive methods
-        if n > 1 && t[n] ≈ t[n-1]
+        if n > 1 && t[n] ≈ t[n - 1]
             break
         end
         # Increase size of output vectors -> adaptive methods
@@ -35,13 +30,28 @@ function NSDEBase.solve!(solution::AbstractRungeKuttaSolution, problem::Abstract
     return solution
 end
 
-"""
-    solve(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; savestages::Bool = false) :: AbstractRungeKuttaSolution
-
-returns the [`AbstractRungeKuttaSolution`](@ref) of an [`AbstractInitialValueProblem`](@ref). `savestages` flags when to save all stages into `solution.k`.
-"""
-function NSDEBase.solve(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; savestages::Bool = false)
+function (solver::AbstractRungeKuttaSolver)(problem::AbstractInitialValueProblem; savestages::Bool=false)
     solution = RungeKuttaSolution(problem, solver; savestages=savestages)
-    NSDEBase.solve!(solution, problem, solver)
+    solver(solution, problem; savestages=savestages)
     return solution
+end
+
+"""
+    solve!(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; kwargs...) :: AbstractRungeKuttaSolution
+
+returns the [`AbstractRungeKuttaSolution`](@ref) of an [`AbstractInitialValueProblem`](@ref).
+"""
+function NSDEBase.solve!(solution::AbstractRungeKuttaSolution,
+                         problem::AbstractInitialValueProblem,
+                         solver::AbstractRungeKuttaSolver; kwargs...)
+    return solver(solution, problem; kwargs...)
+end
+
+"""
+    solve(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; kwargs...) :: AbstractRungeKuttaSolution
+
+returns the [`AbstractRungeKuttaSolution`](@ref) of an [`AbstractInitialValueProblem`](@ref).
+"""
+function NSDEBase.solve(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; kwargs...)
+    return solver(problem; kwargs...)
 end

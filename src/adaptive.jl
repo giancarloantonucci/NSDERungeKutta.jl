@@ -14,84 +14,47 @@ AdaptiveParameters(; δ = 0.0, ϵ = 1e-5, K = 100)
 - `K :: Integer` : maximum number of iterations.
 
 # Methods
-- [`show`   ](@ref) : shows name and contents.
+- [`show`](@ref) : shows name and contents.
 - [`summary`](@ref) : shows name.
 """
-mutable struct AdaptiveParameters{δ_T, ϵ_T, K_T} <: AbstractAdaptiveParameters
+struct AdaptiveParameters{δ_T, ϵ_T, K_T} <: AbstractAdaptiveParameters
     δ::δ_T
     ϵ::ϵ_T
     K::K_T
 end
 
-AdaptiveParameters(; δ = 0.0, ϵ = 1e-5, K = 100) = AdaptiveParameters(δ, ϵ, K)
+AdaptiveParameters(; δ=0.0, ϵ=1e-5, K=100) = AdaptiveParameters(δ, ϵ, K)
 
-############################################################################################
-#                                         PRINTING                                         #
-############################################################################################
+#####
+##### Functions
+#####
 
-"""
-    show(io::IO, adaptive::AbstractAdaptiveParameters)
-
-prints a full description of `adaptive` and its contents to a stream `io`.
-"""
-Base.show(io::IO, adaptive::AbstractAdaptiveParameters) = NSDEBase._show(io, adaptive)
-
-"""
-    summary(io::IO, adaptive::AbstractAdaptiveParameters)
-
-prints a brief description of `adaptive` to a stream `io`.
-"""
-Base.summary(io::IO, adaptive::AbstractAdaptiveParameters) = NSDEBase._summary(io, adaptive)
-
-############################################################################################
-#                                         FUNCTIONS                                        #
-############################################################################################
-
-function adaptive_step!(
-    solution::AbstractRungeKuttaSolution,
-    solver::AbstractRungeKuttaSolver,
-    adaptive::AbstractAdaptiveParameters,
-    cache::AbstractRungeKuttaCache
-)
-    @↓ u = solution
-    @↓ h = solver.stepsize
-    @↓ n, m, v = cache
-    k = solution.k isa Nothing ? cache.k : solution.k[n]
-    @↓ s, b, p, d, q = solver.tableau
-    @↓ δ, ϵ, K = solver.adaptive
-    zero!(v)
-    for i = 1:s
-        @. v += (b[i] - d[i]) * k[i]
-    end
-    @. v /= δ + max(abs(u[n]), abs(u[n+1])) * ϵ
-    error = norm(v) / √length(v)
-    power = - 1 / (min(p, q) + 1)
-    factor = 0.9 * error ^ power
-    h *= max(0.5, min((m == 1 ? 2.0 : 1.0), factor))
-    if error < 1 || m ≥ K
-        n += 1
+function adaptivecheck!(cache::AbstractRungeKuttaCache, solution::AbstractRungeKuttaSolution, solver::AbstractRungeKuttaSolver; savestages::Bool=false)
+    if solver.adaptive isa AbstractAdaptiveParameters
+        @↓ u = solution
+        @↓ h = solver.stepsize
+        @↓ n, m, v = cache
+        k = savestages ? solution.k[n] : cache.k
+        @↓ s, b, p, d, q = solver.tableau
+        @↓ δ, ϵ, K = solver.adaptive
+        zero!(v)
+        for i = 1:s
+            @. v += (b[i] - d[i]) * k[i]
+        end
+        @. v /= δ + max(abs(u[n]), abs(u[n + 1])) * ϵ
+        error = norm(v) / √length(v)
+        power = -1 / (min(p, q) + 1)
+        factor = 0.9 * error^power
+        h *= max(0.5, min((m == 1 ? 2.0 : 1.0), factor))
+        if error < 1 || m ≥ K
+            n += 1
+        else
+            m += 1
+        end
+        @↑ cache = n, m
+        @↑ solver.stepsize = h
     else
-        m += 1
+        cache.n += 1
     end
-    @↑ cache = n, m
-    @↑ solver.stepsize = h
     return solution
-end
-
-function adaptive_step!(
-    solution::AbstractRungeKuttaSolution,
-    solver::AbstractRungeKuttaSolver,
-    adaptive::Nothing,
-    cache::AbstractRungeKuttaCache
-)
-    cache.n += 1
-    return solution
-end
-
-function adaptive_step!(
-    solution::AbstractRungeKuttaSolution,
-    solver::AbstractRungeKuttaSolver,
-    cache::AbstractRungeKuttaCache
-)
-    return adaptive_step!(solution, solver, solver.adaptive, cache)
 end

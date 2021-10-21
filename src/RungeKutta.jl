@@ -1,14 +1,20 @@
 module RungeKutta
 
-export AbstractRungeKuttaSolution
-export AbstractRungeKuttaSolver
+#####
+##### Exports
+#####
 
-export RungeKuttaSolution
-export ButcherTableau
+export AbstractRungeKuttaSolver
+export AbstractRungeKuttaSolution
 
 export ExplicitRungeKuttaSolver, ERK
 export ImplicitRungeKuttaSolver, IRK
 export ExplicitExponentialRungeKuttaSolver, EERK
+export RungeKuttaSolution
+
+export ButcherTableau
+export extract
+export ℛ
 
 export Euler, ExplicitEuler
 export Midpoint, ExplicitMidpoint
@@ -44,8 +50,9 @@ export RadauIIA5
 
 export ExponentialRK4, ERK4
 
-export ℛ
-export extract
+#####
+##### Core
+#####
 
 using ArrowMacros
 using LinearAlgebra
@@ -53,20 +60,31 @@ using NSDEBase
 using RecipesBase
 
 include("abstract.jl")
-include("utils.jl")
+include("tmp.jl")
 include("solution.jl")
+
 include("adaptive.jl")
 include("tableau.jl")
 include("stepsize.jl")
-include("explicit.jl")
 include("newton.jl")
+
+include("explicit.jl")
+include("explicit/cache.jl")
+include("explicit/step.jl")
+include("explicit/solvers.jl")
+
 include("implicit.jl")
+include("implicit/cache.jl")
+include("implicit/step.jl")
+include("implicit/solvers.jl")
+
 include("exponential.jl")
-include("methods.jl")
-include("cache.jl")
-include("step.jl")
+include("exponential/cache.jl")
+include("exponential/step.jl")
+include("exponential/solvers.jl")
+
 include("solve.jl")
 include("stability.jl")
-include("plot.jl")
+include("plotrecipes.jl")
 
 end

@@ -1,33 +1,38 @@
+"""
+    ExplicitExponentialRungeKuttaSolver <: AbstractRungeKuttaSolver
+
+A composite type for an exponential explicit [`AbstractRungeKuttaSolver`](@ref).
+
+# Constructors
+```julia
+ExplicitExponentialRungeKuttaSolver(h)
+EERK(args...; kwargs...)
+```
+
+# Arguments
+- `h :: Real` : step-size.
+
+# Functions
+- [`show`](@ref) : shows name and contents.
+- [`summary`](@ref) : shows name.
+"""
 mutable struct ExplicitExponentialRungeKuttaSolver{stepsize_T} <: AbstractRungeKuttaSolver
     stepsize::stepsize_T
 end
 
-ExplicitExponentialRungeKuttaSolver(h::Real) = ExplicitExponentialRungeKuttaSolver(StepSize(h))
-@doc (@doc ExplicitExponentialRungeKuttaSolver) EERK(args...; kwargs...) = ExplicitExponentialRungeKuttaSolver(args...; kwargs...)
-
-############################################################################################
-#                                         PRINTING                                         #
-############################################################################################
-
-"""
-    show(io::IO, solver::ExplicitExponentialRungeKuttaSolver)
-
-prints a full description of `solver` and its contents to a stream `io`.
-"""
-Base.show(io::IO, solver::ExplicitExponentialRungeKuttaSolver) = NSDEBase._show(io, solver)
-
-"""
-    summary(io::IO, solver::ExplicitExponentialRungeKuttaSolver)
-
-prints a brief description of `solver` to a stream `io`.
-"""
-Base.summary(io::IO, solver::ExplicitExponentialRungeKuttaSolver) = NSDEBase._summary(io, solver)
-
-
-############################################################################################
-#                                          METHODS                                         #
-############################################################################################
-
-function (solver::ExplicitExponentialRungeKuttaSolver)(problem::AbstractInitialValueProblem)
-    solve(problem, solver)
+function ExplicitExponentialRungeKuttaSolver(h::Real)
+    return ExplicitExponentialRungeKuttaSolver(StepSize(h))
 end
+
+@doc (@doc ExplicitExponentialRungeKuttaSolver) function EERK(args...; kwargs...)
+    return ExplicitExponentialRungeKuttaSolver(args...; kwargs...)
+end
+
+#####
+##### Methods
+#####
+
+# POSSIBLE SPECIALISATION
+# function (solver::ExplicitExponentialRungeKuttaSolver)(problem::AbstractInitialValueProblem)
+#     ...
+# end
