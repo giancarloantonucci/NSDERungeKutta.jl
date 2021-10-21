@@ -19,43 +19,27 @@ Modules = [RungeKutta]
 Pages = ["abstract.jl"]
 ```
 
-### Composite Types
+### Composite types
+
+#### Solvers
 
 ```@autodocs
 Modules = [RungeKutta]
-Pages = [
-  "tableau.jl",
-  "stepsize.jl",
-  "adaptive.jl",
-  "newton.jl",
-  "explicit.jl",
-  "implicit.jl",
-  "exponential.jl",
-  "solution.jl",
-  "cache.jl",
-]
+Pages = ["explicit/solvers.jl", "exponential/solvers.jl", "implicit/solvers.jl"]
+```
+
+#### Utilities
+
+```@autodocs
+Modules = [RungeKutta]
+Pages = ["solution.jl", "stepsize.jl", "tableau.jl", "newton.jl", "adaptive.jl", "explicit/cache.jl", "exponential/cache.jl", "implicit/cache.jl"]
 ```
 
 ### Functions
 
-```@docs
-solve
-solve!
-step!
-```
-
-### Solvers
-
 ```@autodocs
 Modules = [RungeKutta]
-Pages = ["methods.jl"]
-```
-
-### Utilities
-
-```@autodocs
-Modules = [RungeKutta]
-Pages = ["stability.jl"]
+Pages = ["solve.jl", "explicit/step.jl", "exponential/step.jl", "implicit/step.jl", "stability.jl"]
 ```
 
 ## Index
