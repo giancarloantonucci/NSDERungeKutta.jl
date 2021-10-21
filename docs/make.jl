@@ -1,5 +1,4 @@
 using Documenter
-using NSDEBase
 using RungeKutta
 
 PAGES = [
