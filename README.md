@@ -12,6 +12,8 @@ RungeKutta.jl is compatible with Julia v1.0 and above. From the Julia REPL,
 ]add https://github.com/giancarloantonucci/RungeKutta.jl
 ```
 
+Below is a brief introduction, but read the [documentation](https://giancarloantonucci.github.io/RungeKutta.jl/dev) for a complete overview of this package.
+
 ## Usage
 
 Let's say that we want to solve the [simple gravity pendulum problem](https://en.wikipedia.org/wiki/Pendulum_(mathematics)#Simple_gravity_pendulum) using the [midpoint method](https://en.wikipedia.org/wiki/Midpoint_method). Here is one way to do it with RungeKutta.jl:
@@ -48,8 +50,6 @@ plot(size = (1000, 400), p₁, p₂, left_margin = 5Plots.mm, bottom_margin = 5P
 ```
 
 ![svg](imgs/regions.svg)
-
-More in-depth details on usage are available in the [documentation](https://giancarloantonucci.github.io/RungeKutta.jl/dev).
 
 ## Available methods
 
