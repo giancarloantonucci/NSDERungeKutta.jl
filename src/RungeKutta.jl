@@ -8,28 +8,28 @@ using RecipesBase
 include("abstract.jl")
 include("tmp.jl")
 include("solution.jl")
+include("solve.jl")
 
 include("adaptive.jl")
 include("tableau.jl")
 include("stepsize.jl")
 include("newton.jl")
 
-include("explicit.jl")
+include("explicit/struct.jl")
 include("explicit/cache.jl")
 include("explicit/step.jl")
 include("explicit/solvers.jl")
 
-include("implicit.jl")
+include("implicit/struct.jl")
 include("implicit/cache.jl")
 include("implicit/step.jl")
 include("implicit/solvers.jl")
 
-include("exponential.jl")
+include("exponential/struct.jl")
 include("exponential/cache.jl")
 include("exponential/step.jl")
 include("exponential/solvers.jl")
 
-include("solve.jl")
 include("stability.jl")
 include("plotrecipes.jl")
 

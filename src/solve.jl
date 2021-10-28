@@ -1,4 +1,9 @@
-function (solver::AbstractRungeKuttaSolver)(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem; savestages::Bool=false)
+"""
+    solve!(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; savestages::Bool=false) :: AbstractRungeKuttaSolution
+
+returns the [`AbstractRungeKuttaSolution`](@ref) of an [`AbstractInitialValueProblem`](@ref).
+"""
+function NSDEBase.solve!(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; savestages::Bool=false)
     cache = RungeKuttaCache(problem, solver)
     @↓ u0, (t0, tN) ← tspan = problem
     @↓ u, t = solution
@@ -30,28 +35,13 @@ function (solver::AbstractRungeKuttaSolver)(solution::AbstractRungeKuttaSolution
     return solution
 end
 
-function (solver::AbstractRungeKuttaSolver)(problem::AbstractInitialValueProblem; savestages::Bool=false)
+"""
+    solve(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; savestages::Bool=false) :: AbstractRungeKuttaSolution
+
+returns the [`AbstractRungeKuttaSolution`](@ref) of an [`AbstractInitialValueProblem`](@ref).
+"""
+function NSDEBase.solve(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; savestages::Bool=false)
     solution = RungeKuttaSolution(problem, solver; savestages=savestages)
-    solver(solution, problem; savestages=savestages)
+    solve!(solution, problem, solver; savestages=savestages)
     return solution
-end
-
-"""
-    solve!(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; kwargs...) :: AbstractRungeKuttaSolution
-
-returns the [`AbstractRungeKuttaSolution`](@ref) of an [`AbstractInitialValueProblem`](@ref).
-"""
-function NSDEBase.solve!(solution::AbstractRungeKuttaSolution,
-                         problem::AbstractInitialValueProblem,
-                         solver::AbstractRungeKuttaSolver; kwargs...)
-    return solver(solution, problem; kwargs...)
-end
-
-"""
-    solve(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; kwargs...) :: AbstractRungeKuttaSolution
-
-returns the [`AbstractRungeKuttaSolution`](@ref) of an [`AbstractInitialValueProblem`](@ref).
-"""
-function NSDEBase.solve(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; kwargs...)
-    return solver(problem; kwargs...)
 end

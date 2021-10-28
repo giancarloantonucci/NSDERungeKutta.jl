@@ -5,7 +5,7 @@ A composite type for an explicit [`AbstractRungeKuttaSolver`](@ref).
 
 # Constructors
 ```julia
-ExplicitRungeKuttaSolver(tableau, h[, adaptive])
+ExplicitRungeKuttaSolver(tableau, stepsize[, adaptive])
 ERK(args...; kwargs...)
 ```
 
@@ -40,7 +40,10 @@ end
 ##### Methods
 #####
 
-# POSSIBLE SPECIALISATION
-# function (solver::ExplicitRungeKuttaSolver)(problem::AbstractInitialValueProblem; save_stages::Bool = false)
-#     ...
+# function (solver::ExplicitRungeKuttaSolver)(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem; savestages::Bool = false)
+#     return solve!(solution, problem, solver; savestages=savestages)
+# end
+
+# function (solver::ExplicitRungeKuttaSolver)(problem::AbstractInitialValueProblem; savestages::Bool = false)
+#     return solve(problem, solver; savestages=savestages)
 # end

@@ -1,7 +1,15 @@
 @doc raw"""
     ButcherTableau <: AbstractButcherTableau
 
-A composite type for the Butcher tableau of an [`AbstractRungeKuttaSolver`](@ref).
+A composite type for the Butcher tableau of an [`AbstractRungeKuttaSolver`](@ref):
+```math
+\begin{array}{c|c}
+    c & A \\
+    \hline
+    p & b \\
+    q & d
+\end{array}
+```
 
 # Constructors
 ```julia
@@ -17,15 +25,7 @@ ButcherTableau(tableau)
 - `p :: Integer` : order of accuracy.
 - `d :: AbstractVector` : embedding's vector of weights.
 - `q :: Integer` : embedding's order of accuracy.
-- `tableau :: AbstractMatrix` : Butcher tableau, from which all other fields can be extracted:
-```math
-\begin{array}{c|c}
-    c & A \\
-    \hline
-    p & b \\
-    q & d
-\end{array}
-```
+- `tableau :: AbstractMatrix` : from which all other fields can be extracted.
 
 # Functions
 - [`show`](@ref) : shows name and contents.

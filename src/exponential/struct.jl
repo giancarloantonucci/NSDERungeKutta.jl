@@ -5,12 +5,12 @@ A composite type for an exponential explicit [`AbstractRungeKuttaSolver`](@ref).
 
 # Constructors
 ```julia
-ExplicitExponentialRungeKuttaSolver(h)
+ExplicitExponentialRungeKuttaSolver(stepsize)
 EERK(args...; kwargs...)
 ```
 
 # Arguments
-- `h :: Real` : step-size.
+- `stepsize :: StepSize` : step-size.
 
 # Functions
 - [`show`](@ref) : shows name and contents.
@@ -32,7 +32,10 @@ end
 ##### Methods
 #####
 
-# POSSIBLE SPECIALISATION
+# function (solver::ExplicitExponentialRungeKuttaSolver)(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem)
+#     return solve!(solution, problem, solver)
+# end
+
 # function (solver::ExplicitExponentialRungeKuttaSolver)(problem::AbstractInitialValueProblem)
-#     ...
+#     return solve(problem, solver)
 # end

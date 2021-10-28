@@ -18,3 +18,5 @@ StepSize(; h)
 mutable struct StepSize{h_T} <: AbstractStepSize
     h::h_T
 end
+
+stepsize(solver::AbstractRungeKuttaSolver) = solver.stepsize.h
