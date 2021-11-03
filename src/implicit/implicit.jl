@@ -42,10 +42,10 @@ end
 ##### Methods
 #####
 
-# function (solver::ImplicitRungeKuttaSolver)(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem; savestages::Bool = false)
-#     return solve!(solution, problem, solver; savestages=savestages)
-# end
+function (solver::ImplicitRungeKuttaSolver)(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem)
+    return solve!(solution, problem, solver)
+end
 
-# function (solver::ImplicitRungeKuttaSolver)(problem::AbstractInitialValueProblem; savestages::Bool = false)
-#     return solve(problem, solver; savestages=savestages)
-# end
+function (solver::ImplicitRungeKuttaSolver)(problem::AbstractInitialValueProblem; savestages::Bool = false)
+    return solve(problem, solver; savestages=savestages)
+end

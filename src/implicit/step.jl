@@ -1,11 +1,11 @@
 """
-    step!(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::ImplicitRungeKuttaSolver, cache::ImplicitRungeKuttaCache; savestages::Bool = false)
+    step!(cache::ImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::ImplicitRungeKuttaSolver)
 
 computes a step of the [`AbstractRungeKuttaSolution`](@ref) of an [`AbstractInitialValueProblem`](@ref) using an [`ImplicitRungeKuttaSolver`](@ref).
 """
-function step!(cache::ImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::ImplicitRungeKuttaSolver; savestages::Bool=false)
+function step!(cache::ImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::ImplicitRungeKuttaSolver)
     @↓ n, v, Δk, J = cache
-    @↓ u, t = solution
+    @↓ u, t, savestages = solution
     k = savestages ? solution.k[n] : cache.k
     @↓ f!, Df! = problem.rhs
     @↓ s, A, c, b = solver.tableau

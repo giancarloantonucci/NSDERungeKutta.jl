@@ -1,59 +1,46 @@
-@recipe function f(solution::RungeKuttaSolution; vars=nothing, is_complex=false)
+@recipe function f(solution::RungeKuttaSolution; vars=nothing, iscomplex=false, plotkind=:plot, label="")
     framestyle --> :box
     gridalpha --> 0.2
-    legend --> :none
     linewidth --> 1.5
     minorgrid --> 0.1
     minorgridstyle --> :dash
     seriestype --> :path
-    # tick_direction --> :out
+    tick_direction --> :out
     (L, N) = size(solution)
-    if vars isa Tuple && length(vars) ≥ 1
+    if vars isa AbstractVector && length(vars) ≥ 1
         vars = vars
     elseif vars isa Integer
-        vars = (vars,)
+        vars = [vars]
     elseif vars isa Nothing
         vars = 1:L
     else
-        error("Got $(typeof(vars)) instead of `Tuple` with `length(vars)` ≥ 1 or `Integer`.")
+        error("Got $(typeof(vars)) instead of `AbstractVector` with `length(vars)` ≥ 1 or `Integer`.")
     end
     @↓ u, t = solution
-    if is_complex
-        xwiden --> true
+    if iscomplex
         for i in vars
-            @series [u[n][i] for n = 1:N]
+            @series begin
+                seriescolor --> i
+                [u[n][i] for n = 1:N]
+            end
         end
     else
-        xwiden --> false
-        [(t, [u[n][i] for n = 1:N]) for i in vars]
+        if plotkind == :phaseplot
+            @series begin
+                seriescolor --> 1
+                tuple([[u[n][i] for n = 1:N] for i in vars]...)
+            end
+        else
+            xwiden --> false
+            for (i, var) in enumerate(vars)
+                @series begin
+                    label := label isa AbstractVector ? label[i] : label
+                    seriescolor --> i
+                    (t, [u[n][var] for n = 1:N])
+                end
+            end
+        end
     end
-end
-
-@userplot PHASEPLOT
-@recipe function f(h::PHASEPLOT; vars=nothing)
-    length(h.args) == 1 ? true : error("Got too many arguments: $(length(h.args)).")
-    solution = h.args[1] isa AbstractRungeKuttaSolution ? h.args[1] :
-               error("Got $(typeof(h.args)) instead of `AbstractRungeKuttaSolution`.")
-    framestyle --> :box
-    gridalpha --> 0.2
-    legend --> :none
-    linewidth --> 1.5
-    minorgrid --> 0.1
-    minorgridstyle --> :dash
-    seriestype --> :path
-    # tick_direction --> :out
-    (L, N) = size(solution)
-    if vars isa Tuple && length(vars) ≥ 1
-        vars = vars
-    elseif vars isa Integer
-        vars = (vars,)
-    elseif vars isa Nothing
-        vars = 1:L
-    else
-        error("Got $(typeof(vars)) instead of `Tuple` with `length(vars)` ≥ 1 or `Integer`.")
-    end
-    @↓ u, t = solution
-    return tuple([[u[n][i] for n in 1:N] for i in vars]...)
 end
 
 @userplot STABILITY
@@ -66,13 +53,13 @@ end
     framestyle --> :box
     gridalpha --> 0.2
     gridstyle --> :dot
-    legend --> :none
+    legend --> false
     levels --> [1.0]
     linewidth --> 1.5
     minorgrid --> 0.1
     minorgridstyle --> :dash
     seriestype --> :contour
-    # tick_direction --> :out
+    tick_direction --> :out
     Δx = max(1, abs(xlims[2] - xlims[1]))
     Δy = max(1, abs(ylims[2] - ylims[1]))
     x = length(xlims) == 2 ? LinRange(xlims..., Int(Δx * 101)) : LinRange(xlims...)
@@ -95,11 +82,11 @@ end
     colorbar --> true
     framestyle --> :box
     gridalpha --> 0.2
-    legend --> :none
+    legend --> false
     minorgrid --> 0.1
     minorgridstyle --> :dash
     seriestype --> :heatmap
-    # tick_direction --> :out
+    tick_direction --> :out
     Δx = max(1, abs(xlims[2] - xlims[1]))
     Δy = max(1, abs(ylims[2] - ylims[1]))
     x = length(xlims) == 2 ? LinRange(xlims..., Int(Δx * 101)) : LinRange(xlims...)
@@ -121,13 +108,13 @@ end
         error("Got $(typeof(h.args)) instead of `ButcherTableau`, `AbstractRungeKuttaSolver` or `Function`.")
     framestyle --> :box
     gridalpha --> 0.2
-    legend --> :none
+    legend --> false
     levels --> [1.0]
     linewidth --> 1.5
     minorgrid --> 0.1
     minorgridstyle --> :dash
     seriestype --> :contour
-    # tick_direction --> :out
+    tick_direction --> :out
     Δx = max(1, abs(xlims[2] - xlims[1]))
     Δy = max(1, abs(ylims[2] - ylims[1]))
     x = length(xlims) == 2 ? LinRange(xlims..., Int(Δx * 101)) : LinRange(xlims...)
@@ -150,11 +137,11 @@ end
     colorbar --> true
     framestyle --> :box
     gridalpha --> 0.2
-    legend --> :none
+    legend --> false
     minorgrid --> 0.1
     minorgridstyle --> :dash
     seriestype --> :heatmap
-    # tick_direction --> :out
+    tick_direction --> :out
     Δx = max(1, abs(xlims[2] - xlims[1]))
     Δy = max(1, abs(ylims[2] - ylims[1]))
     x = length(xlims) == 2 ? LinRange(xlims..., Int(Δx * 101)) : LinRange(xlims...)

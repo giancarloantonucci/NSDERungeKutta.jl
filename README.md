@@ -32,7 +32,7 @@ We can plot the obtained `solution` by extracting its fields `u` and `t`, e.g. u
 
 ```julia
 using Plots, LaTeXStrings
-p₁ = plot(solution, xlabel = L"t", label = [L"\theta" L"\omega"], legend = true)
+p₁ = plot(solution, xlabel = L"t", label = [L"\theta" L"\omega"])
 p₂ = phaseplot(solution, vars = (1, 2), xlabel = L"\theta", ylabel = L"\omega")
 plot(size = (900, 450), p₁, p₂)
 ```

@@ -5,17 +5,15 @@ A composite type for an [`AbstractRungeKuttaSolution`](@ref).
 
 # Constructors
 ```julia
-RungeKuttaSolution(u, t[, k])
-RungeKuttaSolution(problem, solver; savestages = false)
+RungeKuttaSolution(u, t[, k, savestages])
+RungeKuttaSolution(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; savestages=false)
 ```
 
 # Arguments
 - `u :: AbstractVector` : numerical solution.
 - `t :: AbstractVector` : time grid.
 - `k :: AbstractVector` : vector of stages.
-- `problem :: AbstractInitialValueProblem` : initial value problem.
-- `solver :: AbstractRungeKuttaSolver` : Runge-Kutta solver.
-- `savestages :: Bool` : flags when to save all stages into `k`.
+- `savestages :: Bool` : to save all stages into `k`.
 
 # Functions
 - [`getindex`](@ref) : get value(s) and time.
@@ -26,13 +24,15 @@ RungeKuttaSolution(problem, solver; savestages = false)
 - [`size`](@ref) : number of variables and time steps.
 - [`summary`](@ref) : shows name.
 """
-struct RungeKuttaSolution{u_T, t_T, k_T} <: AbstractRungeKuttaSolution
+struct RungeKuttaSolution{u_T, t_T, k_T, savestages_T} <: AbstractRungeKuttaSolution
     u::u_T
     t::t_T
     k::k_T
+    savestages::savestages_T
 end
 
-RungeKuttaSolution(u, t) = RungeKuttaSolution(u, t, nothing)
+RungeKuttaSolution(u, t) = RungeKuttaSolution(u, t, nothing, false)
+RungeKuttaSolution(u, t, k) = RungeKuttaSolution(u, t, k, true)
 
 function RungeKuttaSolution(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; savestages::Bool=false)
     @↓ u0, (t0, tN) ← tspan = problem
@@ -56,60 +56,6 @@ function RungeKuttaSolution(problem::AbstractInitialValueProblem, solver::Abstra
         return RungeKuttaSolution(u, t)
     end
 end
-
-#####
-##### Functions
-#####
-
-"""
-    length(solution::RungeKuttaSolution)
-
-returns the number of time steps of `solution`.
-"""
-Base.length(solution::RungeKuttaSolution) = length(solution.t)
-
-"""
-    size(solution::RungeKuttaSolution)
-
-returns a tuple containing the number of variables and of time steps of `solution`.
-"""
-Base.size(solution::RungeKuttaSolution) = (length(solution.u[1]), length(solution.t))
-
-"""
-    getindex(solution::RungeKuttaSolution, i::Integer)
-
-returns a [`RungeKuttaSolution`](@ref) containing the fields of `solution` indexed at `i`.
-"""
-function Base.getindex(solution::RungeKuttaSolution, i::Integer)
-    @↓ u, t, k = solution
-    if k isa Nothing
-        return RungeKuttaSolution(u[i], t[i])
-    else
-        return RungeKuttaSolution(u[i], t[i], k[i])
-    end
-end
-
-"""
-    setindex!(solution::RungeKuttaSolution, tuple::Tuple, i::Integer)
-
-stores the values of `tuple` into the fields of `solution` indexed at `i`.
-"""
-function Base.setindex!(solution::RungeKuttaSolution, tuple::Tuple, i::Integer)
-    @↓ u, t, k = solution
-    u[i] = tuple[1]
-    t[i] = tuple[2]
-    if length(tuple) > 2 && !(k isa Nothing)
-        k[i] = tuple[3]
-    end
-    return solution
-end
-
-"""
-    lastindex(solution::RungeKuttaSolution)
-
-returns the last index of `solution`.
-"""
-Base.lastindex(solution::RungeKuttaSolution) = lastindex(solution.t)
 
 #####
 ##### Methods
@@ -173,3 +119,57 @@ function (solution::RungeKuttaSolution)(tspan::Tuple{Real,Real})
 end
 
 (solution::RungeKuttaSolution)(t₁::Real, t₂::Real) = solution((t₁, t₂))
+
+#####
+##### Functions
+#####
+
+"""
+    length(solution::RungeKuttaSolution)
+
+returns the number of time steps of `solution`.
+"""
+Base.length(solution::RungeKuttaSolution) = length(solution.t)
+
+"""
+    size(solution::RungeKuttaSolution)
+
+returns a tuple containing the number of variables and of time steps of `solution`.
+"""
+Base.size(solution::RungeKuttaSolution) = (length(solution.u[1]), length(solution.t))
+
+"""
+    getindex(solution::RungeKuttaSolution, i::Integer)
+
+returns a [`RungeKuttaSolution`](@ref) containing the fields of `solution` indexed at `i`.
+"""
+function Base.getindex(solution::RungeKuttaSolution, i::Integer)
+    @↓ u, t, k = solution
+    if k isa Nothing
+        return RungeKuttaSolution(u[i], t[i])
+    else
+        return RungeKuttaSolution(u[i], t[i], k[i])
+    end
+end
+
+"""
+    setindex!(solution::RungeKuttaSolution, tuple::Tuple, i::Integer)
+
+stores the values of `tuple` into the fields of `solution` indexed at `i`.
+"""
+function Base.setindex!(solution::RungeKuttaSolution, tuple::Tuple, i::Integer)
+    @↓ u, t, k = solution
+    u[i] = tuple[1]
+    t[i] = tuple[2]
+    if length(tuple) > 2 && !(k isa Nothing)
+        k[i] = tuple[3]
+    end
+    return solution
+end
+
+"""
+    lastindex(solution::RungeKuttaSolution)
+
+returns the last index of `solution`.
+"""
+Base.lastindex(solution::RungeKuttaSolution) = lastindex(solution.t)

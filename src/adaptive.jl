@@ -29,9 +29,14 @@ AdaptiveParameters(; δ=0.0, ϵ=1e-5, K=100) = AdaptiveParameters(δ, ϵ, K)
 ##### Functions
 #####
 
-function adaptivecheck!(cache::AbstractRungeKuttaCache, solution::AbstractRungeKuttaSolution, solver::AbstractRungeKuttaSolver; savestages::Bool=false)
+"""
+    adaptivecheck!(cache::AbstractRungeKuttaCache, solution::AbstractRungeKuttaSolution, solver::AbstractRungeKuttaSolver)
+
+updates the step-size of an adaptive [`AbstractRungeKuttaSolver`](@ref).
+"""
+function adaptivecheck!(cache::AbstractRungeKuttaCache, solution::AbstractRungeKuttaSolution, solver::AbstractRungeKuttaSolver)
     if solver.adaptive isa AbstractAdaptiveParameters
-        @↓ u = solution
+        @↓ u, savestages = solution
         @↓ h = solver.stepsize
         @↓ n, m, v = cache
         k = savestages ? solution.k[n] : cache.k

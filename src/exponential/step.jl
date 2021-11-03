@@ -1,5 +1,5 @@
 """
-    step!(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::ExplicitExponentialRungeKuttaSolver, cache::ExplicitExponentialRungeKuttaCache)
+    step!(cache::ExplicitExponentialRungeKuttaCache, solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::ExplicitExponentialRungeKuttaSolver)
 
 computes a step of the [`AbstractRungeKuttaSolution`](@ref) of an [`AbstractInitialValueProblem`](@ref) using an [`ExplicitExponentialRungeKuttaSolver`](@ref).
 """

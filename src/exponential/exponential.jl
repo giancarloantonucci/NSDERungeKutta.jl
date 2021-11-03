@@ -32,10 +32,10 @@ end
 ##### Methods
 #####
 
-# function (solver::ExplicitExponentialRungeKuttaSolver)(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem)
-#     return solve!(solution, problem, solver)
-# end
+function (solver::ExplicitExponentialRungeKuttaSolver)(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem)
+    return solve!(solution, problem, solver)
+end
 
-# function (solver::ExplicitExponentialRungeKuttaSolver)(problem::AbstractInitialValueProblem)
-#     return solve(problem, solver)
-# end
+function (solver::ExplicitExponentialRungeKuttaSolver)(problem::AbstractInitialValueProblem)
+    return solve(problem, solver)
+end

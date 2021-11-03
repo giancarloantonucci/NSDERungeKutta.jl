@@ -1,9 +1,9 @@
 """
-    solve!(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; savestages::Bool=false) :: AbstractRungeKuttaSolution
+    solve!(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver) :: AbstractRungeKuttaSolution
 
 returns the [`AbstractRungeKuttaSolution`](@ref) of an [`AbstractInitialValueProblem`](@ref).
 """
-function NSDEBase.solve!(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; savestages::Bool=false)
+function NSDEBase.solve!(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver)
     cache = RungeKuttaCache(problem, solver)
     @↓ u0, (t0, tN) ← tspan = problem
     @↓ u, t = solution
@@ -13,8 +13,8 @@ function NSDEBase.solve!(solution::AbstractRungeKuttaSolution, problem::Abstract
     N = length(t)
     # WHILE instead of FOR loop -> adaptive methods
     while n < N && t[n] < tN
-        step!(cache, solution, problem, solver; savestages=savestages)
-        adaptivecheck!(cache, solution, solver; savestages=savestages)
+        step!(cache, solution, problem, solver)
+        adaptivecheck!(cache, solution, solver)
         @↓ n = cache
         # Stop if update is too small -> adaptive methods
         if n > 1 && t[n] ≈ t[n - 1]
@@ -42,6 +42,6 @@ returns the [`AbstractRungeKuttaSolution`](@ref) of an [`AbstractInitialValuePro
 """
 function NSDEBase.solve(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; savestages::Bool=false)
     solution = RungeKuttaSolution(problem, solver; savestages=savestages)
-    solve!(solution, problem, solver; savestages=savestages)
+    solve!(solution, problem, solver)
     return solution
 end
