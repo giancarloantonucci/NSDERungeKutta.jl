@@ -51,13 +51,9 @@ end
         h.args[1] isa Function ? h.args[1] :
         error("Got $(typeof(h.args)) instead of `ButcherTableau`, `AbstractRungeKuttaSolver` or `Function`.")
     framestyle --> :box
-    gridalpha --> 0.2
-    gridstyle --> :dot
     legend --> false
     levels --> [1.0]
     linewidth --> 1.5
-    minorgrid --> 0.1
-    minorgridstyle --> :dash
     seriestype --> :contour
     tick_direction --> :out
     Δx = max(1, abs(xlims[2] - xlims[1]))
@@ -81,10 +77,7 @@ end
     clims --> (0, 1)
     colorbar --> true
     framestyle --> :box
-    gridalpha --> 0.2
     legend --> false
-    minorgrid --> 0.1
-    minorgridstyle --> :dash
     seriestype --> :heatmap
     tick_direction --> :out
     Δx = max(1, abs(xlims[2] - xlims[1]))
@@ -107,12 +100,9 @@ end
         h.args[1] isa Function ? h.args[1] :
         error("Got $(typeof(h.args)) instead of `ButcherTableau`, `AbstractRungeKuttaSolver` or `Function`.")
     framestyle --> :box
-    gridalpha --> 0.2
     legend --> false
     levels --> [1.0]
     linewidth --> 1.5
-    minorgrid --> 0.1
-    minorgridstyle --> :dash
     seriestype --> :contour
     tick_direction --> :out
     Δx = max(1, abs(xlims[2] - xlims[1]))
@@ -136,10 +126,7 @@ end
     clims --> (0, 1)
     colorbar --> true
     framestyle --> :box
-    gridalpha --> 0.2
     legend --> false
-    minorgrid --> 0.1
-    minorgridstyle --> :dash
     seriestype --> :heatmap
     tick_direction --> :out
     Δx = max(1, abs(xlims[2] - xlims[1]))

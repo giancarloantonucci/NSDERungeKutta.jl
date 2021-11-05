@@ -14,55 +14,80 @@ All exported types and functions are considered part of the public API and thus 
 
 ### Abstract types
 
-```@autodocs
-Modules = [RungeKutta]
-Pages = ["abstract.jl"]
+```@docs
+AbstractRungeKuttaSolver
+AbstractRungeKuttaSolution
+AbstractRungeKuttaCache
+AbstractRungeKuttaParameters
+AbstractButcherTableau
+AbstractStepSize
+AbstractAdaptiveParameters
+AbstractNewtonParameters
 ```
 
 ### Composite types
 
-```@autodocs
-Modules = [RungeKutta]
-Pages = [
-  "explicit/struct.jl",
-  "implicit/struct.jl",
-  "exponential/struct.jl",
-  "solution.jl",
-  "stepsize.jl",
-  "tableau.jl",
-  "newton.jl",
-  "adaptive.jl",
-  "explicit/cache.jl",
-  "implicit/cache.jl",
-  "exponential/cache.jl"]
+```@docs
+ExplicitRungeKuttaSolver
+ImplicitRungeKuttaSolver
+ExplicitExponentialRungeKuttaSolver
+RungeKuttaSolution
+ButcherTableau
+StepSize
+AdaptiveParameters
+NewtonParameters
+ExplicitRungeKuttaCache
+ImplicitRungeKuttaCache
+ExplicitExponentialRungeKuttaCache
 ```
 
 #### Solvers
 
-```@autodocs
-Modules = [RungeKutta]
-Pages = [
-  "explicit/solvers.jl",
-  "implicit/solvers.jl",
-  "exponential/solvers.jl"]
+```@docs
+Euler
+Midpoint
+Heun2
+Ralston2
+Heun3
+Kutta3
+Ralston3
+SSPRK3
+RK4
+Rule38
+HeunEuler
+Fehlberg45
+DormandPrince54
+Verner65
+BackwardEuler
+ImplicitMidpoint
+CrankNicolson
+SDIRK3
+GaussLegendre4
+GaussLegendre6
+LobattoIIIA4
+LobattoIIIB2
+LobattoIIIB4
+LobattoIIIC2
+LobattoIIIC4
+RadauIA3
+RadauIA5
+RadauIIA3
+RadauIIA5
+ExponentialRK4
 ```
 
 ### Functions
 
-```@autodocs
-Modules = [RungeKutta]
-Pages = [
-  "solve.jl",
-  "explicit/step.jl",
-  "implicit/step.jl",
-  "exponential/step.jl"]
+```@docs
+solve!
+solve
+step!
 ```
 
 ### Utilities
 
-```@autodocs
-Modules = [RungeKutta]
-Pages = ["stability.jl"]
+```@docs
+ℛ
 ```
 
 ## Index

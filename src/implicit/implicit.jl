@@ -7,45 +7,40 @@ A composite type for an implicit [`AbstractRungeKuttaSolver`](@ref).
 ```julia
 ImplicitRungeKuttaSolver(tableau, stepsize, newton[, adaptive])
 IRK(args...; kwargs...)
+FIRK(args...; kwargs...)
 ```
 
-# Arguments
-- `tableau :: ButcherTableau` : Butcher tableau.
-- `stepsize :: StepSize` : step-size.
+## Arguments
+- `tableau :: ButcherTableau`
+- `stepsize :: StepSize`
 - `newton :: NewtonParameters` : simplified Newton's parameters.
 - `adaptive :: AdaptiveParameters` : embedded method's parameters.
 
-# Functions
-- [`show`](@ref) : shows name and contents.
-- [`summary`](@ref) : shows name.
+# Methods
+
+    (solver::ImplicitRungeKuttaSolver)(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem) :: RungeKuttaSolution
+    
+returns the `solution` of a `problem` using `solver`.
+    
+    (solver::ImplicitRungeKuttaSolver)(problem::AbstractInitialValueProblem; savestages::Bool=false) :: RungeKuttaSolution
+
+returns the [`RungeKuttaSolution`](@ref) of a `problem` using `solver`; `savestages` is a flag to save all stages into `k`.
 """
-mutable struct ImplicitRungeKuttaSolver{tableau_T, stepsize_T, newton_T, adaptive_T} <: AbstractRungeKuttaSolver
+mutable struct ImplicitRungeKuttaSolver{tableau_T<:ButcherTableau, stepsize_T<:StepSize, newton_T<:NewtonParameters, adaptive_T<:Union{AdaptiveParameters, Nothing}} <: AbstractRungeKuttaSolver
     tableau::tableau_T
     stepsize::stepsize_T
     newton::newton_T
     adaptive::adaptive_T
 end
 
-function ImplicitRungeKuttaSolver(tableau, h::Real, newton, adaptive)
-    return ImplicitRungeKuttaSolver(tableau, StepSize(h), newton, adaptive)
-end
-
-function ImplicitRungeKuttaSolver(tableau, stepsize, newton)
-    return ImplicitRungeKuttaSolver(tableau, stepsize, newton, nothing)
-end
-
-@doc (@doc ImplicitRungeKuttaSolver) function IRK(args...; kwargs...)
-    return ImplicitRungeKuttaSolver(args...; kwargs...)
-end
+ImplicitRungeKuttaSolver(tableau, h::Real, newton, adaptive) = ImplicitRungeKuttaSolver(tableau, StepSize(h), newton, adaptive)
+ImplicitRungeKuttaSolver(tableau, stepsize, newton) = ImplicitRungeKuttaSolver(tableau, stepsize, newton, nothing)
+@doc (@doc ImplicitRungeKuttaSolver) IRK(args...; kwargs...) = ImplicitRungeKuttaSolver(args...; kwargs...)
+@doc (@doc ImplicitRungeKuttaSolver) FIRK(args...; kwargs...) = ImplicitRungeKuttaSolver(args...; kwargs...)
 
 #####
 ##### Methods
 #####
 
-function (solver::ImplicitRungeKuttaSolver)(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem)
-    return solve!(solution, problem, solver)
-end
-
-function (solver::ImplicitRungeKuttaSolver)(problem::AbstractInitialValueProblem; savestages::Bool = false)
-    return solve(problem, solver; savestages=savestages)
-end
+(solver::ImplicitRungeKuttaSolver)(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem) = solve!(solution, problem, solver)
+(solver::ImplicitRungeKuttaSolver)(problem::AbstractInitialValueProblem; savestages::Bool=false) = solve(problem, solver; savestages=savestages)

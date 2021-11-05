@@ -6,8 +6,15 @@ A composite type for the [`AbstractRungeKuttaCache`](@ref) of an [`ExplicitExpon
 # Constructors
 ```julia
 ExplicitExponentialRungeKuttaCache(n, Q, α, β, γ, E, E2)
-ExplicitExponentialRungeKuttaCache(problem::AbstractInitialValueProblem, solver::ExplicitExponentialRungeKuttaSolver)
+ExplicitExponentialRungeKuttaCache(problem, solver)
 ```
+
+## Arguments
+- `problem :: AbstractInitialValueProblem`
+- `solver :: ExplicitRungeKuttaSolver`
+
+# Functions
+- [`RungeKuttaCache`](@ref) : alternative caller.
 """
 mutable struct ExplicitExponentialRungeKuttaCache{n_T, Q_T, α_T, β_T, γ_T, E_T, E2_T} <: AbstractRungeKuttaCache
     n::n_T
@@ -43,6 +50,4 @@ end
 ##### Functions
 #####
 
-function RungeKuttaCache(problem::AbstractInitialValueProblem, solver::ExplicitExponentialRungeKuttaSolver)
-    return ExplicitExponentialRungeKuttaCache(problem, solver)
-end
+RungeKuttaCache(problem::AbstractInitialValueProblem, solver::ExplicitExponentialRungeKuttaSolver) = ExplicitExponentialRungeKuttaCache(problem, solver)

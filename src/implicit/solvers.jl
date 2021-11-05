@@ -13,10 +13,7 @@ function BackwardEuler(; h::Real=0.0, ϵ::Real=1e-3, K::Integer=10)
     newton = NewtonParameters(ϵ=ϵ, K=K)
     return IRK(tableau, h, newton)
 end
-
-@doc (@doc BackwardEuler) function ImplicitEuler(args...; kwargs...)
-    return BackwardEuler(args...; kwargs...)
-end
+@doc (@doc BackwardEuler) ImplicitEuler(args...; kwargs...) = BackwardEuler(args...; kwargs...)
 
 """
     ImplicitMidpoint(; h::Real=0.0, ϵ::Real=1e-3, K::Integer=10) :: ImplicitRungeKuttaSolver
@@ -82,10 +79,7 @@ function GaussLegendre4(; h::Real=0.0, ϵ::Real=1e-3, K::Integer=10)
     newton = NewtonParameters(ϵ=ϵ, K=K)
     return IRK(tableau, h, newton)
 end
-
-@doc (@doc GaussLegendre4) function GL4(args...; kwargs...)
-    return GaussLegendre4(args...; kwargs...)
-end
+@doc (@doc GaussLegendre4) GL4(args...; kwargs...) = GaussLegendre4(args...; kwargs...)
 
 """
     GaussLegendre6(; h::Real=0.0, ϵ::Real=1e-3, K::Integer=10) :: ImplicitRungeKuttaSolver
@@ -104,10 +98,7 @@ function GaussLegendre6(; h::Real=0.0, ϵ::Real=1e-3, K::Integer=10)
     newton = NewtonParameters(ϵ=ϵ, K=K)
     return IRK(tableau, h, newton)
 end
-
-@doc (@doc GaussLegendre6) function GL6(args...; kwargs...)
-    return GaussLegendre6(args...; kwargs...)
-end
+@doc (@doc GaussLegendre6) GL6(args...; kwargs...) = GaussLegendre6(args...; kwargs...)
 
 """
     LobattoIIIA4(; h::Real=0.0, ϵ::Real=1e-3, K::Integer=10) :: ImplicitRungeKuttaSolver

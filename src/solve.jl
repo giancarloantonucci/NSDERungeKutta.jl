@@ -1,7 +1,7 @@
 """
     solve!(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver) :: AbstractRungeKuttaSolution
 
-returns the [`AbstractRungeKuttaSolution`](@ref) of an [`AbstractInitialValueProblem`](@ref).
+returns the `solution` of a `problem` using an [`AbstractRungeKuttaSolver`](@ref).
 """
 function NSDEBase.solve!(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver)
     cache = RungeKuttaCache(problem, solver)
@@ -38,7 +38,7 @@ end
 """
     solve(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; savestages::Bool=false) :: AbstractRungeKuttaSolution
 
-returns the [`AbstractRungeKuttaSolution`](@ref) of an [`AbstractInitialValueProblem`](@ref).
+returns the `solution` of a `problem` using an [`AbstractRungeKuttaSolver`](@ref).
 """
 function NSDEBase.solve(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; savestages::Bool=false)
     solution = RungeKuttaSolution(problem, solver; savestages=savestages)

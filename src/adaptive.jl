@@ -5,19 +5,15 @@ A composite type for the parameters of an adaptive [`AbstractRungeKuttaSolver`](
 
 # Constructors
 ```julia
-AdaptiveParameters(; δ = 0.0, ϵ = 1e-5, K = 100)
+AdaptiveParameters(; δ=0.0, ϵ=1e-5, K=100)
 ```
 
-# Arguments
-- `δ :: Real`    : absolute tolerance.
-- `ϵ :: Real`    : relative tolerance.
+## Arguments
+- `δ :: Real` : absolute tolerance.
+- `ϵ :: Real` : relative tolerance.
 - `K :: Integer` : maximum number of iterations.
-
-# Methods
-- [`show`](@ref) : shows name and contents.
-- [`summary`](@ref) : shows name.
 """
-struct AdaptiveParameters{δ_T, ϵ_T, K_T} <: AbstractAdaptiveParameters
+struct AdaptiveParameters{δ_T<:Real, ϵ_T<:Real, K_T<:Integer} <: AbstractAdaptiveParameters
     δ::δ_T
     ϵ::ϵ_T
     K::K_T
@@ -32,7 +28,7 @@ AdaptiveParameters(; δ=0.0, ϵ=1e-5, K=100) = AdaptiveParameters(δ, ϵ, K)
 """
     adaptivecheck!(cache::AbstractRungeKuttaCache, solution::AbstractRungeKuttaSolution, solver::AbstractRungeKuttaSolver)
 
-updates the step-size of an adaptive [`AbstractRungeKuttaSolver`](@ref).
+updates the step-size of an adaptive `solver`.
 """
 function adaptivecheck!(cache::AbstractRungeKuttaCache, solution::AbstractRungeKuttaSolution, solver::AbstractRungeKuttaSolver)
     if solver.adaptive isa AbstractAdaptiveParameters

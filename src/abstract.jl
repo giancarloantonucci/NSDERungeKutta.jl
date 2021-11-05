@@ -19,5 +19,5 @@ abstract type AbstractButcherTableau <: AbstractRungeKuttaParameters end
 "An abstract type for the step-size of an [`AbstractRungeKuttaSolver`](@ref)."
 abstract type AbstractStepSize <: AbstractRungeKuttaParameters end
 
-"An abstract type for the parameters of simplified Newton of an [`ImplicitRungeKuttaSolver`](@ref)."
+"An abstract type for the parameters used by simplified Newton within an [`ImplicitRungeKuttaSolver`](@ref)."
 abstract type AbstractNewtonParameters <: AbstractRungeKuttaParameters end

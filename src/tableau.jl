@@ -6,8 +6,8 @@ A composite type for the Butcher tableau of an [`AbstractRungeKuttaSolver`](@ref
 \begin{array}{c|c}
     c & A \\
     \hline
-    p & b \\
-    q & d
+    p & b^\intercal \\
+    q & d^\intercal
 \end{array}
 ```
 
@@ -17,21 +17,20 @@ ButcherTableau(A, b, c, s, p[, d, q])
 ButcherTableau(tableau)
 ```
 
-# Arguments
-- `A :: AbstractMatrix` : matrix of coefficients.
-- `b :: AbstractVector` : vector of weights.
-- `c :: AbstractVector` : vector of nodes.
+## Arguments
+- `A :: AbstractMatrix{<:Real}` : matrix of coefficients.
+- `b :: AbstractVector{<:Real}` : vector of weights.
+- `c :: AbstractVector{<:Real}` : vector of nodes.
 - `s :: Integer` : number of stages.
 - `p :: Integer` : order of accuracy.
-- `d :: AbstractVector` : embedding's vector of weights.
+- `d :: AbstractVector{<:Real}` : embedding's vector of weights.
 - `q :: Integer` : embedding's order of accuracy.
-- `tableau :: AbstractMatrix` : from which all other fields can be extracted.
+- `tableau :: AbstractMatrix` : matrix of parameters as in the definition.
 
 # Functions
-- [`show`](@ref) : shows name and contents.
-- [`summary`](@ref) : shows name.
+[`butchertableau`](@ref) : returns Butcher tableau as matrix.
 """
-struct ButcherTableau{A_T, b_T, c_T, s_T, p_T, d_T, q_T} <: AbstractButcherTableau
+struct ButcherTableau{A_T<:AbstractMatrix{<:Real}, b_T<:AbstractVector{<:Real}, c_T<:AbstractVector{<:Real}, s_T<:Integer, p_T<:Integer, d_T<:Union{AbstractVector{<:Real}, Nothing}, q_T<:Union{Integer, Nothing}} <: AbstractButcherTableau
     A::A_T
     b::b_T
     c::c_T
@@ -60,5 +59,19 @@ function ButcherTableau(tableau::AbstractMatrix)
         d = tableau[nrows, 2:ncols]
         q = convert(Integer, tableau[nrows, 1])
         return ButcherTableau(A, b, c, s, p, d, q)
+    end
+end
+
+"""
+    butchertableau(solver::AbstractRungeKuttaSolver)
+
+returns the Butcher tableau of a `solver` as a matrix.
+"""
+function butchertableau(solver::AbstractRungeKuttaSolver)
+    @↓ A, b, c, s, p, d, q = solver.tableau
+    if d isa Nothing && q isa Nothing
+        return [c A; p transpose(b)]
+    else
+        return [c A; p transpose(b); q transpose(d)]
     end
 end

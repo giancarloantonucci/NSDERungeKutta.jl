@@ -7,16 +7,21 @@ A composite type for the [`AbstractRungeKuttaCache`](@ref) of an [`ImplicitRunge
 # Constructors
 ```julia
 ImplicitRungeKuttaCache(n, m, v, k, Δk, J)
-ImplicitRungeKuttaCache(problem::AbstractInitialValueProblem, solver::ImplicitRungeKuttaSolver)
+ImplicitRungeKuttaCache(problem, solver)
 ```
 
-# Arguments
+## Arguments
 - `n :: Integer` : step counter.
 - `m :: Integer` : adaptive correction counter.
-- `v :: AbstractVector{Union{Number, AbstractVector{Number}}}` : temp for `solution.u[n]`.
-- `k :: AbstractVector{Union{Number, AbstractVector{Number}}}` : stages.
-- `Δk :: AbstractVector{Union{Number, AbstractVector{Number}}}` : stages' correction.
-- `J :: AbstractMatrix{Union{Number, AbstractMatrix{Number}}}` : Jacobian of RHS function.
+- `v :: AbstractVector{<:Number}` : temp for `solution.u[n]`.
+- `k :: AbstractVector{<:Union{Number, AbstractVector{<:Number}}}` : stages.
+- `Δk :: AbstractVector{<:Union{Number, AbstractVector{<:Number}}}` : stages' correction.
+- `J :: AbstractMatrix{<:Number}` : Jacobian of right-hand side derivative.
+- `problem :: AbstractInitialValueProblem`
+- `solver :: ExplicitRungeKuttaSolver`
+
+# Functions
+- [`RungeKuttaCache`](@ref) : alternative caller.
 """
 mutable struct ImplicitRungeKuttaCache{n_T, m_T, v_T, k_T, Δk_T, J_T} <: AbstractRungeKuttaCache
     n::n_T
@@ -44,6 +49,4 @@ end
 ##### Functions
 #####
 
-function RungeKuttaCache(problem::AbstractInitialValueProblem, solver::ImplicitRungeKuttaSolver)
-    return ImplicitRungeKuttaCache(problem, solver)
-end
+RungeKuttaCache(problem::AbstractInitialValueProblem, solver::ImplicitRungeKuttaSolver) = ImplicitRungeKuttaCache(problem, solver)

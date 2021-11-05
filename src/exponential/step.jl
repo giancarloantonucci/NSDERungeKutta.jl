@@ -1,7 +1,7 @@
 """
     step!(cache::ExplicitExponentialRungeKuttaCache, solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::ExplicitExponentialRungeKuttaSolver)
 
-computes a step of the [`AbstractRungeKuttaSolution`](@ref) of an [`AbstractInitialValueProblem`](@ref) using an [`ExplicitExponentialRungeKuttaSolver`](@ref).
+computes a step of the `solution` of a `problem` using an [`ExplicitExponentialRungeKuttaSolver`](@ref).
 """
 function step!(cache::ExplicitExponentialRungeKuttaCache, solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::ExplicitExponentialRungeKuttaSolver; kwargs...)
     @↓ n, Q, α, β, γ, E, E2 = cache

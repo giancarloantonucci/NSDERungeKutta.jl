@@ -5,16 +5,19 @@ A composite type for an exponential explicit [`AbstractRungeKuttaSolver`](@ref).
 
 # Constructors
 ```julia
-ExplicitExponentialRungeKuttaSolver(stepsize)
+ExplicitExponentialRungeKuttaSolver(stepsize::StepSize)
 EERK(args...; kwargs...)
 ```
 
-# Arguments
-- `stepsize :: StepSize` : step-size.
+# Methods
 
-# Functions
-- [`show`](@ref) : shows name and contents.
-- [`summary`](@ref) : shows name.
+    (solver::ExplicitExponentialRungeKuttaSolver)(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem) :: RungeKuttaSolution
+    
+returns the `solution` of a `problem` using `solver`.
+    
+    (solver::ExplicitExponentialRungeKuttaSolver)(problem::AbstractInitialValueProblem) :: RungeKuttaSolution
+
+returns the [`RungeKuttaSolution`](@ref) of a `problem` using `solver`.
 """
 mutable struct ExplicitExponentialRungeKuttaSolver{stepsize_T} <: AbstractRungeKuttaSolver
     stepsize::stepsize_T
@@ -32,10 +35,5 @@ end
 ##### Methods
 #####
 
-function (solver::ExplicitExponentialRungeKuttaSolver)(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem)
-    return solve!(solution, problem, solver)
-end
-
-function (solver::ExplicitExponentialRungeKuttaSolver)(problem::AbstractInitialValueProblem)
-    return solve(problem, solver)
-end
+(solver::ExplicitExponentialRungeKuttaSolver)(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem) = solve!(solution, problem, solver)
+(solver::ExplicitExponentialRungeKuttaSolver)(problem::AbstractInitialValueProblem) = solve(problem, solver)

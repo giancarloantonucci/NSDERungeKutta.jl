@@ -1,7 +1,7 @@
 """
     step!(cache::ImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::ImplicitRungeKuttaSolver)
 
-computes a step of the [`AbstractRungeKuttaSolution`](@ref) of an [`AbstractInitialValueProblem`](@ref) using an [`ImplicitRungeKuttaSolver`](@ref).
+computes a step of the `solution` of a 'problem' using an [`ImplicitRungeKuttaSolver`](@ref).
 """
 function step!(cache::ImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::ImplicitRungeKuttaSolver)
     @↓ n, v, Δk, J = cache
@@ -15,7 +15,7 @@ function step!(cache::ImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolut
     # TO-DO: @← J = Df(v, u[n], t[n])
     Df!(J, v, u[n], t[n])
     Z = factorize(I - h * kron(A, J))
-    # Compute stages
+    # stages
     zero!(k)
     for l = 1:K
         for i = 1:s
@@ -40,7 +40,7 @@ function step!(cache::ImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolut
             k[i] .+= Δk_[((i - 1) * L + 1):(i * L)]
         end
     end
-    # Compute step
+    # step
     zero!(v)
     for i = 1:s
         @. v += b[i] * k[i]

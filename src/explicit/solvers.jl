@@ -13,10 +13,7 @@ function Euler(; h::Real=0.0)
     ])
     return ERK(tableau, h)
 end
-
-@doc (@doc Euler) function ExplicitEuler(args...; kwargs...)
-    return Euler(args...; kwargs...)
-end
+@doc (@doc Euler) ExplicitEuler(args...; kwargs...) = Euler(args...; kwargs...)
 
 """
     Heun2(; h::Real=0.0) :: ExplicitRungeKuttaSolver
@@ -63,9 +60,7 @@ function Midpoint(; h::Real=0.0)
     ])
     return ERK(tableau, h)
 end
-@doc (@doc Midpoint) function ExplicitMidpoint(args...; kwargs...)
-    return Midpoint(args...; kwargs...)
-end
+@doc (@doc Midpoint) ExplicitMidpoint(args...; kwargs...) = Midpoint(args...; kwargs...)
 
 """
     Heun3(; h::Real=0.0) :: ExplicitRungeKuttaSolver
@@ -203,10 +198,7 @@ function Fehlberg45(; h::Real=0.0, δ::Real=0.0, ϵ::Real=1e-5, K::Integer=100)
     adaptive = AdaptiveParameters(δ=δ, ϵ=ϵ, K=K)
     return ERK(tableau, h, adaptive)
 end
-
-@doc (@doc Fehlberg45) function F45(args...; kwargs...)
-    return Fehlberg45(args...; kwargs...)
-end
+@doc (@doc Fehlberg45) F45(args...; kwargs...) = Fehlberg45(args...; kwargs...)
 
 """
     DormandPrince54(; h::Real=0.0, δ::Real=0.0, ϵ::Real=1e-5, K::Integer=100) :: ExplicitRungeKuttaSolver
@@ -230,10 +222,7 @@ function DormandPrince54(; h::Real=0.0, δ::Real=0.0, ϵ::Real=1e-5, K::Integer=
     adaptive = AdaptiveParameters(δ=δ, ϵ=ϵ, K=K)
     return ERK(tableau, h, adaptive)
 end
-
-@doc (@doc DormandPrince54) function DP54(args...; kwargs...)
-    return DormandPrince54(args...; kwargs...)
-end
+@doc (@doc DormandPrince54) DP54(args...; kwargs...) = DormandPrince54(args...; kwargs...)
 
 """
     Verner65(; h::Real=0.0, δ::Real=0.0, ϵ::Real=1e-5, K::Integer=100) :: ExplicitRungeKuttaSolver
@@ -258,7 +247,4 @@ function Verner65(; h::Real=0.0, δ::Real=0.0, ϵ::Real=1e-5, K::Integer=100)
     adaptive = AdaptiveParameters(δ=δ, ϵ=ϵ, K=K)
     return ERK(tableau, h, adaptive)
 end
-
-@doc (@doc Verner65) function V65(args...; kwargs...)
-    return Verner65(args...; kwargs...)
-end
+@doc (@doc Verner65) V65(args...; kwargs...) = Verner65(args...; kwargs...)

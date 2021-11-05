@@ -15,12 +15,12 @@ end
 ℛ(z::Number, solver::AbstractRungeKuttaSolver) = ℛ(z, solver.tableau)
 
 """
-    ℛ(Z::AbstractMatrix, tableau::AbstractButcherTableau) :: AbstractMatrix
-    ℛ(Z::AbstractMatrix, solver::AbstractRungeKuttaSolver) :: AbstractMatrix
+    ℛ(Z::AbstractMatrix{<:Number}, tableau::AbstractButcherTableau) :: AbstractMatrix{<:Number}
+    ℛ(Z::AbstractMatrix{<:Number}, solver::AbstractRungeKuttaSolver) :: AbstractMatrix{<:Number}
 
 returns the stability function of an [`AbstractRungeKuttaSolver`](@ref).
 """
-function ℛ(Z::AbstractMatrix, tableau::AbstractButcherTableau)
+function ℛ(Z::AbstractMatrix{<:Number}, tableau::AbstractButcherTableau)
     @↓ A, b, s = tableau
     e = ones(s)
     tmp = kron(e, Z)
@@ -28,4 +28,4 @@ function ℛ(Z::AbstractMatrix, tableau::AbstractButcherTableau)
     tmp = kron(b', Matrix(1.0I, size(Z)...)) * tmp
     return I + tmp
 end
-ℛ(Z::AbstractMatrix, solver::AbstractRungeKuttaSolver) = ℛ(Z, solver.tableau)
+ℛ(Z::AbstractMatrix{<:Number}, solver::AbstractRungeKuttaSolver) = ℛ(Z, solver.tableau)

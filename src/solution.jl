@@ -6,25 +6,37 @@ A composite type for an [`AbstractRungeKuttaSolution`](@ref).
 # Constructors
 ```julia
 RungeKuttaSolution(u, t[, k, savestages])
-RungeKuttaSolution(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; savestages=false)
+RungeKuttaSolution(problem, solver; savestages=false)
 ```
 
-# Arguments
-- `u :: AbstractVector` : numerical solution.
-- `t :: AbstractVector` : time grid.
-- `k :: AbstractVector` : vector of stages.
-- `savestages :: Bool` : to save all stages into `k`.
+## Arguments
+- `u :: AbstractVector{<:AbstractVector{<:Number}}` : numerical solution.
+- `t :: AbstractVector{<:Real}` : time grid.
+- `k :: AbstractVector{<:AbstractVector{<:AbstractVector{<:Number}}}` : vector of stages.
+- `problem :: AbstractInitialValueProblem`
+- `solver :: AbstractRungeKuttaSolver`
+- `savestages :: Bool` : save all stages into `k`.
 
 # Functions
+- [`extract`](@ref) : extracts coordinate.
 - [`getindex`](@ref) : get value(s) and time.
 - [`lastindex`](@ref) : last index.
 - [`length`](@ref) : number of time steps.
 - [`setindex!`](@ref) : set value(s) and time.
-- [`show`](@ref) : shows name and contents.
 - [`size`](@ref) : number of variables and time steps.
-- [`summary`](@ref) : shows name.
+
+# Methods
+
+    (solution::RungeKuttaSolution)(tₚ::Real)
+    
+returns a tuple containing the values for `u` and `t` closest to `tₚ`.
+
+    (solution::RungeKuttaSolution)(tspan::Tuple{Real,Real}) :: RungeKuttaSolution
+    (solution::RungeKuttaSolution)(t₁::Real, t₂::Real) :: RungeKuttaSolution
+    
+returns a [`RungeKuttaSolution`](@ref) containing the values for `u` and `t` in `tspan` (i.e. `t₁ ≤ t ≤ t₂`).
 """
-struct RungeKuttaSolution{u_T, t_T, k_T, savestages_T} <: AbstractRungeKuttaSolution
+struct RungeKuttaSolution{u_T<:AbstractVector{<:AbstractVector{<:Number}}, t_T<:AbstractVector{<:Real}, k_T<:Union{AbstractVector{<:AbstractVector{<:AbstractVector{<:Number}}}, Nothing}, savestages_T<:Bool} <: AbstractRungeKuttaSolution
     u::u_T
     t::t_T
     k::k_T
@@ -60,12 +72,6 @@ end
 #####
 ##### Methods
 #####
-
-function extract(solution::RungeKuttaSolution, i)
-    (L, N) = size(solution)
-    @↓ u, t = solution
-    return RungeKuttaSolution([u[n][i] for n = 1:N], t)
-end
 
 # Make solution callable
 function findclosest(target, vector)
@@ -125,6 +131,17 @@ end
 #####
 
 """
+    extract(solution::RungeKuttaSolution, i::Integer) :: RungeKuttaSolution
+
+returns the `i`th coordinate of `solution`.
+"""
+function extract(solution::RungeKuttaSolution, i::Integer)
+    (L, N) = size(solution)
+    @↓ u, t = solution
+    return RungeKuttaSolution([u[n][i] for n = 1:N], t)
+end
+
+"""
     length(solution::RungeKuttaSolution)
 
 returns the number of time steps of `solution`.
@@ -139,7 +156,7 @@ returns a tuple containing the number of variables and of time steps of `solutio
 Base.size(solution::RungeKuttaSolution) = (length(solution.u[1]), length(solution.t))
 
 """
-    getindex(solution::RungeKuttaSolution, i::Integer)
+    getindex(solution::RungeKuttaSolution, i::Integer) :: RungeKuttaSolution
 
 returns a [`RungeKuttaSolution`](@ref) containing the fields of `solution` indexed at `i`.
 """

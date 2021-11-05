@@ -6,16 +6,21 @@ A composite type for the [`AbstractRungeKuttaCache`](@ref) of an [`ExplicitRunge
 # Constructors
 ```julia
 ExplicitRungeKuttaCache(n, m, v, k)
-ExplicitRungeKuttaCache(problem::AbstractInitialValueProblem, solver::ExplicitRungeKuttaSolver)
+ExplicitRungeKuttaCache(problem, solver)
 ```
 
-# Arguments
+## Arguments
 - `n :: Integer` : step counter.
 - `m :: Integer` : adaptive correction counter.
-- `v :: AbstractVector{Union{Number, AbstractVector{Number}}}` : temp for `solution.u[n]`.
-- `k :: AbstractVector{Union{Number, AbstractVector{Number}}}` : stages.
+- `v :: AbstractVector{<:Number}` : temp for `solution.u[n]`.
+- `k :: AbstractVector{<:AbstractVector{<:Number}}` : stages.
+- `problem :: AbstractInitialValueProblem`
+- `solver :: ExplicitRungeKuttaSolver`
+
+# Functions
+- [`RungeKuttaCache`](@ref) : alternative caller.
 """
-mutable struct ExplicitRungeKuttaCache{n_T, m_T, v_T, k_T} <: AbstractRungeKuttaCache
+mutable struct ExplicitRungeKuttaCache{n_T<:Integer, m_T<:Integer, v_T<:AbstractVector{<:Number}, k_T<:AbstractVector{<:AbstractVector{<:Number}}} <: AbstractRungeKuttaCache
     n::n_T
     m::m_T
     v::v_T
@@ -27,9 +32,7 @@ function ExplicitRungeKuttaCache(problem::AbstractInitialValueProblem, solver::E
     @↓ u0 = problem
     v = similar(u0)
     @↓ s = solver.tableau
-    u0_T = eltype(u0)
-    u0_L = length(u0)
-    k = Vector{u0_T}(undef, s, u0_L)
+    k = Vector{eltype(u0)}(undef, s, length(u0))
     return ExplicitRungeKuttaCache(n, m, v, k)
 end
 
@@ -37,6 +40,11 @@ end
 ##### Functions
 #####
 
-function RungeKuttaCache(problem::AbstractInitialValueProblem, solver::ExplicitRungeKuttaSolver)
-    return ExplicitRungeKuttaCache(problem, solver)
-end
+"""
+    RungeKuttaCache(problem::AbstractInitialValueProblem, solver::ExplicitRungeKuttaSolver) :: ExplicitRungeKuttaCache
+    RungeKuttaCache(problem::AbstractInitialValueProblem, solver::ExplicitExponentialRungeKuttaSolver) :: ExplicitExponentialRungeKuttaCache
+    RungeKuttaCache(problem::AbstractInitialValueProblem, solver::ImplicitRungeKuttaSolver) :: ImplicitRungeKuttaCache
+    
+returns an [`AbstractRungeKuttaCache`](@ref) for each type of `solver`.
+"""
+RungeKuttaCache(problem::AbstractInitialValueProblem, solver::ExplicitRungeKuttaSolver) = ExplicitRungeKuttaCache(problem, solver)
