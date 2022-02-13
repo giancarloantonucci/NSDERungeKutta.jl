@@ -10,7 +10,7 @@ NSDEBase = "5aa61ba9-7752-4810-b2ec-484f26c3f007"
 RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 
 [compat]
-ArrowMacros = "0.1"
+ArrowMacros = "0.1, 0.2"
 NSDEBase = "0.2"
 RecipesBase = "0.7.0, 0.8, 1.0"
 julia = "1"
