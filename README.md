@@ -2,7 +2,7 @@
 
 A Julia package implementing Runge-Kutta methods.
 
-[![Docs Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://giancarloantonucci.github.io/RungeKutta.jl/stable) [![Docs Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://giancarloantonucci.github.io/RungeKutta.jl/dev) [![Build Status](https://img.shields.io/github/workflow/status/giancarloantonucci/RungeKutta.jl/CI)](https://github.com/giancarloantonucci/RungeKutta.jl/actions) [![Coverage](https://img.shields.io/codecov/c/github/giancarloantonucci/RungeKutta.jl?label=coverage)](https://codecov.io/gh/giancarloantonucci/RungeKutta.jl)
+[![Docs Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://giancarloantonucci.github.io/RungeKutta.jl/dev) [![Build Status](https://img.shields.io/github/workflow/status/giancarloantonucci/RungeKutta.jl/CI)](https://github.com/giancarloantonucci/RungeKutta.jl/actions) [![Coverage](https://img.shields.io/codecov/c/github/giancarloantonucci/RungeKutta.jl?label=coverage)](https://codecov.io/gh/giancarloantonucci/RungeKutta.jl)
 
 ## Installation
 
@@ -12,7 +12,7 @@ RungeKutta.jl is compatible with Julia v1.0 and above. From the Julia REPL,
 ]add https://github.com/giancarloantonucci/RungeKutta.jl
 ```
 
-Below is a brief introduction, but read the [documentation](https://giancarloantonucci.github.io/RungeKutta.jl/dev) for a complete overview of this package.
+Read the [documentation](https://giancarloantonucci.github.io/RungeKutta.jl/dev) for a complete overview of this package.
 
 ## Usage
 
@@ -20,9 +20,9 @@ Let's say that we want to solve the [simple gravity pendulum problem](https://en
 
 ```julia
 using RungeKutta
-f(u, t) = [u[2]; -9.81 * sin(u[1])]
-u0 = [0.0; π/2]
-tspan = (0.0, 2π)
+f(u, t) = [u[2]; -sin(u[1])]
+u0 = [0.0; π/4]
+tspan = (0.0, 2π/3 * √9.81)
 problem = IVP(f, u0, tspan)
 solver = Midpoint(h = 1e-2)
 solution = solve(problem, solver)
