@@ -1,159 +1,169 @@
 """
     RungeKuttaSolution <: AbstractRungeKuttaSolution
 
-A composite type for an [`AbstractRungeKuttaSolution`](@ref).
+A composite type for an [`AbstractRungeKuttaSolution`](@ref) obtained using an [`AbstractRungeKuttaSolver`](@ref).
 
 # Constructors
 ```julia
-RungeKuttaSolution(u, t[, k, savestages])
-RungeKuttaSolution(problem, solver; savestages=false)
+RungeKuttaSolution(u, t)
+RungeKuttaSolution(problem, solver)
 ```
 
 ## Arguments
-- `u :: AbstractVector{<:AbstractVector{<:Number}}` : numerical solution.
-- `t :: AbstractVector{<:Real}` : time grid.
-- `k :: AbstractVector{<:AbstractVector{<:AbstractVector{<:Number}}}` : vector of stages.
-- `problem :: AbstractInitialValueProblem`
-- `solver :: AbstractRungeKuttaSolver`
-- `savestages :: Bool` : save all stages into `k`.
+- `u :: AbstractVector{𝕍} where 𝕍<:AbstractVector{ℂ} where ℂ<:Number` : numerical solution.
+- `t :: AbstractVector{ℝ} where ℝ<:Real` : time grid.
 
 # Functions
-- [`extract`](@ref) : extracts coordinate.
+- [`extract`](@ref) : extract variable.
+- [`firstindex`](@ref) : first index.
 - [`getindex`](@ref) : get value(s) and time.
 - [`lastindex`](@ref) : last index.
 - [`length`](@ref) : number of time steps.
 - [`setindex!`](@ref) : set value(s) and time.
 - [`size`](@ref) : number of variables and time steps.
-
-# Methods
-
-    (solution::RungeKuttaSolution)(tₚ::Real)
-    
-returns a tuple containing the values for `u` and `t` closest to `tₚ`.
-
-    (solution::RungeKuttaSolution)(tspan::Tuple{Real,Real}) :: RungeKuttaSolution
-    (solution::RungeKuttaSolution)(t₁::Real, t₂::Real) :: RungeKuttaSolution
-    
-returns a [`RungeKuttaSolution`](@ref) containing the values for `u` and `t` in `tspan` (i.e. `t₁ ≤ t ≤ t₂`).
 """
-struct RungeKuttaSolution{u_T<:AbstractVector{<:AbstractVector{<:Number}}, t_T<:AbstractVector{<:Real}, k_T<:Union{AbstractVector{<:AbstractVector{<:AbstractVector{<:Number}}}, Nothing}, savestages_T<:Bool} <: AbstractRungeKuttaSolution
+struct RungeKuttaSolution{u_T<:(AbstractVector{𝕍} where 𝕍<:AbstractVector{ℂ} where ℂ<:Number), t_T<:(AbstractVector{ℝ} where ℝ<:Real)} <: AbstractRungeKuttaSolution
     u::u_T
     t::t_T
-    k::k_T
-    savestages::savestages_T
 end
-
-RungeKuttaSolution(u, t) = RungeKuttaSolution(u, t, nothing, false)
-RungeKuttaSolution(u, t, k) = RungeKuttaSolution(u, t, k, true)
-
-function RungeKuttaSolution(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; savestages::Bool=false)
+function RungeKuttaSolution(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver)
     @↓ u0, (t0, tN) ← tspan = problem
     @↓ h = solver.stepsize
-    N = round(Int, (tN - t0) / h) + 1
-    # Initialise u
+    N = round(Integer, (tN - t0) / h) + 1
+    # initialise u
     u0_T = eltype(u0)
-    L = length(u0)
-    u = Vector{u0_T}(undef, N, L)
+    d = length(u0)
+    u = Vector{u0_T}(undef, N, d)
     u[1] = u0
-    # Initialise t
-    t0_T = typeof(t0)
+    # initialise t
+    t0_T = eltype(t0)
     t = Vector{t0_T}(undef, N)
     t[1] = t0
-    # Initialise k
-    if savestages
-        @↓ s = solver.tableau
-        k = Vector{u0_T}(undef, N, s, L)
-        return RungeKuttaSolution(u, t, k)
-    else
-        return RungeKuttaSolution(u, t)
-    end
+    return RungeKuttaSolution(u, t)
 end
 
 #####
 ##### Methods
 #####
 
-# Make solution callable
-function findclosest(target, vector)
-    N = length(vector)
-    if target ≤ vector[1]
-        return (1, vector[1])
-    elseif target ≥ vector[end]
-        return (N, vector[end])
+function findindex(tₚ, t, u)
+    N = length(t)
+    if tₚ < t[1]
+        return 2
     end
-    i = 0
-    j = N
-    n = 0
-    while i < j
-        n = (i + j) ÷ 2
-        if target == vector[n]
-            return vector[n]
-        elseif target < vector[n]
-            if (n > 1) && (target > vector[n - 1])
-                if target - vector[n - 1] ≥ vector[n] - target
-                    return (n, vector[n])
-                else
-                    return (n - 1, vector[n - 1])
-                end
-            end
-            j = n
-        else
-            if (n < N) && (target < vector[n + 1])
-                if target - vector[n] ≥ vector[n + 1] - target
-                    return (n + 1, vector[n + 1])
-                else
-                    return (n, vector[n])
-                end
-            end
-            i = n + 1
+    for n in 2:N
+        if t[n-1] ≤ tₚ ≤ t[n]
+            return n
         end
     end
-    return n, vector[n]
+    if tₚ > t[N]
+        return N
+    end
 end
 
+function nearestneighbour(x, xᵢ₋₁, xᵢ, fᵢ₋₁, fᵢ)
+    s = abs(xᵢ - x) > abs(x - xᵢ₋₁) ? fᵢ₋₁ : fᵢ
+    return s
+end
+
+function linearspline(x, xᵢ₋₁, xᵢ, fᵢ₋₁, fᵢ)
+    hᵢ = xᵢ - xᵢ₋₁
+    aᵢ₋₁ = (xᵢ - x) / hᵢ
+    aᵢ = (x - xᵢ₋₁) / hᵢ
+    s = @. aᵢ₋₁ * fᵢ₋₁ + aᵢ * fᵢ
+    return s
+end
+
+function hermitecubicspline(x, xᵢ₋₁, xᵢ, fᵢ₋₁, fᵢ, dfᵢ₋₁, dfᵢ)
+    hᵢ = xᵢ - xᵢ₋₁
+    c₀ = fᵢ₋₁
+    c₁ = dfᵢ₋₁
+    c₂ = @. (3 * (fᵢ - fᵢ₋₁) / hᵢ - (dfᵢ + 2 * dfᵢ₋₁)) / hᵢ
+    c₃ = @. ((dfᵢ + dfᵢ₋₁) - 2 * (fᵢ - fᵢ₋₁) / hᵢ) / hᵢ^2
+    s = @. c₀ + c₁ * (x - xᵢ₋₁) + c₂ * (x - xᵢ₋₁)^2 + c₃ * (x - xᵢ₋₁)^3
+    return s
+end
+
+"""
+    (solution::RungeKuttaSolution)(tₚ::Real)
+
+interpolates `solution.u` at `tₚ` using linear splines.
+"""
 function (solution::RungeKuttaSolution)(tₚ::Real)
     @↓ u, t = solution
-    (n, tₙ) = findclosest(tₚ, t)
-    return tₙ, u[n]
+    n = findindex(tₚ, t, u)
+    s = linearspline(tₚ, t[n-1], t[n], u[n-1], u[n])
+    return s
 end
 
-function (solution::RungeKuttaSolution)(tspan::Tuple{Real,Real})
+"""
+    (solution::RungeKuttaSolution)(tₚ::Real, f::Function)
+
+interpolates `solution.u` at `tₚ` using Hermite's cubic splines.
+"""
+function (solution::RungeKuttaSolution)(tₚ::Real, f::Function)
     @↓ u, t = solution
-    n₁, _ = findclosest(tspan[1], t)
-    n₂, _ = findclosest(tspan[2], t)
-    return RungeKuttaSolution(u[n₁:n₂], t[n₁:n₂])
+    n = findindex(tₚ, t, u)
+    duₙ₋₁, duₙ = f(u[n-1], t[n-1]), f(u[n], t[n])
+    s = hermitecubicspline(tₚ, t[n-1], t[n], u[n-1], u[n], duₙ₋₁, duₙ)
+    return s
 end
-
-(solution::RungeKuttaSolution)(t₁::Real, t₂::Real) = solution((t₁, t₂))
 
 #####
 ##### Functions
 #####
 
 """
-    extract(solution::RungeKuttaSolution, i::Integer) :: RungeKuttaSolution
-
-returns the `i`th coordinate of `solution`.
-"""
-function extract(solution::RungeKuttaSolution, i::Integer)
-    (L, N) = size(solution)
-    @↓ u, t = solution
-    return RungeKuttaSolution([u[n][i] for n = 1:N], t)
-end
-
-"""
     length(solution::RungeKuttaSolution)
 
 returns the number of time steps of `solution`.
 """
-Base.length(solution::RungeKuttaSolution) = length(solution.t)
+function Base.length(solution::RungeKuttaSolution)
+    @↓ t = solution
+    return length(t)
+end
 
 """
     size(solution::RungeKuttaSolution)
 
 returns a tuple containing the number of variables and of time steps of `solution`.
 """
-Base.size(solution::RungeKuttaSolution) = (length(solution.u[1]), length(solution.t))
+function Base.size(solution::RungeKuttaSolution)
+    @↓ u, t = solution
+    return (length(u[1]), length(t))
+end
+
+"""
+    extract(solution::RungeKuttaSolution, i::Integer) :: RungeKuttaSolution
+
+returns the `i`th variable of `solution` (`i = 0` returns `t`).
+"""
+function extract(solution::RungeKuttaSolution, i::Integer)
+    N = length(solution)
+    @↓ u, t = solution
+    if i == 0
+        return t
+    else
+        return [u[n][i] for n = 1:N]
+    end
+end
+
+"""
+    extract(solution::RungeKuttaSolution, v::AbstractVector) :: RungeKuttaSolution
+
+returns the variables of `solution` indicated in `v`.
+"""
+extract(solution::RungeKuttaSolution, v::AbstractVector) = tuple([extract(solution, i) for i in v]...)
+
+"""
+    extract(solution::RungeKuttaSolution) :: RungeKuttaSolution
+
+returns all variables of `solution`, `t` included.
+"""
+function extract(solution::RungeKuttaSolution)
+    d = size(solution)[1]
+    return extract(solution, 0:d)
+end
 
 """
     getindex(solution::RungeKuttaSolution, i::Integer) :: RungeKuttaSolution
@@ -161,12 +171,18 @@ Base.size(solution::RungeKuttaSolution) = (length(solution.u[1]), length(solutio
 returns a [`RungeKuttaSolution`](@ref) containing the fields of `solution` indexed at `i`.
 """
 function Base.getindex(solution::RungeKuttaSolution, i::Integer)
-    @↓ u, t, k = solution
-    if k isa Nothing
-        return RungeKuttaSolution(u[i], t[i])
-    else
-        return RungeKuttaSolution(u[i], t[i], k[i])
-    end
+    @↓ u, t = solution
+    RungeKuttaSolution(u[i], t[i])
+end
+
+"""
+    getindex(solution::RungeKuttaSolution, v::AbstractVector) :: RungeKuttaSolution
+
+returns a [`RungeKuttaSolution`](@ref) containing the fields of `solution` indexed at `v`.
+"""
+function Base.getindex(solution::RungeKuttaSolution, v::AbstractVector)
+    @↓ u, t = solution
+    return RungeKuttaSolution(u[v], t[v])
 end
 
 """
@@ -175,13 +191,47 @@ end
 stores the values of `tuple` into the fields of `solution` indexed at `i`.
 """
 function Base.setindex!(solution::RungeKuttaSolution, tuple::Tuple, i::Integer)
-    @↓ u, t, k = solution
-    u[i] = tuple[1]
-    t[i] = tuple[2]
-    if length(tuple) > 2 && !(k isa Nothing)
-        k[i] = tuple[3]
-    end
+    @↓ u, t = solution
+    ʊ, τ = tuple
+    u[i] = ʊ
+    t[i] = τ
     return solution
+end
+
+"""
+    setindex!(solution::RungeKuttaSolution, point::RungeKuttaSolution, i::Integer)
+
+stores the fields of `point` into the fields of `solution` indexed at `i`.
+"""
+function Base.setindex!(solution::RungeKuttaSolution, point::RungeKuttaSolution, i::Integer)
+    @↓ u, t = solution
+    @↓ ʊ, τ = point
+    u[i] = ʊ
+    t[i] = τ
+    return solution
+end
+
+"""
+    setindex!(solution::RungeKuttaSolution, smallersolution::RungeKuttaSolution, v::AbstractVector)
+
+stores the fields of `smallersolution` into the fields of `solution` indexed at `v`.
+"""
+function Base.setindex!(solution::RungeKuttaSolution, smallersolution::RungeKuttaSolution, v::AbstractVector)
+    @↓ u, t = solution
+    @↓ ʊ, τ = smallersolution
+    @. u[v] = ʊ
+    @. t[v] = τ
+    return solution
+end
+
+"""
+    firstindex(solution::RungeKuttaSolution)
+
+returns the first index of `solution`.
+"""
+function Base.firstindex(solution::RungeKuttaSolution)
+    @↓ t = solution
+    return firstindex(t)
 end
 
 """
@@ -189,4 +239,7 @@ end
 
 returns the last index of `solution`.
 """
-Base.lastindex(solution::RungeKuttaSolution) = lastindex(solution.t)
+function Base.lastindex(solution::RungeKuttaSolution)
+    @↓ t = solution
+    return lastindex(t)
+end

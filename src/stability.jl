@@ -2,7 +2,7 @@
     ℛ(z::Number, tableau::AbstractButcherTableau) :: Number
     ℛ(z::Number, solver::AbstractRungeKuttaSolver) :: Number
 
-returns the stability function of an [`AbstractRungeKuttaSolver`](@ref):
+returns the stability function of `solver`:
 ```math
     R(z) = \frac{\det(I - z(A - \mathbb{1}b^\intercal))}{\det(I - zA)}.
 ```
@@ -15,12 +15,12 @@ end
 ℛ(z::Number, solver::AbstractRungeKuttaSolver) = ℛ(z, solver.tableau)
 
 """
-    ℛ(Z::AbstractMatrix{<:Number}, tableau::AbstractButcherTableau) :: AbstractMatrix{<:Number}
-    ℛ(Z::AbstractMatrix{<:Number}, solver::AbstractRungeKuttaSolver) :: AbstractMatrix{<:Number}
+    ℛ(Z::AbstractMatrix, tableau::AbstractButcherTableau) :: AbstractMatrix
+    ℛ(Z::AbstractMatrix, solver::AbstractRungeKuttaSolver) :: AbstractMatrix
 
-returns the stability function of an [`AbstractRungeKuttaSolver`](@ref).
+returns the stability function of `solver`.
 """
-function ℛ(Z::AbstractMatrix{<:Number}, tableau::AbstractButcherTableau)
+function ℛ(Z::AbstractMatrix, tableau::AbstractButcherTableau)
     @↓ A, b, s = tableau
     e = ones(s)
     tmp = kron(e, Z)
@@ -28,4 +28,4 @@ function ℛ(Z::AbstractMatrix{<:Number}, tableau::AbstractButcherTableau)
     tmp = kron(b', Matrix(1.0I, size(Z)...)) * tmp
     return I + tmp
 end
-ℛ(Z::AbstractMatrix{<:Number}, solver::AbstractRungeKuttaSolver) = ℛ(Z, solver.tableau)
+ℛ(Z::AbstractMatrix, solver::AbstractRungeKuttaSolver) = ℛ(Z, solver.tableau)

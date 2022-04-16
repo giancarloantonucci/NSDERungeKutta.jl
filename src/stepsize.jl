@@ -1,11 +1,11 @@
 """
     StepSize <: AbstractStepSize
 
-A composite type for an [`AbstractStepSize`](@ref).
+A composite type for the step-size a Runge-Kutta solver.
 
 # Constructors
 ```julia
-StepSize(; h::Real)
+StepSize(h::Real)
 ```
 
 # Functions
@@ -15,8 +15,12 @@ mutable struct StepSize{h_T<:Real} <: AbstractStepSize
     h::h_T
 end
 
+#####
+##### Functions
+#####
+
 """
-    stepsize(solver::AbstractRungeKuttaSolver)
+    stepsize(solver::AbstractRungeKuttaSolver) :: Real
 
 returns the step-size of a `solver`.
 """

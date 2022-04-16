@@ -1,87 +1,124 @@
 module RungeKutta
 
+using Reexport
 using ArrowMacros
 using LinearAlgebra
-using NSDEBase
+@reexport using NSDEBase
 using RecipesBase
 
 include("abstract.jl")
 include("utils.jl")
-include("tmp.jl")
 include("solution.jl")
 include("solve.jl")
+
 include("tableau.jl")
 include("stepsize.jl")
-include("adaptive.jl")
 include("newton.jl")
-include("explicit/explicit.jl")
-include("explicit/cache.jl")
-include("explicit/step.jl")
-include("explicit/solvers.jl")
-include("implicit/implicit.jl")
-include("implicit/cache.jl")
-include("implicit/step.jl")
-include("implicit/solvers.jl")
-include("exponential/exponential.jl")
-include("exponential/cache.jl")
-include("exponential/step.jl")
-include("exponential/solvers.jl")
+include("adaptive.jl")
+
+include("erk/constructor.jl")
+include("erk/cache.jl")
+include("erk/step.jl")
+include("erk/adaptivecheck.jl")
+include("erk/solvers.jl")
+
+include("dirk/constructor.jl")
+include("dirk/cache.jl")
+include("dirk/step.jl")
+include("dirk/adaptivecheck.jl")
+include("dirk/solvers.jl")
+
+include("ierk/constructor.jl")
+include("ierk/cache.jl")
+include("ierk/step.jl")
+include("ierk/adaptivecheck.jl")
+include("ierk/solvers.jl")
+
+include("exrk/constructor.jl")
+include("exrk/cache.jl")
+include("exrk/step.jl")
+include("exrk/adaptivecheck.jl")
+include("exrk/solvers.jl")
+
+include("irk/constructor.jl")
+include("irk/cache.jl")
+include("irk/step.jl")
+include("irk/adaptivecheck.jl")
+include("irk/solvers.jl")
+
 include("stability.jl")
-include("plotrecipes.jl")
+include("plot.jl")
 
 export AbstractRungeKuttaSolver
 export AbstractRungeKuttaSolution
-export AbstractRungeKuttaCache
 export AbstractRungeKuttaParameters
-export AbstractAdaptiveParameters
-export AbstractButcherTableau
-export AbstractStepSize
-export AbstractNewtonParameters
 
-export ExplicitRungeKuttaSolver, ERK
-export ImplicitRungeKuttaSolver, IRK, FIRK
-export ExplicitExponentialRungeKuttaSolver, EERK
 export RungeKuttaSolution
 export ButcherTableau
-export StepSize
-export AdaptiveParameters
-export NewtonParameters
 
-export butchertableau
-export stepsize
-export adaptivecheck!
-export extract
-export ℛ
-
+export ExplicitRungeKuttaSolver, ERK
 export Euler, ExplicitEuler
-export Midpoint, ExplicitMidpoint
 export Heun2
+export Midpoint, ExplicitMidpoint
 export Ralston2
 export Heun3
 export Kutta3
 export Ralston3
 export SSPRK3
-export RK4
+export Ralston4
+export RungeKutta4, RK4
 export Rule38
+export Butcher5
+export KuttaNyström5
+export Butcher6
+export Butcher7
+
 export HeunEuler
-export Fehlberg45, F45
-export DormandPrince54, DP54
-export Verner65, V65
+export BogackiShampine
+export Fehlberg45
+export DormandPrince54
+export Verner65
+export Fehlberg78
+
+export DiagonallyImplicitRungeKuttaSolver, DIRK
 export BackwardEuler, ImplicitEuler
-export ImplicitMidpoint
-export CrankNicolson
+export ImplicitMidpoint, GaußLegendre2, GaussLegendre2
+export SDIRK2
+export LobattoIII2
+export CrankNicolson, LobattoIIIA2
 export SDIRK3
-export GaussLegendre4, GL4
-export GaussLegendre6, GL6
-export LobattoIIIA4
-export LobattoIIIB2
-export LobattoIIIB4
-export LobattoIIIC2
-export LobattoIIIC4
-export RadauIA3
-export RadauIA5
-export RadauIIA3
-export RadauIIA5
+export RadauI3
+export RadauII3
+export SDIRK4
+export LobattoIII4
+
+export ImplicitExplicitRungeKuttaSolver, IERK
+export IMEXEuler, IMEXSSP1_111
+export IMEXSSP2_222
+export IMEXSSP2_322
+export IMEXSSP2_332
+export IMEXSSP3_332
+
+export ExplicitExponentialRungeKuttaSolver, EXRK
 export ExponentialRK4, ERK4
+
+export ImplicitRungeKuttaSolver, IRK
+export LobattoIIIC2
+export RadauIA3
+export RadauIIA3
+export GaußLegendre4, GaussLegendre4
+export LobattoIIIA4
+export LobattoIIIB4
+export LobattoIIIC4
+export RadauI5
+export RadauIA5
+export RadauII5
+export RadauIIA5
+export GaußLegendre6, GaussLegendre6
+
+export butchertableau
+export stepsize
+export extract
+export ℛ
 
 end

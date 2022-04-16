@@ -1,33 +1,43 @@
-"""
-    solve!(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver) :: AbstractRungeKuttaSolution
+function step!(cache::AbstractRungeKuttaCache, solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver)
+    @↓ rhs = problem
+    return step!(cache, solution, rhs, solver)
+end
 
-returns the `solution` of a `problem` using an [`AbstractRungeKuttaSolver`](@ref).
+function adaptivecheck!(cache::AbstractRungeKuttaCache, solution::AbstractRungeKuttaSolution, solver::AbstractRungeKuttaSolver)
+    @↓ adaptive = solver
+    return adaptivecheck!(cache, solution, solver, adaptive)
+end
+
+function adaptivecheck!(cache::AbstractRungeKuttaCache, solution::AbstractRungeKuttaSolution, solver::AbstractRungeKuttaSolver, adaptive::Nothing)
+    cache.n += 1
+    return solution
+end
+
+"""
+    solve!(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver) :: RungeKuttaSolution
+
+computes the `solution` of `problem` using `solver`.
 """
 function NSDEBase.solve!(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver)
     cache = RungeKuttaCache(problem, solver)
     @↓ u0, (t0, tN) ← tspan = problem
     @↓ u, t = solution
     @↓ n = cache
-    u0_T = eltype(u0)
-    u0_L = length(u0)
-    N = length(t)
-    # WHILE instead of FOR loop -> adaptive methods
-    while n < N && t[n] < tN
+    N = N₀ = length(t)
+    while t[n] < tN
         step!(cache, solution, problem, solver)
         adaptivecheck!(cache, solution, solver)
         @↓ n = cache
-        # Stop if update is too small -> adaptive methods
-        if n > 1 && t[n] ≈ t[n - 1]
+        @↓ h = solver.stepsize
+        if t[n] ≈ tN || h ≈ zero(h)
             break
         end
-        # Increase size of output vectors -> adaptive methods
-        # if n == N && t[n] < tN
-        #     N += 1
-        #     push!(u, Vector{u0_T}(undef, u0_L))
-        #     resize!(t, N)
-        # end
+        if n == N && t[n] < tN
+            append!(u, similar(u, N₀))
+            append!(t, similar(t, N₀))
+            N += N₀
+        end
     end
-    # Decrease size of output vectors -> adaptive methods
     if n < N
         resize!(u, n)
         resize!(t, n)
@@ -36,12 +46,12 @@ function NSDEBase.solve!(solution::AbstractRungeKuttaSolution, problem::Abstract
 end
 
 """
-    solve(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; savestages::Bool=false) :: AbstractRungeKuttaSolution
+    solve(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver) :: RungeKuttaSolution
 
-returns the `solution` of a `problem` using an [`AbstractRungeKuttaSolver`](@ref).
+computes the solution of `problem` using `solver`.
 """
-function NSDEBase.solve(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; savestages::Bool=false)
-    solution = RungeKuttaSolution(problem, solver; savestages=savestages)
+function NSDEBase.solve(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver)
+    solution = RungeKuttaSolution(problem, solver)
     solve!(solution, problem, solver)
     return solution
 end

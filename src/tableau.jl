@@ -1,7 +1,7 @@
 @doc raw"""
     ButcherTableau <: AbstractButcherTableau
 
-A composite type for the Butcher tableau of an [`AbstractRungeKuttaSolver`](@ref):
+A composite type for the Butcher tableau of a Runge-Kutta solver:
 ```math
 \begin{array}{c|c}
     c & A \\
@@ -14,23 +14,22 @@ A composite type for the Butcher tableau of an [`AbstractRungeKuttaSolver`](@ref
 # Constructors
 ```julia
 ButcherTableau(A, b, c, s, p[, d, q])
-ButcherTableau(tableau)
+ButcherTableau(tableau::AbstractMatrix{ℝ}) where ℝ<:Real
 ```
 
 ## Arguments
-- `A :: AbstractMatrix{<:Real}` : matrix of coefficients.
-- `b :: AbstractVector{<:Real}` : vector of weights.
-- `c :: AbstractVector{<:Real}` : vector of nodes.
+- `A :: AbstractMatrix{ℝ} where ℝ<:Real` : matrix of coefficients.
+- `b :: AbstractVector{ℝ} where ℝ<:Real` : vector of weights.
+- `c :: AbstractVector{ℝ} where ℝ<:Real` : vector of nodes.
 - `s :: Integer` : number of stages.
 - `p :: Integer` : order of accuracy.
-- `d :: AbstractVector{<:Real}` : embedding's vector of weights.
+- `d :: AbstractVector{ℝ} where ℝ<:Real` : embedding's vector of weights.
 - `q :: Integer` : embedding's order of accuracy.
-- `tableau :: AbstractMatrix` : matrix of parameters as in the definition.
 
 # Functions
-[`butchertableau`](@ref) : returns Butcher tableau as matrix.
+[`butchertableau`](@ref) : return matrix of parameters.
 """
-struct ButcherTableau{A_T<:AbstractMatrix{<:Real}, b_T<:AbstractVector{<:Real}, c_T<:AbstractVector{<:Real}, s_T<:Integer, p_T<:Integer, d_T<:Union{AbstractVector{<:Real}, Nothing}, q_T<:Union{Integer, Nothing}} <: AbstractButcherTableau
+struct ButcherTableau{A_T<:(AbstractMatrix{ℝ} where ℝ<:Real), b_T<:(AbstractVector{ℝ} where ℝ<:Real), c_T<:(AbstractVector{ℝ} where ℝ<:Real), s_T<:Integer, p_T<:Integer, d_T<:(Union{AbstractVector{ℝ}, Nothing} where ℝ<:Real), q_T<:Union{Integer, Nothing}} <: AbstractButcherTableau
     A::A_T
     b::b_T
     c::c_T
@@ -39,14 +38,8 @@ struct ButcherTableau{A_T<:AbstractMatrix{<:Real}, b_T<:AbstractVector{<:Real}, 
     d::d_T
     q::q_T
 end
-
-function ButcherTableau(A::AbstractMatrix, b::AbstractVector, c::AbstractVector, s::Integer, p::Integer)
-    d = nothing
-    q = nothing
-    return ButcherTableau(A, b, c, s, p, d, q)
-end
-
-function ButcherTableau(tableau::AbstractMatrix)
+ButcherTableau(A::AbstractMatrix{ℝ}, b::AbstractVector{ℝ}, c::AbstractVector{ℝ}, s::Integer, p::Integer) where ℝ<:Real = ButcherTableau(A, b, c, s, p, nothing, nothing)
+function ButcherTableau(tableau::AbstractMatrix{ℝ}) where ℝ<:Real
     nrows, ncols = size(tableau)
     s = ncols - 1
     A = tableau[1:s, 2:ncols]
@@ -62,8 +55,12 @@ function ButcherTableau(tableau::AbstractMatrix)
     end
 end
 
+#####
+##### Functions
+#####
+
 """
-    butchertableau(solver::AbstractRungeKuttaSolver)
+    butchertableau(solver::AbstractRungeKuttaSolver) :: AbstractMatrix{<:Real}
 
 returns the Butcher tableau of a `solver` as a matrix.
 """

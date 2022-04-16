@@ -3,7 +3,7 @@ using RungeKutta
 
 PAGES = [
     "Home" => "index.md",
-    "Examples" => "examples.md"
+    "Examples" => "examples.md",
 ]
 
 makedocs(;

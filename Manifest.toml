@@ -133,7 +133,7 @@ uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
 [[NSDEBase]]
 deps = ["ArrowMacros", "FiniteDifferences", "ForwardDiff", "LinearAlgebra", "RecipesBase"]
-git-tree-sha1 = "e495d95abdc275138f19fabfc963e99a38fa9df7"
+git-tree-sha1 = "76d842569b71d375c723192cfff3f143016ad8eb"
 repo-rev = "master"
 repo-url = "https://github.com/giancarloantonucci/NSDEBase.jl"
 uuid = "5aa61ba9-7752-4810-b2ec-484f26c3f007"

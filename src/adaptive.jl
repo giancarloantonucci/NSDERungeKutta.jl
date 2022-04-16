@@ -5,57 +5,17 @@ A composite type for the parameters of an adaptive [`AbstractRungeKuttaSolver`](
 
 # Constructors
 ```julia
-AdaptiveParameters(; δ=0.0, ϵ=1e-5, K=100)
+AdaptiveParameters(; atol::Real=0.0, rtol::Real=1e-5, nits::Integer=100)
 ```
 
 ## Arguments
-- `δ :: Real` : absolute tolerance.
-- `ϵ :: Real` : relative tolerance.
-- `K :: Integer` : maximum number of iterations.
+- `atol :: Real` : absolute tolerance.
+- `rtol :: Real` : relative tolerance.
+- `nits :: Integer` : maximum number of iterations.
 """
-struct AdaptiveParameters{δ_T<:Real, ϵ_T<:Real, K_T<:Integer} <: AbstractAdaptiveParameters
-    δ::δ_T
-    ϵ::ϵ_T
-    K::K_T
+struct AdaptiveParameters{atol_T<:Real, rtol_T<:Real, nits_T<:Integer} <: AbstractAdaptiveParameters
+    atol::atol_T
+    rtol::rtol_T
+    nits::nits_T
 end
-
-AdaptiveParameters(; δ=0.0, ϵ=1e-5, K=100) = AdaptiveParameters(δ, ϵ, K)
-
-#####
-##### Functions
-#####
-
-"""
-    adaptivecheck!(cache::AbstractRungeKuttaCache, solution::AbstractRungeKuttaSolution, solver::AbstractRungeKuttaSolver)
-
-updates the step-size of an adaptive `solver`.
-"""
-function adaptivecheck!(cache::AbstractRungeKuttaCache, solution::AbstractRungeKuttaSolution, solver::AbstractRungeKuttaSolver)
-    if solver.adaptive isa AbstractAdaptiveParameters
-        @↓ u, savestages = solution
-        @↓ h = solver.stepsize
-        @↓ n, m, v = cache
-        k = savestages ? solution.k[n] : cache.k
-        @↓ s, b, p, d, q = solver.tableau
-        @↓ δ, ϵ, K = solver.adaptive
-        zero!(v)
-        for i = 1:s
-            @. v += (b[i] - d[i]) * k[i]
-        end
-        @. v /= δ + max(abs(u[n]), abs(u[n + 1])) * ϵ
-        error = norm(v) / √length(v)
-        power = -1 / (min(p, q) + 1)
-        factor = 0.9 * error^power
-        h *= max(0.5, min((m == 1 ? 2.0 : 1.0), factor))
-        if error < 1 || m ≥ K
-            n += 1
-        else
-            m += 1
-        end
-        @↑ cache = n, m
-        @↑ solver.stepsize = h
-    else
-        cache.n += 1
-    end
-    return solution
-end
+AdaptiveParameters(; atol::Real=0.0, rtol::Real=1e-5, nits::Integer=100) = AdaptiveParameters(atol, rtol, nits)

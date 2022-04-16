@@ -17,7 +17,6 @@ All exported types and functions are considered part of the public API and thus 
 ```@docs
 AbstractRungeKuttaSolver
 AbstractRungeKuttaSolution
-AbstractRungeKuttaCache
 AbstractRungeKuttaParameters
 AbstractButcherTableau
 AbstractStepSize
@@ -36,9 +35,6 @@ ButcherTableau
 StepSize
 AdaptiveParameters
 NewtonParameters
-ExplicitRungeKuttaCache
-ImplicitRungeKuttaCache
-ExplicitExponentialRungeKuttaCache
 ```
 
 #### Solvers
@@ -81,13 +77,18 @@ ExponentialRK4
 ```@docs
 solve!
 solve
-step!
 ```
 
 ### Utilities
 
 ```@docs
 ℛ
+extract
+getindex
+lastindex
+length
+setindex!
+size
 ```
 
 ## Index
