@@ -1,4 +1,4 @@
-function step!(cache::ExplicitExponentialRungeKuttaCache, solution::AbstractRungeKuttaSolution, rhs::AbstractRightHandSideFunction, solver::ExplicitExponentialRungeKuttaSolver)
+function step!(cache::ExplicitExponentialRungeKuttaCache, solution::AbstractRungeKuttaSolution, rhs::AbstractRightHandSide, solver::ExplicitExponentialRungeKuttaSolver)
     @↓ n, v, w, k, ehL, ehcL, e = cache
     @↓ u, t = solution
     @↓ tableau, stepsize = solver

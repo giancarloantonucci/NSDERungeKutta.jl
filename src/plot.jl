@@ -49,7 +49,7 @@ end
 end
 
 @userplot STABILITY
-@recipe function f(h::STABILITY; lims=(-5, 5), xlims=lims, ylims=lims)
+@recipe function f(h::STABILITY; span=range(-5,5,length=100), xspan=span, yspan=span)
     R = if h.args[1] isa ButcherTableau
         z -> ℛ(z, h.args[1])
     elseif h.args[1] isa AbstractRungeKuttaSolver
@@ -62,19 +62,15 @@ end
     legend --> false
     levels --> [1.0]
     seriestype --> :contour
-    Δx = max(1, abs(xlims[2] - xlims[1]))
-    Δy = max(1, abs(ylims[2] - ylims[1]))
-    x = length(xlims) == 2 ? LinRange(xlims..., Int(Δx * 11)) : LinRange(xlims...)
-    y = length(ylims) == 2 ? LinRange(ylims..., Int(Δy * 11)) : LinRange(ylims...)
     function f(x, y)
         z = x + 1im * y
         return p = abs(R(z))
     end
-    return x, y, f
+    return xspan, yspan, f
 end
 
 @userplot STABILITYF
-@recipe function f(h::STABILITYF; lims=(-5, 5), xlims=lims, ylims=lims)
+@recipe function f(h::STABILITYF; span=range(-5,5,length=100), xspan=span, yspan=span)
     R = if h.args[1] isa ButcherTableau
         z -> ℛ(z, h.args[1])
     elseif h.args[1] isa AbstractRungeKuttaSolver
@@ -88,20 +84,16 @@ end
     colorbar --> true
     legend --> false
     seriestype --> :heatmap
-    Δx = max(1, abs(xlims[2] - xlims[1]))
-    Δy = max(1, abs(ylims[2] - ylims[1]))
-    x = length(xlims) == 2 ? LinRange(xlims..., Int(Δx * 11)) : LinRange(xlims...)
-    y = length(ylims) == 2 ? LinRange(ylims..., Int(Δy * 11)) : LinRange(ylims...)
     function f(x, y)
         z = x + 1im * y
         p = abs(R(z))
         return (p > 1 ? -Inf : p)
     end
-    return x, y, f
+    return xspan, yspan, f
 end
 
 @userplot ORDERSTAR
-@recipe function f(h::ORDERSTAR; lims=(-5, 5), xlims=lims, ylims=lims)
+@recipe function f(h::ORDERSTAR; span=range(-5,5,length=100), xspan=span, yspan=span)
     R = if h.args[1] isa ButcherTableau
         z -> ℛ(z, h.args[1])
     elseif h.args[1] isa AbstractRungeKuttaSolver
@@ -114,19 +106,15 @@ end
     legend --> false
     levels --> [1.0]
     seriestype --> :contour
-    Δx = max(1, abs(xlims[2] - xlims[1]))
-    Δy = max(1, abs(ylims[2] - ylims[1]))
-    x = length(xlims) == 2 ? LinRange(xlims..., Int(Δx * 11)) : LinRange(xlims...)
-    y = length(ylims) == 2 ? LinRange(ylims..., Int(Δy * 11)) : LinRange(ylims...)
     function f(x, y)
         z = x + 1im * y
         return abs(R(z) * exp(-z))
     end
-    return x, y, f
+    return xspan, yspan, f
 end
 
 @userplot ORDERSTARF
-@recipe function f(h::ORDERSTARF; lims=(-5, 5), xlims=lims, ylims=lims)
+@recipe function f(h::ORDERSTARF; span=range(-5,5,length=100), xspan=span, yspan=span)
     R = if h.args[1] isa ButcherTableau
         z -> ℛ(z, h.args[1])
     elseif h.args[1] isa AbstractRungeKuttaSolver
@@ -140,14 +128,10 @@ end
     colorbar --> true
     legend --> false
     seriestype --> :heatmap
-    Δx = max(1, abs(xlims[2] - xlims[1]))
-    Δy = max(1, abs(ylims[2] - ylims[1]))
-    x = length(xlims) == 2 ? LinRange(xlims..., Int(Δx * 11)) : LinRange(xlims...)
-    y = length(ylims) == 2 ? LinRange(ylims..., Int(Δy * 11)) : LinRange(ylims...)
     function f(x, y)
         z = x + 1im * y
         p = abs(R(z) * exp(-z))
         return (p > 1 ? NaN : p)
     end
-    return x, y, f
+    return xspan, yspan, f
 end

@@ -1,4 +1,4 @@
-function step!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, rhs::SplitRightHandSideFunction{𝑁, 𝑀}, solver::ImplicitExplicitRungeKuttaSolver) where {𝑁<:NonlinearRightHandSideFunction, 𝑀<:NonlinearRightHandSideFunction}
+function step!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, rhs::SplitRightHandSide{𝑁, 𝑀}, solver::ImplicitExplicitRungeKuttaSolver) where {𝑁<:NonlinearRightHandSide, 𝑀<:NonlinearRightHandSide}
     @↓ n, kᴵ, kᴱ, Uᵢ, J, e = cache
     @↓ u, t = solution
     @↓ stiff, nonstiff = rhs
@@ -60,7 +60,7 @@ function step!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKu
     return u[n+1], t[n+1]
 end
 
-function step!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, rhs::SplitRightHandSideFunction{𝐿, 𝑁}, solver::ImplicitExplicitRungeKuttaSolver) where {𝐿<:LinearRightHandSideFunction, 𝑁<:NonlinearRightHandSideFunction}
+function step!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, rhs::SplitRightHandSide{𝐿, 𝑁}, solver::ImplicitExplicitRungeKuttaSolver) where {𝐿<:LinearRightHandSide, 𝑁<:NonlinearRightHandSide}
     @↓ n, kᴵ, kᴱ, Uᵢ, J, e = cache
     @↓ u, t = solution
     @↓ stiff, nonstiff = rhs

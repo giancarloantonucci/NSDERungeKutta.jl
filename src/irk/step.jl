@@ -1,4 +1,4 @@
-function step!(cache::ImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, rhs::NonlinearRightHandSideFunction, solver::ImplicitRungeKuttaSolver)
+function step!(cache::ImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, rhs::NonlinearRightHandSide, solver::ImplicitRungeKuttaSolver)
     @↓ n, k, Δk, V, J, e = cache
     @↓ u, t = solution
     @↓ Df! = rhs
@@ -59,7 +59,7 @@ function step!(cache::ImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolut
     return u[n+1], t[n+1]
 end
 
-function step!(cache::ImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, rhs::LinearRightHandSideFunction, solver::ImplicitRungeKuttaSolver)
+function step!(cache::ImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, rhs::LinearRightHandSide, solver::ImplicitRungeKuttaSolver)
     @↓ n, k, V, J, e = cache
     @↓ u, t = solution
     @↓ L, g! = rhs

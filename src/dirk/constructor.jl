@@ -29,7 +29,7 @@ struct DiagonallyImplicitRungeKuttaSolver{tableau_T<:AbstractButcherTableau, ste
     adaptive::adaptive_T
 end
 
-DiagonallyImplicitRungeKuttaSolver(tableau::AbstractButcherTableau, h::Real, newton::AbstractSimplifiedNewtonParameters, adaptive::AbstractAdaptiveParameters) = DiagonallyImplicitRungeKuttaSolver(tableau, StepSize(h), newton, adaptive)
+DiagonallyImplicitRungeKuttaSolver(tableau::AbstractButcherTableau, h::Real, newton::AbstractSimplifiedNewtonParameters, adaptive::Union{AbstractAdaptiveParameters, Nothing}) = DiagonallyImplicitRungeKuttaSolver(tableau, StepSize(h), newton, adaptive)
 DiagonallyImplicitRungeKuttaSolver(tableau::AbstractButcherTableau, stepsize::Union{AbstractStepSize, Real}, newton::AbstractSimplifiedNewtonParameters) = DiagonallyImplicitRungeKuttaSolver(tableau, stepsize, newton, nothing)
 @doc (@doc DiagonallyImplicitRungeKuttaSolver) DIRK(args...; kwargs...) = DiagonallyImplicitRungeKuttaSolver(args...; kwargs...)
 

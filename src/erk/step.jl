@@ -1,4 +1,4 @@
-function step!(cache::ExplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, rhs::AbstractRightHandSideFunction, solver::ExplicitRungeKuttaSolver)
+function step!(cache::ExplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, rhs::AbstractRightHandSide, solver::ExplicitRungeKuttaSolver)
     @↓ n, k, e = cache
     @↓ u, t = solution
     @↓ tableau, stepsize = solver
