@@ -18,7 +18,7 @@ ERK(args...; kwargs...)
 
     (solver::ExplicitRungeKuttaSolver)(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem) :: RungeKuttaSolution
     (solver::ExplicitRungeKuttaSolver)(problem::AbstractInitialValueProblem) :: RungeKuttaSolution
-    
+
 returns the `solution` of a `problem` using `solver`.
 """
 struct ExplicitRungeKuttaSolver{tableau_T<:AbstractButcherTableau, stepsize_T<:AbstractStepSize, adaptive_T<:Union{AbstractAdaptiveParameters, Nothing}} <: AbstractRungeKuttaSolver
@@ -31,9 +31,7 @@ ExplicitRungeKuttaSolver(tableau::AbstractButcherTableau, h::Real, adaptive::Uni
 ExplicitRungeKuttaSolver(tableau::AbstractButcherTableau, stepsize::Union{AbstractStepSize, Real}) = ExplicitRungeKuttaSolver(tableau, stepsize, nothing)
 @doc (@doc ExplicitRungeKuttaSolver) ERK(args...; kwargs...) = ExplicitRungeKuttaSolver(args...; kwargs...)
 
-#####
-##### Methods
-#####
+#----------------------------------- METHODS -----------------------------------
 
 (solver::ExplicitRungeKuttaSolver)(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem) = solve!(solution, problem, solver)
 (solver::ExplicitRungeKuttaSolver)(problem::AbstractInitialValueProblem) = solve(problem, solver)

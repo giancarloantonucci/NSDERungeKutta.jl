@@ -15,9 +15,7 @@ mutable struct StepSize{h_T<:Real} <: AbstractStepSize
     h::h_T
 end
 
-#####
-##### Functions
-#####
+#---------------------------------- FUNCTIONS ----------------------------------
 
 """
     stepsize(solver::AbstractRungeKuttaSolver) :: Real

@@ -12,7 +12,7 @@ IRK(args...; kwargs...)
 # Arguments
 - `tableau :: AbstractButcherTableau`
 - `stepsize :: Union{AbstractStepSize, Real}`
-- `newton :: AbstractSimplifiedNewtonParameters`
+- `newton :: AbstractNewtonParameters`
 - `adaptive :: Union{AbstractAdaptiveParameters, Nothing}`
 
 # Methods
@@ -22,20 +22,18 @@ IRK(args...; kwargs...)
 
 returns the `solution` of a `problem` using `solver`.
 """
-mutable struct ImplicitRungeKuttaSolver{tableau_T<:AbstractButcherTableau, stepsize_T<:AbstractStepSize, newton_T<:AbstractSimplifiedNewtonParameters, adaptive_T<:Union{AbstractAdaptiveParameters, Nothing}} <: AbstractRungeKuttaSolver
+struct ImplicitRungeKuttaSolver{tableau_T<:AbstractButcherTableau, stepsize_T<:AbstractStepSize, newton_T<:AbstractNewtonParameters, adaptive_T<:Union{AbstractAdaptiveParameters, Nothing}} <: AbstractRungeKuttaSolver
     tableau::tableau_T
     stepsize::stepsize_T
     newton::newton_T
     adaptive::adaptive_T
 end
 
-ImplicitRungeKuttaSolver(tableau::AbstractButcherTableau, h::Real, newton::AbstractSimplifiedNewtonParameters, adaptive::Union{AbstractAdaptiveParameters, Nothing}) = ImplicitRungeKuttaSolver(tableau, StepSize(h), newton, adaptive)
-ImplicitRungeKuttaSolver(tableau::AbstractButcherTableau, stepsize::Union{AbstractStepSize, Real}, newton::AbstractSimplifiedNewtonParameters) = ImplicitRungeKuttaSolver(tableau, stepsize, newton, nothing)
+ImplicitRungeKuttaSolver(tableau::AbstractButcherTableau, h::Real, newton::AbstractNewtonParameters, adaptive::Union{AbstractAdaptiveParameters, Nothing}) = ImplicitRungeKuttaSolver(tableau, StepSize(h), newton, adaptive)
+ImplicitRungeKuttaSolver(tableau::AbstractButcherTableau, stepsize::Union{AbstractStepSize, Real}, newton::AbstractNewtonParameters) = ImplicitRungeKuttaSolver(tableau, stepsize, newton, nothing)
 @doc (@doc ImplicitRungeKuttaSolver) IRK(args...; kwargs...) = ImplicitRungeKuttaSolver(args...; kwargs...)
 
-#####
-##### Methods
-#####
+#----------------------------------- METHODS -----------------------------------
 
 (solver::ImplicitRungeKuttaSolver)(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem) = solve!(solution, problem, solver)
 (solver::ImplicitRungeKuttaSolver)(problem::AbstractInitialValueProblem) = solve(problem, solver)

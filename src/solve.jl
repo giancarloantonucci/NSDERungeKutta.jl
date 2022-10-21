@@ -3,12 +3,12 @@ function step!(cache::AbstractRungeKuttaCache, solution::AbstractRungeKuttaSolut
     return step!(cache, solution, rhs, solver)
 end
 
-function adaptivecheck!(cache::AbstractRungeKuttaCache, solution::AbstractRungeKuttaSolution, solver::AbstractRungeKuttaSolver)
+function adaptivestep!(cache::AbstractRungeKuttaCache, solution::AbstractRungeKuttaSolution, solver::AbstractRungeKuttaSolver)
     @↓ adaptive = solver
-    return adaptivecheck!(cache, solution, solver, adaptive)
+    return adaptivestep!(cache, solution, solver, adaptive)
 end
 
-function adaptivecheck!(cache::AbstractRungeKuttaCache, solution::AbstractRungeKuttaSolution, solver::AbstractRungeKuttaSolver, adaptive::Nothing)
+function adaptivestep!(cache::AbstractRungeKuttaCache, solution::AbstractRungeKuttaSolution, solver::AbstractRungeKuttaSolver, adaptive::Nothing)
     cache.n += 1
     return solution
 end
@@ -26,22 +26,17 @@ function NSDEBase.solve!(solution::AbstractRungeKuttaSolution, problem::Abstract
     N = N₀ = length(t)
     while t[n] < tN
         step!(cache, solution, problem, solver)
-        adaptivecheck!(cache, solution, solver)
+        adaptivestep!(cache, solution, solver)
         @↓ n = cache
-        @↓ h = solver.stepsize
-        if t[n] ≈ tN || h ≈ zero(h)
-            break
-        end
         if n == N && t[n] < tN
-            append!(u, similar(u, N₀))
-            append!(t, similar(t, N₀))
+            append!(u, [similar(u[n]) for i = 1:N₀])
+            append!(t, Vector{typeof(t[n])}(undef, N₀))
             N += N₀
         end
     end
-    if n < N
-        resize!(u, n)
-        resize!(t, n)
-    end
+    resize!(u, n)
+    resize!(t, n)
+    # @↑ solution = u, t
     return solution
 end
 

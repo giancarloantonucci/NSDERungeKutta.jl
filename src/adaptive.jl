@@ -18,4 +18,5 @@ struct AdaptiveParameters{atol_T<:Real, rtol_T<:Real, nits_T<:Integer} <: Abstra
     rtol::rtol_T
     nits::nits_T
 end
+
 AdaptiveParameters(; atol::Real=0.0, rtol::Real=1e-5, nits::Integer=100) = AdaptiveParameters(atol, rtol, nits)

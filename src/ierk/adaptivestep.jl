@@ -1,4 +1,4 @@
-# function adaptivecheck!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, solver::ImplicitExplicitRungeKuttaSolver, adaptive::AdaptiveParameters)
+# function adaptivestep!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, solver::ImplicitExplicitRungeKuttaSolver, adaptive::AdaptiveParameters)
 #     @↓ n, m, kᴵ, kᴱ = cache
 #     @↓ u, savestages = solution
 #     @↓ implicit, explicit, stepsize = solver

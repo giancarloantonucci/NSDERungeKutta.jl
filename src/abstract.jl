@@ -6,4 +6,4 @@ abstract type AbstractRungeKuttaCache <: AbstractInitialValueCache end
 abstract type AbstractButcherTableau <: AbstractRungeKuttaParameters end
 abstract type AbstractStepSize <: AbstractRungeKuttaParameters end
 abstract type AbstractAdaptiveParameters <: AbstractRungeKuttaParameters end
-abstract type AbstractSimplifiedNewtonParameters <: AbstractRungeKuttaParameters end
+abstract type AbstractNewtonParameters <: AbstractRungeKuttaParameters end

@@ -14,7 +14,7 @@ function IMEXEuler(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
          0 0;
         pᴱ 1;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return IERK(implicitableau, explicitableau, h, newton)
 end
 @doc (@doc IMEXEuler) IMEXSSP1_111(args...; kwargs...) = IMEXEuler(args...; kwargs...)
@@ -37,7 +37,7 @@ function IMEXSSP2_222(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
          1   1   0;
         pᴱ 1/2 1/2;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return IERK(implicitableau, explicitableau, h, newton)
 end
 
@@ -60,7 +60,7 @@ function IMEXSSP2_322(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
          1   0   1   0;
         pᴱ   0 1/2 1/2;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return IERK(implicitableau, explicitableau, h, newton)
 end
 
@@ -83,7 +83,7 @@ function IMEXSSP2_332(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
           1 1/2 1/2   0;
          pᴱ 1/3 1/3 1/3;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return IERK(implicitableau, explicitableau, h, newton)
 end
 
@@ -107,6 +107,6 @@ function IMEXSSP3_332(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
         1/2 1/4 1/4   0;
          pᴱ 1/6 1/6 2/3;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return IERK(implicitableau, explicitableau, h, newton)
 end

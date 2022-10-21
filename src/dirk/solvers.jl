@@ -10,7 +10,7 @@ function BackwardEuler(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
         1 1;
         p 1;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return DIRK(tableau, h, newton)
 end
 @doc (@doc BackwardEuler) ImplicitEuler(args...; kwargs...) = BackwardEuler(args...; kwargs...)
@@ -28,7 +28,7 @@ function ImplicitMidpoint(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
         1/2 1/2;
           p   1;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return DIRK(tableau, h, newton)
 end
 @doc (@doc ImplicitMidpoint) GaußLegendre2(args...; kwargs...) = ImplicitMidpoint(args...; kwargs...)
@@ -46,7 +46,7 @@ function SDIRK2(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
         0  -1   1;
         p 1/2 1/2;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return DIRK(tableau, h, newton)
 end
 
@@ -62,7 +62,7 @@ function LobattoIII2(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
         1   1   0;
         p 1/2 1/2;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return DIRK(tableau, h, newton)
 end
 
@@ -79,7 +79,7 @@ function CrankNicolson(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
         1 1/2 1/2;
         p 1/2 1/2;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return DIRK(tableau, h, newton)
 end
 @doc (@doc CrankNicolson) LobattoIIIA2(args...; kwargs...) = CrankNicolson(args...; kwargs...)
@@ -97,7 +97,7 @@ function SDIRK3(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
         1-γ 1-2γ   γ;
           p  1/2 1/2;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return DIRK(tableau, h, newton)
 end
 
@@ -113,7 +113,7 @@ function RadauI3(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
        2/3 1/3 1/3;
          p 1/4 3/4;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return DIRK(tableau, h, newton)
 end
 
@@ -129,7 +129,7 @@ function RadauII3(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
          1   1   0;
          p 3/4 1/4;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return DIRK(tableau, h, newton)
 end
 
@@ -148,7 +148,7 @@ function SDIRK4(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
             1    25/24    -49/48 125/16 -85/12 1/4;
             p    25/24    -49/48 125/16 -85/12 1/4;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return DIRK(tableau, h, newton)
 end
 
@@ -165,6 +165,6 @@ function LobattoIII4(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
           1   0   1   0;
           p 1/6 2/3 1/6;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return DIRK(tableau, h, newton)
 end

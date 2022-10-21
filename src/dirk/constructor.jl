@@ -12,7 +12,7 @@ DIRK(args...; kwargs...)
 # Arguments
 - `tableau :: AbstractButcherTableau`
 - `stepsize :: Union{AbstractStepSize, Real}`
-- `newton :: AbstractSimplifiedNewtonParameters`
+- `newton :: AbstractNewtonParameters`
 - `adaptive :: Union{AbstractAdaptiveParameters, Nothing}`
 
 # Methods
@@ -22,20 +22,18 @@ DIRK(args...; kwargs...)
 
 returns the `solution` of a `problem` using `solver`.
 """
-struct DiagonallyImplicitRungeKuttaSolver{tableau_T<:AbstractButcherTableau, stepsize_T<:AbstractStepSize, newton_T<:AbstractSimplifiedNewtonParameters, adaptive_T<:Union{AbstractAdaptiveParameters, Nothing}} <: AbstractRungeKuttaSolver
+struct DiagonallyImplicitRungeKuttaSolver{tableau_T<:AbstractButcherTableau, stepsize_T<:AbstractStepSize, newton_T<:AbstractNewtonParameters, adaptive_T<:Union{AbstractAdaptiveParameters, Nothing}} <: AbstractRungeKuttaSolver
     tableau::tableau_T
     stepsize::stepsize_T
     newton::newton_T
     adaptive::adaptive_T
 end
 
-DiagonallyImplicitRungeKuttaSolver(tableau::AbstractButcherTableau, h::Real, newton::AbstractSimplifiedNewtonParameters, adaptive::Union{AbstractAdaptiveParameters, Nothing}) = DiagonallyImplicitRungeKuttaSolver(tableau, StepSize(h), newton, adaptive)
-DiagonallyImplicitRungeKuttaSolver(tableau::AbstractButcherTableau, stepsize::Union{AbstractStepSize, Real}, newton::AbstractSimplifiedNewtonParameters) = DiagonallyImplicitRungeKuttaSolver(tableau, stepsize, newton, nothing)
+DiagonallyImplicitRungeKuttaSolver(tableau::AbstractButcherTableau, h::Real, newton::AbstractNewtonParameters, adaptive::Union{AbstractAdaptiveParameters, Nothing}) = DiagonallyImplicitRungeKuttaSolver(tableau, StepSize(h), newton, adaptive)
+DiagonallyImplicitRungeKuttaSolver(tableau::AbstractButcherTableau, stepsize::Union{AbstractStepSize, Real}, newton::AbstractNewtonParameters) = DiagonallyImplicitRungeKuttaSolver(tableau, stepsize, newton, nothing)
 @doc (@doc DiagonallyImplicitRungeKuttaSolver) DIRK(args...; kwargs...) = DiagonallyImplicitRungeKuttaSolver(args...; kwargs...)
 
-#####
-##### Methods
-#####
+#----------------------------------- METHODS -----------------------------------
 
 (solver::DiagonallyImplicitRungeKuttaSolver)(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem) = solve!(solution, problem, solver)
 (solver::DiagonallyImplicitRungeKuttaSolver)(problem::AbstractInitialValueProblem) = solve(problem, solver)

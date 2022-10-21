@@ -31,9 +31,7 @@ ExplicitExponentialRungeKuttaSolver(tableau::AbstractButcherTableau, h::Real, ad
 ExplicitExponentialRungeKuttaSolver(tableau::AbstractButcherTableau, stepsize::Union{AbstractStepSize, Real}) = ExplicitExponentialRungeKuttaSolver(tableau, stepsize, nothing)
 @doc (@doc ExplicitExponentialRungeKuttaSolver) EXRK(args...; kwargs...) = ExplicitExponentialRungeKuttaSolver(args...; kwargs...)
 
-#####
-##### Methods
-#####
+#----------------------------------- METHODS -----------------------------------
 
 (solver::ExplicitExponentialRungeKuttaSolver)(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem) = solve!(solution, problem, solver)
 (solver::ExplicitExponentialRungeKuttaSolver)(problem::AbstractInitialValueProblem) = solve(problem, solver)

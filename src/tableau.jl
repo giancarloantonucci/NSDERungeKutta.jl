@@ -38,7 +38,9 @@ struct ButcherTableau{A_T<:(AbstractMatrix{ℝ} where ℝ<:Real), b_T<:(Abstract
     d::d_T
     q::q_T
 end
+
 ButcherTableau(A::AbstractMatrix{ℝ}, b::AbstractVector{ℝ}, c::AbstractVector{ℝ}, s::Integer, p::Integer) where ℝ<:Real = ButcherTableau(A, b, c, s, p, nothing, nothing)
+
 function ButcherTableau(tableau::AbstractMatrix{ℝ}) where ℝ<:Real
     nrows, ncols = size(tableau)
     s = ncols - 1
@@ -55,9 +57,7 @@ function ButcherTableau(tableau::AbstractMatrix{ℝ}) where ℝ<:Real
     end
 end
 
-#####
-##### Functions
-#####
+#---------------------------------- FUNCTIONS ----------------------------------
 
 """
     butchertableau(solver::AbstractRungeKuttaSolver) :: AbstractMatrix{<:Real}

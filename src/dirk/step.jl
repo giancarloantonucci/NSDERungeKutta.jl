@@ -1,5 +1,5 @@
 function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, rhs::NonlinearRightHandSide, solver::DiagonallyImplicitRungeKuttaSolver)
-    @↓ n, k, Uᵢ, Δkᵢ, J, e = cache
+    @↓ n, v, k, Uᵢ, Δkᵢ, J, e = cache
     @↓ u, t = solution
     @↓ Df! = rhs
     @↓ tableau, stepsize, newton = solver
@@ -7,7 +7,6 @@ function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRunge
     @↓ h = stepsize
     @↓ rtol, nits = newton
     # compute stages
-    v = u[n+1] # avoid allocs
     Df!(J, v, u[n], t[n])
     for i = 1:s
         # Eᵢ = u[n] + h * sum(A[i,j] * k[j] for j = 1:i-1)
@@ -18,22 +17,23 @@ function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRunge
             end
         end
         @. v = u[n] + h * v
-        #simplified Newton
-        ı = 1
+        # simplified Newton
         zero!(k[i])
-        # Fᵢ' = I - h * A[i,i] * J
-        M = factorize(I - h * A[i,i] * J)
-        while (ı == 1) || (norm(Δkᵢ) > rtol * norm(k[i]) && ı < nits)
+        # DFᵢ = I - h * A[i,i] * J
+        DFᵢ = factorize(I - h * A[i,i] * J)
+        for ȷ = 1:nits
             # Uᵢ = Eᵢ + h * A[i,i] * k[i]
             @. Uᵢ = v + h * A[i,i] * k[i]
             # Fᵢ = f(t[n] + h * c[i], Uᵢ) - k[i]
             rhs(Δkᵢ, Uᵢ, t[n] + h * c[i])
             @. Δkᵢ -= k[i]
-            # Δkᵢ = Fᵢ' \ Fᵢ
-            ldiv!(M, Δkᵢ)
+            # Δkᵢ = DFᵢ \ Fᵢ
+            ldiv!(DFᵢ, Δkᵢ)
             # k[i] += Δkᵢ
             @. k[i] += Δkᵢ
-            ı += 1
+            if norm(Δkᵢ) < rtol * norm(k[i])
+                break
+            end
         end
     end
     # compute step
@@ -44,21 +44,20 @@ function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRunge
             @. v += b[i] * k[i]
         end
     end
-    @. v = u[n] + h * v
-    # t[n+1] = t[n] + h
+    @. u[n+1] = u[n] + h * v
+    # t[n+1] = t[n] + h with Kahan's summation
     t[n+1] = t[n] +ₖ (h, e)
     return u[n+1], t[n+1]
 end
 
 function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, rhs::LinearRightHandSide, solver::DiagonallyImplicitRungeKuttaSolver)
-    @↓ n, k, e = cache
+    @↓ n, v, k, e = cache
     @↓ u, t = solution
     @↓ L = rhs
     @↓ tableau, stepsize = solver
     @↓ A, b, c, s = tableau
     @↓ h = stepsize
     # compute stages
-    v = u[n+1] # avoid allocs
     for i = 1:s
         # Eᵢ = u[n] + h * sum(A[i,j] * k[j] for j = 1:i-1)
         zero!(v)
@@ -68,12 +67,12 @@ function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRunge
             end
         end
         @. v = u[n] + h * v
-        # Fᵢ' = I - h * A[i,i] * L
-        M = factorize(I - h * A[i,i] * L)
+        # DFᵢ = I - h * A[i,i] * L
+        DFᵢ = factorize(I - h * A[i,i] * L)
         # Fᵢ = L * Eᵢ + g(t[n] + h * c[i])
         rhs(k[i], v, t[n] + h * c[i])
-        # k[i] = Fᵢ' \ Fᵢ
-        ldiv!(M, k[i])
+        # k[i] = DFᵢ \ Fᵢ
+        ldiv!(DFᵢ, k[i])
     end
     # compute step
     # u[n+1] = u[n] + h * sum(b[i] * k[i] for i = 1:s)
@@ -83,8 +82,8 @@ function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRunge
             @. v += b[i] * k[i]
         end
     end
-    @. v = u[n] + h * v
-    # t[n+1] = t[n] + h
+    @. u[n+1] = u[n] + h * v
+    # t[n+1] = t[n] + h with Kahan's summation
     t[n+1] = t[n] +ₖ (h, e)
     return u[n+1], t[n+1]
 end

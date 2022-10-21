@@ -20,98 +20,70 @@ RungeKuttaSolution(problem, solver)
 - [`lastindex`](@ref) : last index.
 - [`length`](@ref) : number of time steps.
 - [`setindex!`](@ref) : set value(s) and time.
-- [`size`](@ref) : number of variables and time steps.
+- [`dimension`](@ref) : number of variables.
 """
 struct RungeKuttaSolution{u_T<:(AbstractVector{𝕍} where 𝕍<:AbstractVector{ℂ} where ℂ<:Number), t_T<:(AbstractVector{ℝ} where ℝ<:Real)} <: AbstractRungeKuttaSolution
     u::u_T
     t::t_T
 end
+
 function RungeKuttaSolution(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver)
     @↓ u0, (t0, tN) ← tspan = problem
     @↓ h = solver.stepsize
-    N = round(Integer, (tN - t0) / h) + 1
-    # initialise u
-    u0_T = eltype(u0)
-    d = length(u0)
-    u = Vector{u0_T}(undef, N, d)
-    u[1] = u0
-    # initialise t
-    t0_T = eltype(t0)
-    t = Vector{t0_T}(undef, N)
-    t[1] = t0
+    N = ceil(Int, (tN - t0) / h) + 1 # e.g. tspan = (0, 1), h = 0.3 ⇒ t = [0.0, 0.3, 0.6, 0.9, 1.2]
+    u = [similar(u0) for i = 1:N]; u[1] = u0
+    t = Vector{typeof(t0)}(undef, N); t[1] = t0
     return RungeKuttaSolution(u, t)
 end
 
-#####
-##### Methods
-#####
-
-function findindex(tₚ, t, u)
-    N = length(t)
-    if tₚ < t[1]
-        return 2
-    end
-    for n in 2:N
-        if t[n-1] ≤ tₚ ≤ t[n]
-            return n
-        end
-    end
-    if tₚ > t[N]
-        return N
-    end
-end
-
-function nearestneighbour(x, xᵢ₋₁, xᵢ, fᵢ₋₁, fᵢ)
-    s = abs(xᵢ - x) > abs(x - xᵢ₋₁) ? fᵢ₋₁ : fᵢ
-    return s
-end
-
-function linearspline(x, xᵢ₋₁, xᵢ, fᵢ₋₁, fᵢ)
-    hᵢ = xᵢ - xᵢ₋₁
-    aᵢ₋₁ = (xᵢ - x) / hᵢ
-    aᵢ = (x - xᵢ₋₁) / hᵢ
-    s = @. aᵢ₋₁ * fᵢ₋₁ + aᵢ * fᵢ
-    return s
-end
-
-function hermitecubicspline(x, xᵢ₋₁, xᵢ, fᵢ₋₁, fᵢ, dfᵢ₋₁, dfᵢ)
-    hᵢ = xᵢ - xᵢ₋₁
-    c₀ = fᵢ₋₁
-    c₁ = dfᵢ₋₁
-    c₂ = @. (3 * (fᵢ - fᵢ₋₁) / hᵢ - (dfᵢ + 2 * dfᵢ₋₁)) / hᵢ
-    c₃ = @. ((dfᵢ + dfᵢ₋₁) - 2 * (fᵢ - fᵢ₋₁) / hᵢ) / hᵢ^2
-    s = @. c₀ + c₁ * (x - xᵢ₋₁) + c₂ * (x - xᵢ₋₁)^2 + c₃ * (x - xᵢ₋₁)^3
-    return s
-end
+#----------------------------------- METHODS -----------------------------------
 
 """
     (solution::RungeKuttaSolution)(tₚ::Real)
 
-interpolates `solution.u` at `tₚ` using linear splines.
+interpolates `solution` using linear splines, approximating its value at `tₚ`.
 """
 function (solution::RungeKuttaSolution)(tₚ::Real)
     @↓ u, t = solution
-    n = findindex(tₚ, t, u)
-    s = linearspline(tₚ, t[n-1], t[n], u[n-1], u[n])
-    return s
+    N = length(t)
+    if tₚ < t[1]
+        return u[1]
+    elseif tₚ ≥ t[N]
+        return u[N]
+    else
+        for n in 2:N
+            if t[n-1] ≤ tₚ < t[n]
+                uₚ = linearspline(tₚ, t[n-1], t[n], u[n-1], u[n])
+                return uₚ
+            end
+        end
+    end
 end
 
 """
     (solution::RungeKuttaSolution)(tₚ::Real, f::Function)
 
-interpolates `solution.u` at `tₚ` using Hermite's cubic splines.
+interpolates `solution` using Hermite's cubic splines, approximating its value at `tₚ`.
 """
 function (solution::RungeKuttaSolution)(tₚ::Real, f::Function)
     @↓ u, t = solution
-    n = findindex(tₚ, t, u)
-    duₙ₋₁, duₙ = f(u[n-1], t[n-1]), f(u[n], t[n])
-    s = hermitecubicspline(tₚ, t[n-1], t[n], u[n-1], u[n], duₙ₋₁, duₙ)
-    return s
+    N = length(t)
+    if tₚ < t[1]
+        return u[1]
+    elseif tₚ ≥ t[N]
+        return u[N]
+    else
+        for n in 2:N
+            if t[n-1] ≤ tₚ < t[n]
+                duₙ₋₁, duₙ = f(u[n-1], t[n-1]), f(u[n], t[n])
+                uₚ = hermitecubicspline(tₚ, t[n-1], t[n], u[n-1], u[n], duₙ₋₁, duₙ)
+                return uₚ
+            end
+        end
+    end
 end
 
-#####
-##### Functions
-#####
+#---------------------------------- FUNCTIONS ----------------------------------
 
 """
     length(solution::RungeKuttaSolution)
@@ -121,6 +93,16 @@ returns the number of time steps of `solution`.
 function Base.length(solution::RungeKuttaSolution)
     @↓ t = solution
     return length(t)
+end
+
+"""
+    dimension(solution::RungeKuttaSolution)
+
+returns the number of variables of `solution`.
+"""
+function dimension(solution::RungeKuttaSolution)
+    @↓ u = solution
+    return length(u[1])
 end
 
 """
@@ -161,7 +143,7 @@ extract(solution::RungeKuttaSolution, v::AbstractVector) = tuple([extract(soluti
 returns all variables of `solution`, `t` included.
 """
 function extract(solution::RungeKuttaSolution)
-    d = size(solution)[1]
+    d = dimension(solution)
     return extract(solution, 0:d)
 end
 

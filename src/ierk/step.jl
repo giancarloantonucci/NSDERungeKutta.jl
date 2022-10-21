@@ -1,5 +1,5 @@
 function step!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, rhs::SplitRightHandSide{𝑁, 𝑀}, solver::ImplicitExplicitRungeKuttaSolver) where {𝑁<:NonlinearRightHandSide, 𝑀<:NonlinearRightHandSide}
-    @↓ n, kᴵ, kᴱ, Uᵢ, J, e = cache
+    @↓ n, v, kᴵ, kᴱ, Uᵢ, J, e = cache
     @↓ u, t = solution
     @↓ stiff, nonstiff = rhs
     @↓ Df! = stiff
@@ -9,7 +9,6 @@ function step!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKu
     @↓ h = stepsize
     @↓ rtol, nits = newton
     # compute stages
-    v = u[n+1] # avoid allocs
     Df!(J, v, u[n], t[n])
     for i = 1:s
         # Eᵢ = u[n] + h * sum(Aᴵ[i,j] * kᴵ[j] + Aᴱ[i,j] * kᴱ[j] for j = 1:i-1)
@@ -54,14 +53,14 @@ function step!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKu
             @. v += bᴱ[i] * kᴱ[i]
         end
     end
-    @. v = u[n] + h * v
-    # t[n+1] = t[n] + h
+    @. u[n+1] = u[n] + h * v
+    # t[n+1] = t[n] + h with Kahan's summation
     t[n+1] = t[n] +ₖ (h, e)
     return u[n+1], t[n+1]
 end
 
 function step!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, rhs::SplitRightHandSide{𝐿, 𝑁}, solver::ImplicitExplicitRungeKuttaSolver) where {𝐿<:LinearRightHandSide, 𝑁<:NonlinearRightHandSide}
-    @↓ n, kᴵ, kᴱ, Uᵢ, J, e = cache
+    @↓ n, v, kᴵ, kᴱ, Uᵢ, J, e = cache
     @↓ u, t = solution
     @↓ stiff, nonstiff = rhs
     @↓ L, g! = stiff
@@ -70,7 +69,6 @@ function step!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKu
     @↓ Aᴱ ← A, bᴱ ← b, cᴱ ← c = explicitableau
     @↓ h = stepsize
     # compute stages
-    v = u[n+1] # avoid allocs
     for i = 1:s
         # Eᵢ = u[n] + h * sum(Aᴵ[i,j] * kᴵ[j] + Aᴱ[i,j] * kᴱ[j] for j = 1:i-1)
         zero!(v)
@@ -106,8 +104,8 @@ function step!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKu
             @. v += bᴱ[i] * kᴱ[i]
         end
     end
-    @. v = u[n] + h * v
-    # t[n+1] = t[n] + h
+    @. u[n+1] = u[n] + h * v
+    # t[n+1] = t[n] + h with Kahan's summation
     t[n+1] = t[n] +ₖ (h, e)
     return u[n+1], t[n+1]
 end

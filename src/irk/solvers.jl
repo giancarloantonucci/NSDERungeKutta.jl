@@ -10,7 +10,7 @@ function LobattoIIIC2(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
         1 1/2  1/2;
         p 1/2  1/2;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return IRK(tableau, h, newton)
 end
 
@@ -26,7 +26,7 @@ function RadauIA3(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
         2/3  1/4 5/12;
           p  1/4  3/4;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return IRK(tableau, h, newton)
 end
 
@@ -42,7 +42,7 @@ function RadauIIA3(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
          1   3/4   1/4;
          p   3/4   1/4;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return IRK(tableau, h, newton)
 end
 
@@ -59,7 +59,7 @@ function GaußLegendre4(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
         1/2+√3/6 1/4+√3/6      1/4;
                p      1/2      1/2;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return IRK(tableau, h, newton)
 end
 @doc (@doc GaußLegendre4) GaussLegendre4(args...; kwargs...) = GaußLegendre4(args...; kwargs...)
@@ -77,7 +77,7 @@ function LobattoIIIA4(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
           1  1/6 2/3   1/6;
           p  1/6 2/3   1/6;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return IRK(tableau, h, newton)
 end
 
@@ -94,7 +94,7 @@ function LobattoIIIB4(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
           1 1/6  5/6   0;
           p 1/6  2/3 1/6;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return IRK(tableau, h, newton)
 end
 
@@ -111,7 +111,7 @@ function LobattoIIIC4(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
           1 1/6  2/3   1/6;
           p 1/6  2/3   1/6;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return IRK(tableau, h, newton)
 end
 
@@ -128,7 +128,7 @@ function RadauI5(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
         (6+√6)/10 (9-√6)/75 (168+73*√6)/600     (24-√6)/120;
                 p       1/9      (16+√6)/36      (16-√6)/36;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return IRK(tableau, h, newton)
 end
 
@@ -145,7 +145,7 @@ function RadauIA5(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
         (6+√6)/10 1/9 (88+43*√6)/360  (88-7*√6)/360;
                 p 1/9     (16+√6)/36     (16-√6)/36;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return IRK(tableau, h, newton)
 end
 
@@ -162,7 +162,7 @@ function RadauII5(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
                 1      (6-√6)/12      (6+√6)/12   0;
                 p     (16-√6)/36     (16+√6)/36 1/9;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return IRK(tableau, h, newton)
 end
 
@@ -179,7 +179,7 @@ function RadauIIA5(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
                 1        (16-√6)/36        (16+√6)/36          1/9;
                 p        (16-√6)/36        (16+√6)/36          1/9;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return IRK(tableau, h, newton)
 end
 
@@ -197,7 +197,7 @@ function GaußLegendre6(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
         1/2+√15/10 5/36+√15/30 2/9+√15/15        5/36;
                  p        5/18        4/9        5/18;
     ]))
-    newton = SimplifiedNewtonParameters(rtol=rtol, nits=nits)
+    newton = NewtonParameters(rtol=rtol, nits=nits)
     return IRK(tableau, h, newton)
 end
 @doc (@doc GaußLegendre6) GaussLegendre6(args...; kwargs...) = GaußLegendre6(args...; kwargs...)

@@ -19,31 +19,31 @@ include("adaptive.jl")
 include("erk/constructor.jl")
 include("erk/cache.jl")
 include("erk/step.jl")
-include("erk/adaptivecheck.jl")
+include("erk/adaptivestep.jl")
 include("erk/solvers.jl")
 
 include("dirk/constructor.jl")
 include("dirk/cache.jl")
 include("dirk/step.jl")
-include("dirk/adaptivecheck.jl")
+include("dirk/adaptivestep.jl")
 include("dirk/solvers.jl")
 
 include("ierk/constructor.jl")
 include("ierk/cache.jl")
 include("ierk/step.jl")
-include("ierk/adaptivecheck.jl")
+include("ierk/adaptivestep.jl")
 include("ierk/solvers.jl")
 
 include("exrk/constructor.jl")
 include("exrk/cache.jl")
 include("exrk/step.jl")
-include("exrk/adaptivecheck.jl")
+include("exrk/adaptivestep.jl")
 include("exrk/solvers.jl")
 
 include("irk/constructor.jl")
 include("irk/cache.jl")
 include("irk/step.jl")
-include("irk/adaptivecheck.jl")
+include("irk/adaptivestep.jl")
 include("irk/solvers.jl")
 
 include("stability.jl")
@@ -118,7 +118,7 @@ export GaußLegendre6, GaussLegendre6
 
 export butchertableau
 export stepsize
-export extract
+export dimension, extract
 export ℛ
 
 end
