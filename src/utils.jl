@@ -1,6 +1,6 @@
 hairernorm(v) = sqrt(sum(abs2, v) / length(v))
 
-# Kahan's compensated summation
+# Kahan's compensated summation for improved numerical accuracy
 function kahansum(a::AbstractFloat, b::AbstractFloat, e::Ref{AbstractFloat})
     corrected_b = b + e[]
     sum = a + corrected_b
@@ -9,7 +9,7 @@ function kahansum(a::AbstractFloat, b::AbstractFloat, e::Ref{AbstractFloat})
     return sum
 end
 
-# Linear spline interpolation
+# Linear spline interpolation between two points
 function linearspline(x, x_prev, x_curr, y_prev, y_curr)
     h = x_curr - x_prev
     a_prev = (x_curr - x) / h
@@ -18,7 +18,7 @@ function linearspline(x, x_prev, x_curr, y_prev, y_curr)
     return y
 end
 
-# Cubic Hermite spline interpolation
+# Cubic Hermite spline interpolation between two points
 function hermitecubicspline(x, x_prev, x_curr, y_prev, y_curr, dy_prev, dy_curr)
     h = x_curr - x_prev
     c0 = y_prev
