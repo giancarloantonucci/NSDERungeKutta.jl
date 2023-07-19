@@ -1,12 +1,11 @@
 hairernorm(v) = sqrt(sum(v.^2) / length(v))
 
 # Kahan's (compensated) summation
-function +ₖ(a::AbstractFloat, tpl::Tuple{AbstractFloat, Ref{<:AbstractFloat}})
-    b, ε = tpl
-    b₁ = b + ε[]
-    c = a + b₁
-    b₂ = c - a
-    ε[] = b₁ - b₂
+function kahan_sum(a::AbstractFloat, b::AbstractFloat, e::Ref{AbstractFloat})
+    b1 = b + e[]
+    c = a + b1
+    b2 = c - a
+    e[] = b1 - b2
     return c
 end
 
