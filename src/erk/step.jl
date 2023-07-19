@@ -27,6 +27,6 @@ function step!(cache::ExplicitRungeKuttaCache, solution::AbstractRungeKuttaSolut
     end
     @. u[n+1] = u[n] + h * v
     # t[n+1] = t[n] + h
-    t[n+1] = kahan_sum(t[n], h, e)
+    t[n+1] = kahansum(t[n], h, e)
     return u[n+1], t[n+1]
 end

@@ -1,29 +1,30 @@
-hairernorm(v) = sqrt(sum(v.^2) / length(v))
+hairernorm(v) = sqrt(sum(abs2, v) / length(v))
 
-# Kahan's (compensated) summation
-function kahan_sum(a::AbstractFloat, b::AbstractFloat, e::Ref{AbstractFloat})
-    b1 = b + e[]
-    c = a + b1
-    b2 = c - a
-    e[] = b1 - b2
-    return c
+# Kahan's compensated summation
+function kahansum(a::AbstractFloat, b::AbstractFloat, e::Ref{AbstractFloat})
+    corrected_b = b + e[]
+    sum = a + corrected_b
+    compensation = corrected_b - (sum - a)
+    e[] = compensation
+    return sum
 end
 
-# interpolation methods
-function linearspline(x, xᵢ₋₁, xᵢ, yᵢ₋₁, yᵢ)
-    hᵢ = xᵢ - xᵢ₋₁
-    aᵢ₋₁ = (xᵢ - x) / hᵢ
-    aᵢ = (x - xᵢ₋₁) / hᵢ
-    y = @. aᵢ₋₁ * yᵢ₋₁ + aᵢ * yᵢ
+# Linear spline interpolation
+function linearspline(x, x_prev, x_curr, y_prev, y_curr)
+    h = x_curr - x_prev
+    a_prev = (x_curr - x) / h
+    a_curr = (x - x_prev) / h
+    y = @. a_prev * y_prev + a_curr * y_curr
     return y
 end
 
-function hermitecubicspline(x, xᵢ₋₁, xᵢ, yᵢ₋₁, yᵢ, dyᵢ₋₁, dyᵢ)
-    hᵢ = xᵢ - xᵢ₋₁
-    c₀ = yᵢ₋₁
-    c = dyᵢ₋₁
-    c₂ = @. (3 * (yᵢ - yᵢ₋₁) / hᵢ - (dyᵢ + 2 * dyᵢ₋₁)) / hᵢ
-    c₃ = @. ((dyᵢ + dyᵢ₋₁) - 2 * (yᵢ - yᵢ₋₁) / hᵢ) / hᵢ^2
-    y = @. c₀ + c * (x - xᵢ₋₁) + c₂ * (x - xᵢ₋₁)^2 + c₃ * (x - xᵢ₋₁)^3
+# Cubic Hermite spline interpolation
+function hermitecubicspline(x, x_prev, x_curr, y_prev, y_curr, dy_prev, dy_curr)
+    h = x_curr - x_prev
+    c0 = y_prev
+    c1 = dy_prev
+    c2 = @. (3 * (y_curr - y_prev) / h - (dy_curr + 2 * dy_prev)) / h
+    c3 = @. ((dy_curr + dy_prev) - 2 * (y_curr - y_prev) / h) / h^2
+    y = @. c0 + c1 * (x - x_prev) + c2 * (x - x_prev)^2 + c3 * (x - x_prev)^3
     return y
 end
