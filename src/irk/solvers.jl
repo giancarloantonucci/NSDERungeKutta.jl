@@ -47,12 +47,11 @@ function RadauIIA3(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
 end
 
 """
-    GaußLegendre4(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10) :: ImplicitRungeKuttaSolver
-    GaussLegendre4(args...; kwargs...) :: ImplicitRungeKuttaSolver
+    GaussLegendre4(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10) :: ImplicitRungeKuttaSolver
 
 returns an [`ImplicitRungeKuttaSolver`](@ref) for the 4th-order Gauß-Legendre method.
 """
-function GaußLegendre4(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
+function GaussLegendre4(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
     p = 4
     tableau = ButcherTableau(float([
         1/2-√3/6      1/4 1/4-√3/6;
@@ -62,7 +61,6 @@ function GaußLegendre4(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
     newton = NewtonParameters(rtol=rtol, nits=nits)
     return IRK(tableau, h, newton)
 end
-@doc (@doc GaußLegendre4) GaussLegendre4(args...; kwargs...) = GaußLegendre4(args...; kwargs...)
 
 """
     LobattoIIIA4(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10) :: ImplicitRungeKuttaSolver
@@ -184,12 +182,11 @@ function RadauIIA5(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
 end
 
 """
-    GaußLegendre6(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10) :: ImplicitRungeKuttaSolver
-    GaussLegendre6(args...; kwargs...) :: ImplicitRungeKuttaSolver
+    GaussLegendre6(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10) :: ImplicitRungeKuttaSolver
 
 returns an [`ImplicitRungeKuttaSolver`](@ref) for the 6th-order Gauß–Legendre method.
 """
-function GaußLegendre6(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
+function GaussLegendre6(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
     p = 6
     tableau = ButcherTableau(float([
         1/2-√15/10        5/36 2/9-√15/15 5/36-√15/30;
@@ -200,4 +197,3 @@ function GaußLegendre6(; h::Real=0.0, rtol::Real=1e-3, nits::Integer=10)
     newton = NewtonParameters(rtol=rtol, nits=nits)
     return IRK(tableau, h, newton)
 end
-@doc (@doc GaußLegendre6) GaussLegendre6(args...; kwargs...) = GaußLegendre6(args...; kwargs...)
