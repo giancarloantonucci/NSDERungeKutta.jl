@@ -1,7 +1,7 @@
 hairernorm(v) = sqrt(sum(abs2, v) / length(v))
 
 # Kahan's compensated summation for improved numerical accuracy
-function kahansum(a::AbstractFloat, b::AbstractFloat, e::Ref{AbstractFloat})
+function kahansum(a::AbstractFloat, b::AbstractFloat, e::Ref{<:AbstractFloat})
     corrected_b = b + e[]
     sum = a + corrected_b
     compensation = corrected_b - (sum - a)
