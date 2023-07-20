@@ -23,17 +23,20 @@ function NSDEBase.solve!(solution::AbstractRungeKuttaSolution, problem::Abstract
     @↓ u0, (t0, tN) ← tspan = problem
     @↓ u, t = solution
     @↓ n = cache
-    N = N₀ = length(t)
+    N0 = N = length(t)
+    # Integrate until the final time tN is reached
     while t[n] < tN
         step!(cache, solution, problem, solver)
         adaptivestep!(cache, solution, solver)
         @↓ n = cache
+        # If the solution array is full and the final time hasn't been reached yet, append more memory to make space for more time steps
         if n == N && t[n] < tN
-            append!(u, [similar(u[n]) for i = 1:N₀])
-            append!(t, Vector{typeof(t[n])}(undef, N₀))
-            N += N₀
+            append!(u, [similar(u[n]) for i = 1:N0])
+            append!(t, similar(t, N0))
+            N += N0
         end
     end
+    # Resize the solution arrays to match the final number of time steps
     resize!(u, n)
     resize!(t, n)
     # @↑ solution = u, t
