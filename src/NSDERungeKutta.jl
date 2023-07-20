@@ -118,7 +118,7 @@ export GaußLegendre6, GaussLegendre6
 
 export butchertableau
 export stepsize
-export dimension, extract
+export numvariables, extract
 export ℛ
 
 end
