@@ -79,11 +79,12 @@ function Heun3(; h::Real=0.0)
 end
 
 """
-    Kutta3(; h::Real=0.0) :: ExplicitRungeKuttaSolver
+    RungeKutta3(; h::Real=0.0) :: ExplicitRungeKuttaSolver
+    RK3(args...; kwargs...)
 
 returns an [`ExplicitRungeKuttaSolver`](@ref) for the 3rd-order Kutta method.
 """
-function Kutta3(; h::Real=0.0)
+function RungeKutta3(; h::Real=0.0)
     p = 3
     tableau = ButcherTableau(float([
           0   0   0   0;
@@ -93,6 +94,7 @@ function Kutta3(; h::Real=0.0)
     ]))
     return ERK(tableau, h)
 end
+@doc (@doc RungeKutta4) RK3(args...; kwargs...) = RungeKutta3(args...; kwargs...)
 
 """
     Ralston3(; h::Real=0.0) :: ExplicitRungeKuttaSolver
