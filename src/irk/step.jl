@@ -6,12 +6,13 @@ function step!(cache::ImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolut
     @↓ A, b, c, s = tableau
     @↓ h = stepsize
     @↓ rtol, nits = newton
-    # compute stages
+
+    # Stages:
     zero!(k)
     Df!(J, v, u[n], t[n])
     # DF = I - kron(h * A, J)
     DF = factorize(I - h * kron(A, J))
-    for ȷ = 1:nits
+    for l = 1:nits
         for i = 1:s
             # Uᵢ = u[n] + h * sum(a[i,j] * k[j] for j = 1:s)
             zero!(v)
@@ -45,7 +46,8 @@ function step!(cache::ImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolut
             break
         end
     end
-    # compute step
+
+    # Step:
     # u[n+1] = u[n] + h * sum(b[i] * k[i] for i = 1:s)
     zero!(v)
     for i = 1:s
@@ -66,7 +68,8 @@ function step!(cache::ImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolut
     @↓ tableau, stepsize = solver
     @↓ A, b, c, s = tableau
     @↓ h = stepsize
-    # compute stages
+
+    # Stages:
     # DF = I - kron(h * A, L)
     DF = factorize(I - h * kron(A, L))
     # F = kron(ones(s), L * u[n]) + [g(t[n] + h * c[i]) for i = 1:s]
@@ -86,7 +89,8 @@ function step!(cache::ImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolut
         d = length(k[i])
         @. k[i] = V[(i-1)*d+1:i*d]
     end
-    # compute step
+
+    # Step:
     # u[n+1] = u[n] + h * sum(b[i] * k[i] for i = 1:s)
     zero!(v)
     for i = 1:s
@@ -97,5 +101,6 @@ function step!(cache::ImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolut
     @. u[n+1] = u[n] + h * v
     # t[n+1] = t[n] + h
     t[n+1] = kahansum(t[n], h, e)
+
     return u[n+1], t[n+1]
 end

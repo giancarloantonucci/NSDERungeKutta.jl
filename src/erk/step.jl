@@ -4,7 +4,8 @@ function step!(cache::ExplicitRungeKuttaCache, solution::AbstractRungeKuttaSolut
     @↓ tableau, stepsize = solver
     @↓ A, b, c, s = tableau
     @↓ h = stepsize
-    # compute stages
+
+    # Stages:
     for i = 1:s
         # Uᵢ = u[n] + h * sum(A[i,j] * k[j] for j = 1:i-1)
         zero!(v)
@@ -17,7 +18,8 @@ function step!(cache::ExplicitRungeKuttaCache, solution::AbstractRungeKuttaSolut
         # k[i] = f(t[n] + h * c[i], Uᵢ)
         rhs(k[i], v, t[n] + h * c[i])
     end
-    # compute step
+
+    # Step:
     # u[n+1] = u[n] + h * sum(b[i] * k[i] for i = 1:s)
     zero!(v)
     for i = 1:s
@@ -28,5 +30,6 @@ function step!(cache::ExplicitRungeKuttaCache, solution::AbstractRungeKuttaSolut
     @. u[n+1] = u[n] + h * v
     # t[n+1] = t[n] + h
     t[n+1] = kahansum(t[n], h, e)
+    
     return u[n+1], t[n+1]
 end

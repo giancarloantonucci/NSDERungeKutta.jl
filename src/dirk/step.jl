@@ -6,7 +6,8 @@ function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRunge
     @↓ A, b, c, s = tableau
     @↓ h = stepsize
     @↓ rtol, nits = newton
-    # compute stages
+
+    # Stages:
     Df!(J, v, u[n], t[n])
     for i = 1:s
         # Eᵢ = u[n] + h * sum(A[i,j] * k[j] for j = 1:i-1)
@@ -17,11 +18,12 @@ function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRunge
             end
         end
         @. v = u[n] + h * v
-        # simplified Newton
-        zero!(k[i])
+
+        # Simplified Newton:
         # DFᵢ = I - h * A[i,i] * J
+        zero!(k[i])
         DFᵢ = factorize(I - h * A[i,i] * J)
-        for ȷ = 1:nits
+        for l = 1:nits
             # Uᵢ = Eᵢ + h * A[i,i] * k[i]
             @. Uᵢ = v + h * A[i,i] * k[i]
             # Fᵢ = f(t[n] + h * c[i], Uᵢ) - k[i]
@@ -36,7 +38,8 @@ function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRunge
             end
         end
     end
-    # compute step
+
+    # Step:
     # u[n+1] = u[n] + h * sum(b[i] * k[i] for i = 1:s)
     zero!(v)
     for i = 1:s
@@ -47,6 +50,7 @@ function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRunge
     @. u[n+1] = u[n] + h * v
     # t[n+1] = t[n] + h
     t[n+1] = kahansum(t[n], h, e)
+
     return u[n+1], t[n+1]
 end
 
@@ -57,7 +61,8 @@ function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRunge
     @↓ tableau, stepsize = solver
     @↓ A, b, c, s = tableau
     @↓ h = stepsize
-    # compute stages
+
+    # Stages:
     for i = 1:s
         # Eᵢ = u[n] + h * sum(A[i,j] * k[j] for j = 1:i-1)
         zero!(v)
@@ -74,7 +79,8 @@ function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRunge
         # k[i] = DFᵢ \ Fᵢ
         ldiv!(DFᵢ, k[i])
     end
-    # compute step
+
+    # Step:
     # u[n+1] = u[n] + h * sum(b[i] * k[i] for i = 1:s)
     zero!(v)
     for i = 1:s
@@ -85,5 +91,6 @@ function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRunge
     @. u[n+1] = u[n] + h * v
     # t[n+1] = t[n] + h
     t[n+1] = kahansum(t[n], h, e)
+
     return u[n+1], t[n+1]
 end

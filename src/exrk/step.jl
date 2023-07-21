@@ -6,7 +6,8 @@ function step!(cache::ExplicitExponentialRungeKuttaCache, solution::AbstractRung
     @↓ nonstiff, stiff = rhs
     @↓ L = nonstiff
     @↓ h = stepsize
-    # compute stages
+
+    # Stages:
     for i = 1:s
         # Uᵢ = exp(c[i] * h * L) * u[n] + h * sum(Aᵩ[i,j](h * L) * k[j] for j = 1:i-1)
         zero!(v)
@@ -21,7 +22,8 @@ function step!(cache::ExplicitExponentialRungeKuttaCache, solution::AbstractRung
         # k[i] = f(t[n] + h * c[i], Uᵢ)
         stiff(k[i], v, t[n] + h * c[i])
     end
-    # compute step
+
+    # Step:
     # u[n+1] = exp(h * L) * u[n] + h * sum(bᵩ[i](h * L) * k[i] for i = 1:s)
     zero!(v)
     for i = 1:s
