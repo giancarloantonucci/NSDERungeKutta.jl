@@ -1,4 +1,4 @@
-mutable struct ImplicitRungeKuttaCache{n_T<:Integer, m_T<:Integer, v_T<:(AbstractVector{ℂ} where ℂ<:Number), k_T<:(AbstractVector{𝕍} where 𝕍<:AbstractVector{ℂ} where ℂ<:Number), Δk_T<:(AbstractVector{𝕍} where 𝕍<:AbstractVector{ℂ} where ℂ<:Number), V_T<:(AbstractVector{ℂ} where ℂ<:Number), J_T<:(AbstractMatrix{ℂ} where ℂ<:Number), e_T<:(Ref{ℝ} where ℝ<:Real)} <: AbstractRungeKuttaCache
+mutable struct ImplicitRungeKuttaCache{n_T<:Integer, m_T<:Integer, v_T<:AbstractVector{<:Number}, k_T<:AbstractVector{<:AbstractVector{<:Number}}, Δk_T<:AbstractVector{<:AbstractVector{<:Number}}, V_T<:AbstractVector{<:Number}, J_T<:(AbstractMatrix{ℂ} where ℂ<:Number), e_T<:Ref{<:Real}} <: AbstractRungeKuttaCache
     n::n_T # step counter
     m::m_T # adaptive counter
     v::v_T # avoids allocation inside `adaptivestep!`
