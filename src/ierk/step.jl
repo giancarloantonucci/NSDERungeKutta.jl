@@ -8,7 +8,8 @@ function step!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKu
     @↓ Aᴱ ← A, bᴱ ← b, cᴱ ← c = explicitableau
     @↓ h = stepsize
     @↓ rtol, nits = newton
-    # compute stages
+
+    # Stages:
     Df!(J, v, u[n], t[n])
     for i = 1:s
         # Eᵢ = u[n] + h * sum(Aᴵ[i,j] * kᴵ[j] + Aᴱ[i,j] * kᴱ[j] for j = 1:i-1)
@@ -22,13 +23,14 @@ function step!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKu
             end
         end
         @. v = u[n] + h * v
-        # simplified Newton
-        ı = 1
+
+        # Simplified Newton:
+        l = 1
         zero!(Uᵢ)
-        ΔUᵢ = kᴱ[i] # avoid allocs
+        ΔUᵢ = kᴱ[i] # to avoid allocs
         # Fᵢ' = I - h * Aᴵ[i,i] * L
         M = factorize(I - h * Aᴵ[i,i] * J)
-        while (ı == 1) || (norm(ΔUᵢ) > rtol * norm(Uᵢ) && ı < nits)
+        for l = 1:nits
             # kᴵ[i] = fₛ(t[n] + h * cᴵ[i], Uᵢ)
             stiff(kᴵ[i], Uᵢ, t[n] + h * cᴵ[i])
             # Fᵢ = Eᵢ + h * Aᴵ[i,i] * kᴵ[i] - Uᵢ
@@ -37,12 +39,16 @@ function step!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKu
             ldiv!(M, ΔUᵢ)
             # Uᵢ += ΔUᵢ
             @. Uᵢ += ΔUᵢ
-            ı += 1
+            if norm(ΔUᵢ) < rtol * norm(Uᵢ)
+                break
+            end
         end
+
         # kᴱ[i] = fₙₛ(t[n] + h * cᴱ[i], Uᵢ)
         nonstiff(kᴱ[i], Uᵢ, t[n] + h * cᴱ[i])
     end
-    # compute step
+
+    # Step:
     # u[n+1] = u[n] + h * sum(bᴵ[i] * kᴵ[i] + bᴱ[i] * kᴱ[i] for i = 1:s)
     zero!(v)
     for i = 1:s
@@ -56,6 +62,7 @@ function step!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKu
     @. u[n+1] = u[n] + h * v
     # t[n+1] = t[n] + h
     t[n+1] = kahansum(t[n], h, e)
+
     return u[n+1], t[n+1]
 end
 
@@ -68,7 +75,8 @@ function step!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKu
     @↓ Aᴵ ← A, bᴵ ← b, cᴵ ← c, s = implicitableau
     @↓ Aᴱ ← A, bᴱ ← b, cᴱ ← c = explicitableau
     @↓ h = stepsize
-    # compute stages
+
+    # Stages:
     for i = 1:s
         # Eᵢ = u[n] + h * sum(Aᴵ[i,j] * kᴵ[j] + Aᴱ[i,j] * kᴱ[j] for j = 1:i-1)
         zero!(v)
@@ -93,7 +101,8 @@ function step!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKu
         # kᴱ[i] = fₙₛ(t[n] + h * cᴱ[i], U)
         nonstiff(kᴱ[i], Uᵢ, t[n] + h * cᴱ[i])
     end
-    # compute step
+
+    # Step:
     # u[n+1] = u[n] + h * sum(bᴵ[i] * kᴵ[i] + bᴱ[i] * kᴱ[i] for i = 1:s)
     zero!(v)
     for i = 1:s
@@ -107,5 +116,6 @@ function step!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKu
     @. u[n+1] = u[n] + h * v
     # t[n+1] = t[n] + h
     t[n+1] = kahansum(t[n], h, e)
+
     return u[n+1], t[n+1]
 end
