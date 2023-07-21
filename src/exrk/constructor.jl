@@ -6,7 +6,7 @@ A composite type for an exponential explicit [`AbstractRungeKuttaSolver`](@ref).
 # Constructors
 ```julia
 ExplicitExponentialRungeKuttaSolver(tableau, stepsize[, adaptive])
-EERK(args...; kwargs...)
+ExRK(args...; kwargs...)
 ```
 
 # Arguments
@@ -29,7 +29,7 @@ end
 
 ExplicitExponentialRungeKuttaSolver(tableau::AbstractButcherTableau, h::Real, adaptive::Union{AbstractAdaptiveParameters, Nothing}) = ExplicitExponentialRungeKuttaSolver(tableau, StepSize(h), adaptive)
 ExplicitExponentialRungeKuttaSolver(tableau::AbstractButcherTableau, stepsize::Union{AbstractStepSize, Real}) = ExplicitExponentialRungeKuttaSolver(tableau, stepsize, nothing)
-@doc (@doc ExplicitExponentialRungeKuttaSolver) EXRK(args...; kwargs...) = ExplicitExponentialRungeKuttaSolver(args...; kwargs...)
+@doc (@doc ExplicitExponentialRungeKuttaSolver) ExRK(args...; kwargs...) = ExplicitExponentialRungeKuttaSolver(args...; kwargs...)
 
 #----------------------------------- METHODS -----------------------------------
 
