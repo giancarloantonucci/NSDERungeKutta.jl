@@ -1,5 +1,5 @@
 using LinearAlgebra
-using RungeKutta
+using NSDERungeKutta
 using Test
 
 u0 = ones(3)
@@ -31,7 +31,7 @@ problem = IVP(f!, u0, tspan)
     @test solver isa ExplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = Kutta3(h = 1e-3)
+    solver = RK3(h = 1e-3)
     @test solver isa ExplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
