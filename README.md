@@ -32,9 +32,10 @@ We can plot the obtained `solution` by extracting its fields `u` and `t`, e.g. u
 
 ```julia
 using Plots, LaTeXStrings
+gr(fontfamily = "Computer Modern", framestyle = :box, label = "", tickdirection = :out)
 p₁ = plot(solution, xlabel = L"t", label = [L"\theta" L"\omega"])
-p₂ = phaseplot(solution, vars = (1, 2), xlabel = L"\theta", ylabel = L"\omega")
-plot(size = (900, 450), p₁, p₂)
+p₂ = phaseplot(solution, variables = (1, 2), xlabel = L"\theta", ylabel = L"\omega")
+plot(size = (900, 450), p₁, p₂, left_margin = 3Plots.mm, bottom_margin = 3Plots.mm)
 ```
 
 ![svg](imgs/pendulum.svg)
@@ -44,8 +45,8 @@ For convenience, this package re-exports all the ODE problems defined in [NSDEBa
 This package has some predefined recipes to plot **stability regions** and **order stars** too:
 
 ```julia
-p₁ = stabilityf(RK4(), xlabel = L"\Re(z)", ylabel = L"\Im(z)", colour = :blues)
-p₂ = orderstarf(RK4(), xlabel = L"\Re(z)", ylabel = L"\Im(z)", colour = :blues)
+p₁ = stabilityf(RK4(), xlabel = L"\Re(z)", ylabel = L"\Im(z)", colour = :blues, resolution = 500)
+p₂ = orderstarf(RK4(), xlabel = L"\Re(z)", ylabel = L"\Im(z)", colour = :blues, resolution = 500)
 plot(size = (1000, 400), p₁, p₂, left_margin = 5Plots.mm, bottom_margin = 5Plots.mm)
 ```
 
