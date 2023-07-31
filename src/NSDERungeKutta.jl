@@ -99,14 +99,14 @@ export IMEXSSP2_322
 export IMEXSSP2_332
 export IMEXSSP3_332
 
-export ExplicitExponentialRungeKuttaSolver, ExpERK
+export ExplicitExponentialRungeKuttaSolver, ExRK
 export ETDRK4
 
 export ImplicitRungeKuttaSolver, IRK
 export LobattoIIIC2
 export RadauIA3
 export RadauIIA3
-export GaußLegendre4, GaussLegendre4
+export GaussLegendre4
 export LobattoIIIA4
 export LobattoIIIB4
 export LobattoIIIC4
@@ -114,7 +114,7 @@ export RadauI5
 export RadauIA5
 export RadauII5
 export RadauIIA5
-export GaußLegendre6, GaussLegendre6
+export GaussLegendre6
 
 export butchertableau
 export stepsize
