@@ -20,6 +20,7 @@ RungeKuttaSolution(problem, solver)
 - [`lastindex`](@ref) : get the last index.
 - [`length`](@ref) : get the number of time steps.
 - [`setindex!`](@ref) : set value(s) and time.
+- [`numtimesteps`](@ref) : get the number of time steps.
 - [`numvariables`](@ref) : get the number of variables.
 """
 struct RungeKuttaSolution{u_T<:(AbstractVector{𝕍} where 𝕍<:AbstractVector{ℂ} where ℂ<:Number), t_T<:(AbstractVector{ℝ} where ℝ<:Real)} <: AbstractRungeKuttaSolution
@@ -88,11 +89,18 @@ end
 #---------------------------------- FUNCTIONS ----------------------------------
 
 """
+    numtimesteps(solution::RungeKuttaSolution)
+
+returns the number of time steps in `solution`.
+"""
+numtimesteps(solution::RungeKuttaSolution) = length(solution.t)
+
+"""
     length(solution::RungeKuttaSolution)
 
 returns the number of time steps in `solution`.
 """
-Base.length(solution::RungeKuttaSolution) = length(solution.t)
+Base.length(solution::RungeKuttaSolution) = numtimesteps(solution)
 
 """
     numvariables(solution::RungeKuttaSolution)
@@ -106,7 +114,7 @@ numvariables(solution::RungeKuttaSolution) = length(solution.u[1])
 
 returns a tuple containing the number of variables and time steps in `solution`.
 """
-Base.size(solution::RungeKuttaSolution) = (numvariables(solution), length(solution))
+Base.size(solution::RungeKuttaSolution) = (numvariables(solution), numtimesteps(solution))
 
 """
     extract(solution::RungeKuttaSolution, i::Integer) :: RungeKuttaSolution
