@@ -3,6 +3,7 @@
     minorgrid --> 0.1
     minorgridstyle --> :dash
     seriestype --> :path
+    xwiden --> false
     (num_variables, num_time_steps) = size(solution)
     if variables isa Nothing
         variables = 1:num_variables
