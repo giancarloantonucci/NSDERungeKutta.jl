@@ -44,12 +44,12 @@ end
     @↓ solution ← object = wrappedobject
     (num_variables, num_time_steps) = size(solution)
     variables = haskey(plotattributes, :variables) ? plotattributes[:variables] : (1:num_variables)
-    @↓ solution_variables, solution_time_steps = solution
+    @↓ solution_variables ← u, solution_time_steps ← t = solution
     return tuple([[solution_variables[n][i] for n = 1:num_time_steps] for i in variables]...)
 end
 
 @userplot STABILITY
-@recipe function f(h::STABILITY; span=range(-5,5,length=100), xspan=span, yspan=span)
+@recipe function f(h::STABILITY; resolution=100, span=range(-5,5,length=resolution), xspan=span, yspan=span)
     R = if h.args[1] isa ButcherTableau
         z -> ℛ(z, h.args[1])
     elseif h.args[1] isa AbstractRungeKuttaSolver
@@ -70,7 +70,7 @@ end
 end
 
 @userplot STABILITYF
-@recipe function f(h::STABILITYF; span=range(-5,5,length=100), xspan=span, yspan=span)
+@recipe function f(h::STABILITYF; resolution=100, span=range(-5,5,length=resolution), xspan=span, yspan=span)
     R = if h.args[1] isa ButcherTableau
         z -> ℛ(z, h.args[1])
     elseif h.args[1] isa AbstractRungeKuttaSolver
@@ -93,7 +93,7 @@ end
 end
 
 @userplot ORDERSTAR
-@recipe function f(h::ORDERSTAR; span=range(-5,5,length=100), xspan=span, yspan=span)
+@recipe function f(h::ORDERSTAR; resolution=100, span=range(-5,5,length=resolution), xspan=span, yspan=span)
     R = if h.args[1] isa ButcherTableau
         z -> ℛ(z, h.args[1])
     elseif h.args[1] isa AbstractRungeKuttaSolver
@@ -114,7 +114,7 @@ end
 end
 
 @userplot ORDERSTARF
-@recipe function f(h::ORDERSTARF; span=range(-5,5,length=100), xspan=span, yspan=span)
+@recipe function f(h::ORDERSTARF; resolution=100, span=range(-5,5,length=resolution), xspan=span, yspan=span)
     R = if h.args[1] isa ButcherTableau
         z -> ℛ(z, h.args[1])
     elseif h.args[1] isa AbstractRungeKuttaSolver
