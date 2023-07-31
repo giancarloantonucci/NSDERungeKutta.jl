@@ -1,36 +1,36 @@
-@recipe function f(solution::RungeKuttaSolution; vars=nothing, iscomplex=false, plotkind=:plot)
+@recipe function f(solution::RungeKuttaSolution; variables=nothing, iscomplex=false, plotkind=:plot)
     gridalpha --> 0.2
     minorgrid --> 0.1
     minorgridstyle --> :dash
     seriestype --> :path
-    (L, N) = size(solution)
-    if vars isa Nothing
-        vars = 1:L
-    elseif vars isa Integer
-        vars = [vars]
-    elseif vars isa Tuple
-        # vars = [var for var in vars]
-    elseif vars isa AbstractVector
-        # vars = vars
+    (num_variables, num_time_steps) = size(solution)
+    if variables isa Nothing
+        variables = 1:num_variables
+    elseif variables isa Integer
+        variables = [variables]
+    elseif variables isa Tuple
+        # variables = [variable for variable in variables]
+    elseif variables isa AbstractVector
+        # variables = variables
     else
-        throw(ArgumentError("Got $(typeof(vars)) instead of `Union{Integer, Tuple, AbstractVector}` with `length(vars)` ≥ 1."))
+        throw(ArgumentError("Got $(typeof(variables)) instead of `Union{Integer, Tuple, AbstractVector}` with `length(variables)` ≥ 1."))
     end
-    @↓ u, t = solution
+    @↓ solution_variables ← u, solution_time_steps ← t = solution
     if iscomplex
-        for i in vars
+        for i in variables
             @series begin
                 seriescolor --> i
-                [u[n][i] for n = 1:N]
+                [solution_variables[n][i] for n = 1:num_time_steps]
             end
         end
     else
-        for (i, var) in enumerate(vars)
+        for (i, variable) in enumerate(variables)
             @series begin
                 if haskey(plotattributes, :label) && plotattributes[:label] isa AbstractVector
                     label := plotattributes[:label][i]
                 end
                 seriescolor --> i
-                (t, [u[n][var] for n = 1:N])
+                (solution_time_steps, [solution_variables[n][variable] for n = 1:num_time_steps])
             end
         end
     end
@@ -42,10 +42,10 @@ end
     minorgridstyle --> :dash
     seriestype --> :path
     @↓ solution ← object = wrappedobject
-    (L, N) = size(solution)
-    vars = haskey(plotattributes, :vars) ? plotattributes[:vars] : (1:L)
-    @↓ u, t = solution
-    return tuple([[u[n][i] for n = 1:N] for i in vars]...)
+    (num_variables, num_time_steps) = size(solution)
+    variables = haskey(plotattributes, :variables) ? plotattributes[:variables] : (1:num_variables)
+    @↓ solution_variables, solution_time_steps = solution
+    return tuple([[solution_variables[n][i] for n = 1:num_time_steps] for i in variables]...)
 end
 
 @userplot STABILITY
@@ -64,7 +64,7 @@ end
     seriestype --> :contour
     function f(x, y)
         z = x + 1im * y
-        return p = abs(R(z))
+        return abs(R(z))
     end
     return xspan, yspan, f
 end
