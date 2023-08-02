@@ -2,7 +2,7 @@
 
 A Julia package implementing Runge-Kutta methods.
 
-[![Docs Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://giancarloantonucci.github.io/NSDERungeKutta.jl/dev) [![Build Status](https://img.shields.io/github/workflow/status/giancarloantonucci/NSDERungeKutta.jl/CI)](https://github.com/giancarloantonucci/NSDERungeKutta.jl/actions) [![Coverage](https://img.shields.io/codecov/c/github/giancarloantonucci/NSDERungeKutta.jl?label=coverage)](https://codecov.io/gh/giancarloantonucci/NSDERungeKutta.jl)
+[![Documentation](https://img.shields.io/badge/docs-dev-blue.svg)](https://giancarloantonucci.github.io/NSDERungeKutta.jl/dev) ![Build Status](https://img.shields.io/github/actions/workflow/status/giancarloantonucci/NSDERungeKutta.jl/CI.yml) ![Coverage Status](https://img.shields.io/codecov/c/github/giancarloantonucci/NSDERungeKutta.jl)
 
 ## Installation
 
