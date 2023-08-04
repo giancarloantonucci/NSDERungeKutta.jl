@@ -1,5 +1,5 @@
 using Documenter
-using RungeKutta
+using NSDERungeKutta
 
 PAGES = [
     "Home" => "index.md",
@@ -15,5 +15,5 @@ makedocs(;
 )
 
 deploydocs(;
-    repo = "https://github.com/giancarloantonucci/RungeKutta.jl"
+    repo = "https://github.com/giancarloantonucci/NSDERungeKutta.jl"
 )
