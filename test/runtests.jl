@@ -95,38 +95,53 @@ end
 
 @testset "Implicit" begin
     solver = ImplicitEuler(h = 1e-3)
-    @test solver isa ImplicitRungeKuttaSolver
+    @test solver isa DiagonallyImplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
     solver = GaussLegendre2(h = 1e-3)
-    @test solver isa ImplicitRungeKuttaSolver
+    @test solver isa DiagonallyImplicitRungeKuttaSolver
+    solution = solve(problem, solver)
+    @test solution isa RungeKuttaSolution
+    solver = SDIRK2(h = 1e-3)
+    @test solver isa DiagonallyImplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
     solver = LobattoIII2(h = 1e-3)
-    @test solver isa ImplicitRungeKuttaSolver
+    @test solver isa DiagonallyImplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
     solver = LobattoIIIA2(h = 1e-3)
-    @test solver isa ImplicitRungeKuttaSolver
+    @test solver isa DiagonallyImplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
+    solver = SDIRK3(h = 1e-3)
+    @test solver isa DiagonallyImplicitRungeKuttaSolver
+    solution = solve(problem, solver)
+    @test solution isa RungeKuttaSolution
+    solver = RadauI3(h = 1e-3)
+    @test solver isa DiagonallyImplicitRungeKuttaSolver
+    solution = solve(problem, solver)
+    @test solution isa RungeKuttaSolution
+    solver = RadauII3(h = 1e-3)
+    @test solver isa DiagonallyImplicitRungeKuttaSolver
+    solution = solve(problem, solver)
+    @test solution isa RungeKuttaSolution
+    solver = SDIRK4(h = 1e-3)
+    @test solver isa DiagonallyImplicitRungeKuttaSolver
+    solution = solve(problem, solver)
+    @test solution isa RungeKuttaSolution
+    solver = LobattoIII4(h = 1e-3)
+    @test solver isa DiagonallyImplicitRungeKuttaSolver
+    solution = solve(problem, solver)
+    @test solution isa RungeKuttaSolution
+end
+
+@testset "Implicit" begin
     solver = LobattoIIIC2(h = 1e-3)
     @test solver isa ImplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = SDIRK3(h = 1e-3)
-    @test solver isa ImplicitRungeKuttaSolver
-    solution = solve(problem, solver)
-    @test solution isa RungeKuttaSolution
-    solver = RadauI3(h = 1e-3)
-    @test solver isa ImplicitRungeKuttaSolver
-    solution = solve(problem, solver)
-    @test solution isa RungeKuttaSolution
     solver = RadauIA3(h = 1e-3)
-    @test solver isa ImplicitRungeKuttaSolver
-    solution = solve(problem, solver)
-    @test solution isa RungeKuttaSolution
-    solver = RadauII3(h = 1e-3)
     @test solver isa ImplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
@@ -135,10 +150,6 @@ end
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
     solver = GaussLegendre4(h = 1e-3)
-    @test solver isa ImplicitRungeKuttaSolver
-    solution = solve(problem, solver)
-    @test solution isa RungeKuttaSolution
-    solver = LobattoIII4(h = 1e-3)
     @test solver isa ImplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
