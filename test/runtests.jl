@@ -93,7 +93,7 @@ problem = IVP(f!, u0, tspan)
     @test solution isa RungeKuttaSolution
 end
 
-@testset "Implicit" begin
+@testset "Diagonally Implicit" begin
     solver = ImplicitEuler(h = 1e-3)
     @test solver isa DiagonallyImplicitRungeKuttaSolver
     solution = solve(problem, solver)
