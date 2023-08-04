@@ -201,12 +201,11 @@ function Butcher5(; h::Real=0.0)
 end
 
 """
-    KuttaNyström5(; h::Real=0.0) :: ExplicitRungeKuttaSolver
-    KuttaNystrom5(args...; kwargs...) :: ExplicitRungeKuttaSolver
+    KuttaNystrom5(; h::Real=0.0) :: ExplicitRungeKuttaSolver
 
 returns an [`ExplicitRungeKuttaSolver`](@ref) for the 5th-order Kutta-Nyström method.
 """
-function KuttaNyström5(; h::Real=0.0)
+function KuttaNystrom5(; h::Real=0.0)
     p = 5
     tableau = ButcherTableau(float([
             0      0     0       0    0      0       0;
@@ -219,7 +218,6 @@ function KuttaNyström5(; h::Real=0.0)
     ]))
     return ERK(tableau, h)
 end
-@doc (@doc KuttaNyström5) KuttaNystrom5(args...; kwargs...) = KuttaNyström5(args...; kwargs...)
 
 """
     Butcher6(; h::Real=0.0) :: ExplicitRungeKuttaSolver

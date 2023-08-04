@@ -69,7 +69,7 @@ export Ralston4
 export RungeKutta4, RK4
 export Rule38
 export Butcher5
-export KuttaNyström5
+export KuttaNystrom5
 export Butcher6
 export Butcher7
 
