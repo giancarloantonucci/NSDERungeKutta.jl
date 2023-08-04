@@ -59,7 +59,7 @@ problem = IVP(f!, u0, tspan)
     @test solver isa ExplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = KuttaNyström5(h = 1e-3)
+    solver = KuttaNystrom5(h = 1e-3)
     @test solver isa ExplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
