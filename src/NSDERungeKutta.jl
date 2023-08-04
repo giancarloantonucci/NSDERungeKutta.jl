@@ -82,7 +82,7 @@ export Fehlberg78
 
 export DiagonallyImplicitRungeKuttaSolver, DIRK
 export BackwardEuler, ImplicitEuler
-export ImplicitMidpoint, GaußLegendre2, GaussLegendre2
+export ImplicitMidpoint, GaussLegendre2
 export SDIRK2
 export LobattoIII2
 export CrankNicolson, LobattoIIIA2
