@@ -52,10 +52,17 @@ plot(size = (1000, 400), p₁, p₂, left_margin = 5Plots.mm, bottom_margin = 5P
 
 ![svg](imgs/regions.svg)
 
-## Available methods
+## Methods
 
 This package currently supports the following methods:
 
-**Explicit**: `Euler`/`ExplicitEuler`, `Midpoint`/`ExplicitMidpoint`, `Heun2`, `Ralston2`, `Heun3`, `Kutta3`, `Ralston3`, `SSPRK3`, `RK4`, `Rule38`, `HeunEuler`, `Fehlberg45`/`F45`, `DormandPrince54`/`DP54`, `Verner65`/`V65`.
+**Explicit**:
 
-**Implicit**: `BackwardEuler`/`ImplicitEuler`, `ImplicitMidpoint`, `CrankNicolson`, `SDIRK3`, `GaussLegendre4`/`GL4`, `GaussLegendre6`/`GL6`, `LobattoIIIA4`, `LobattoIIIB2`, `LobattoIIIB4`, `LobattoIIIC2`, `LobattoIIIC4`, `RadauIA3`, `RadauIA5`, `RadauIIA3`, `RadauIIA5`.
+- `Euler`/`ExplicitEuler`, `Heun2`, `Midpoint`/`ExplicitMidpoint`, `Ralston2`, `Heun3`, `RungeKutta3`/`RK3`, `Ralston3`, `SSPRK3`, `Ralston4`, `RungeKutta4`/`RK4`, `Rule38`, `Butcher5`, `KuttaNystrom5`, `Butcher6`, `Butcher7`,
+- (Embedded) `HeunEuler`, `BogackiShampine`, `Fehlberg45`, `DormandPrince54`, `Verner65`, `Fehlberg78`.
+
+**Diagonally Implicit**:
+- `BackwardEuler`/`ImplicitEuler`, `ImplicitMidpoint`/`GaussLegendre2`, `SDIRK2`, `LobattoIII2`, `CrankNicolson`/`LobattoIIIA2`, `SDIRK3`, `RadauI3`, `RadauII3`, `SDIRK4`, `LobattoIII4`.
+
+**Implicit**:
+- `LobattoIIIC2`, `RadauIA3`, `RadauIIA3`, `GaussLegendre4`, `LobattoIIIA4`, `LobattoIIIB4`, `LobattoIIIC4`, `RadauI5`, `RadauIA5`, `RadauII5`, `RadauIIA5`, `GaussLegendre6`.
