@@ -305,6 +305,7 @@ end
 
 """
     Fehlberg45(; h::Real=0.0, atol::Real=0.0, rtol::Real=1e-5, nits::Integer=100) :: ExplicitRungeKuttaSolver
+    F45(args...; kwargs...) :: ExplicitRungeKuttaSolver
 
 returns an [`ExplicitRungeKuttaSolver`](@ref) for the 4th-order Fehlberg method with 5th-order error estimate.
 """
@@ -324,9 +325,11 @@ function Fehlberg45(; h::Real=0.0, atol::Real=0.0, rtol::Real=1e-5, nits::Intege
     adaptive = AdaptiveParameters(atol=atol, rtol=rtol, nits=nits)
     return ERK(tableau, h, adaptive)
 end
+@doc (@doc Fehlberg45) F45(args...; kwargs...) = Fehlberg45(args...; kwargs...)
 
 """
     DormandPrince54(; h::Real=0.0, atol::Real=0.0, rtol::Real=1e-5, nits::Integer=100) :: ExplicitRungeKuttaSolver
+    DP54(args...; kwargs...) :: ExplicitRungeKuttaSolver
 
 returns an [`ExplicitRungeKuttaSolver`](@ref) for the 5th-order Dormand-Prince method with 4th-order error estimate.
 """
@@ -347,9 +350,11 @@ function DormandPrince54(; h::Real=0.0, atol::Real=0.0, rtol::Real=1e-5, nits::I
     adaptive = AdaptiveParameters(atol=atol, rtol=rtol, nits=nits)
     return ERK(tableau, h, adaptive)
 end
+@doc (@doc DormandPrince54) DP54(args...; kwargs...) = DormandPrince54(args...; kwargs...)
 
 """
     Verner65(; h::Real=0.0, atol::Real=0.0, rtol::Real=1e-5, nits::Integer=100) :: ExplicitRungeKuttaSolver
+    V65(args...; kwargs...) :: ExplicitRungeKuttaSolver
 
 returns an [`ExplicitRungeKuttaSolver`](@ref) for the 6th-order Verner method with 5th-order error estimate.
 """
@@ -371,9 +376,11 @@ function Verner65(; h::Real=0.0, atol::Real=0.0, rtol::Real=1e-5, nits::Integer=
     adaptive = AdaptiveParameters(atol=atol, rtol=rtol, nits=nits)
     return ERK(tableau, h, adaptive)
 end
+@doc (@doc Verner65) V65(args...; kwargs...) = Verner65(args...; kwargs...)
 
 """
     Fehlberg78(; h::Real=0.0, atol::Real=0.0, rtol::Real=1e-5, nits::Integer=100) :: ExplicitRungeKuttaSolver
+    F78(args...; kwargs...) :: ExplicitRungeKuttaSolver
 
 returns an [`ExplicitRungeKuttaSolver`](@ref) for the 7th-order Fehlberg method with 8th-order error estimate.
 """
@@ -400,3 +407,4 @@ function Fehlberg78(; h::Real=0.0, atol::Real=0.0, rtol::Real=1e-5, nits::Intege
     adaptive = AdaptiveParameters(atol=atol, rtol=rtol, nits=nits)
     return ERK(tableau, h, adaptive)
 end
+@doc (@doc Fehlberg78) F78(args...; kwargs...) = Fehlberg78(args...; kwargs...)

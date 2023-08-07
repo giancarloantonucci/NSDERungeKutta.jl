@@ -75,10 +75,10 @@ export Butcher7
 
 export HeunEuler
 export BogackiShampine
-export Fehlberg45
-export DormandPrince54
-export Verner65
-export Fehlberg78
+export Fehlberg45, F45
+export DormandPrince54, DP54
+export Verner65, V65
+export Fehlberg78, F78
 
 export DiagonallyImplicitRungeKuttaSolver, DIRK
 export BackwardEuler, ImplicitEuler

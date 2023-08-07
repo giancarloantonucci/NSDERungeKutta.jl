@@ -75,19 +75,19 @@ problem = IVP(f!, u0, tspan)
     @test solver isa ExplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = Fehlberg45(h = 1e-3)
+    solver = F45(h = 1e-3)
     @test solver isa ExplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = DormandPrince54(h = 1e-3)
+    solver = DP54(h = 1e-3)
     @test solver isa ExplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = Verner65(h = 1e-3)
+    solver = V65(h = 1e-3)
     @test solver isa ExplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
-    solver = Fehlberg78(h = 1e-3)
+    solver = F78(h = 1e-3)
     @test solver isa ExplicitRungeKuttaSolver
     solution = solve(problem, solver)
     @test solution isa RungeKuttaSolution
