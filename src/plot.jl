@@ -37,12 +37,12 @@
     end
 end
 
-@recipe function f(wrappedobject::NSDEBase._PhasePlot{<:RungeKuttaSolution})
+@recipe function f(wrapper::NSDEBase._PhasePlot{<:RungeKuttaSolution})
     gridalpha --> 0.2
     minorgrid --> 0.1
     minorgridstyle --> :dash
     seriestype --> :path
-    @↓ solution ← object = wrappedobject
+    @↓ solution ← plottable = wrapper
     (num_variables, num_time_steps) = size(solution)
     variables = haskey(plotattributes, :variables) ? plotattributes[:variables] : (1:num_variables)
     @↓ solution_variables ← u, solution_time_steps ← t = solution
