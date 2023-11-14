@@ -1,12 +1,11 @@
-@recipe function f(solution::RungeKuttaSolution; variables=nothing, iscomplex=false, plotkind=:plot)
+@recipe function f(solution::RungeKuttaSolution; variables=nothing, is_complex=false)
     gridalpha --> 0.2
     minorgrid --> 0.1
     minorgridstyle --> :dash
     seriestype --> :path
-    xwiden --> false
-    (num_variables, num_time_steps) = size(solution)
+    (d, N) = size(solution)
     if variables isa Nothing
-        variables = 1:num_variables
+        variables = 1:d
     elseif variables isa Integer
         variables = [variables]
     elseif variables isa Tuple
@@ -14,24 +13,26 @@
     elseif variables isa AbstractVector
         # variables = variables
     else
-        throw(ArgumentError("Got $(typeof(variables)) instead of `Union{Integer, Tuple, AbstractVector}` with `length(variables)` ≥ 1."))
+        throw(ArgumentError("Got $(typeof(variables)) instead of either `Integer`, `Tuple`, or `AbstractVector`."))
     end
-    @↓ solution_variables ← u, solution_time_steps ← t = solution
-    if iscomplex
+    @↓ u, t = solution
+    if is_complex
         for i in variables
             @series begin
                 seriescolor --> i
-                [solution_variables[n][i] for n = 1:num_time_steps]
+                ([real.(u[n][i]) for n = 1:N], [imag.(u[n][i]) for n = 1:N])
+                # (t, [real.(u[n][i]) for n = 1:N], [imag.(u[n][i]) for n = 1:N])
             end
         end
     else
         for (i, variable) in enumerate(variables)
             @series begin
+                xwiden --> false
                 if haskey(plotattributes, :label) && plotattributes[:label] isa AbstractVector
                     label := plotattributes[:label][i]
                 end
                 seriescolor --> i
-                (solution_time_steps, [solution_variables[n][variable] for n = 1:num_time_steps])
+                (t, [u[n][variable] for n = 1:N])
             end
         end
     end
@@ -43,10 +44,10 @@ end
     minorgridstyle --> :dash
     seriestype --> :path
     @↓ solution ← plottable = wrapper
-    (num_variables, num_time_steps) = size(solution)
-    variables = haskey(plotattributes, :variables) ? plotattributes[:variables] : (1:num_variables)
-    @↓ solution_variables ← u, solution_time_steps ← t = solution
-    return tuple([[solution_variables[n][i] for n = 1:num_time_steps] for i in variables]...)
+    (d, N) = size(solution)
+    variables = haskey(plotattributes, :variables) ? plotattributes[:variables] : (1:d)
+    @↓ u, t = solution
+    return tuple([[u[n][i] for n = 1:N] for i in variables]...)
 end
 
 @userplot STABILITY
@@ -58,7 +59,7 @@ end
     elseif h.args[1] isa Function
         h.args[1]
     else
-        throw(ArgumentError("Got $(typeof(h.args)) instead of `Union{ButcherTableau, AbstractRungeKuttaSolver, Function}`."))
+        throw(ArgumentError("Got $(typeof(h.args)) instead of either `ButcherTableau`, `AbstractRungeKuttaSolver`, or `Function`."))
     end
     legend --> false
     levels --> [1.0]
@@ -79,7 +80,7 @@ end
     elseif h.args[1] isa Function
         h.args[1]
     else
-        throw(ArgumentError("Got $(typeof(h.args)) instead of `Union{ButcherTableau, AbstractRungeKuttaSolver, Function}`."))
+        throw(ArgumentError("Got $(typeof(h.args)) instead of either `ButcherTableau`, `AbstractRungeKuttaSolver`, or `Function`."))
     end
     clims --> (0, 1)
     colorbar --> true
@@ -102,7 +103,7 @@ end
     elseif h.args[1] isa Function
         h.args[1]
     else
-        throw(ArgumentError("Got $(typeof(h.args)) instead of `Union{ButcherTableau, AbstractRungeKuttaSolver, Function}`."))
+        throw(ArgumentError("Got $(typeof(h.args)) instead of either `ButcherTableau`, `AbstractRungeKuttaSolver`, or `Function`."))
     end
     legend --> false
     levels --> [1.0]
@@ -123,7 +124,7 @@ end
     elseif h.args[1] isa Function
         h.args[1]
     else
-        throw(ArgumentError("Got $(typeof(h.args)) instead of `Union{ButcherTableau, AbstractRungeKuttaSolver, Function}`."))
+        throw(ArgumentError("Got $(typeof(h.args)) instead of either `ButcherTableau`, `AbstractRungeKuttaSolver`, or `Function`."))
     end
     clims --> (0, 1)
     colorbar --> true
@@ -135,4 +136,42 @@ end
         return (p > 1 ? NaN : p)
     end
     return xspan, yspan, f
+end
+
+@recipe function f(ts::AbstractVector, hs::StepSizes)
+    gridalpha --> 0.2
+    @series begin
+        markershape --> :circle
+        markerstrokewidth --> 0
+        return ts, hs.accepted
+    end
+    for n in 1:length(hs.rejected)
+        @series begin
+            markershape --> :x
+            seriestype --> :scatter
+            seriescolor --> 2
+            y = hs.rejected[n]
+            x = ts[n] * ones(length(y))
+            return x, y
+        end
+    end
+end
+
+@recipe function f(hs::StepSizes)
+    gridalpha --> 0.2
+    @series begin
+        markershape --> :circle
+        markerstrokewidth --> 0
+        return hs.accepted
+    end
+    for n in 1:length(hs.rejected)
+        @series begin
+            markershape --> :x
+            seriestype --> :scatter
+            seriescolor --> 2
+            y = hs.rejected[n]
+            x = n * ones(length(y))
+            return x, y
+        end
+    end
 end
