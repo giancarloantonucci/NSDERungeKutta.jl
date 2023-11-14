@@ -1,5 +1,5 @@
 function step!(cache::ExplicitExponentialRungeKuttaCache, solution::AbstractRungeKuttaSolution, rhs::AbstractRightHandSide, solver::ExplicitExponentialRungeKuttaSolver)
-    @↓ n, v, w, k, e = cache
+    @↓ n, e, v, w, k = cache
     @↓ u, t = solution
     @↓ tableau, stepsize = solver
     @↓ Aᵩ, bᵩ, c, s = tableau

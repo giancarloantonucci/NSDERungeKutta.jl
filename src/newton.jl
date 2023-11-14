@@ -5,16 +5,16 @@ A composite type for the parameters of simplified Newton.
 
 # Constructors
 ```julia
-NewtonParameters(; rtol=1e-3, nits=10)
+NewtonParameters(; εᵣ=1e-3, Mₙ=10)
 ```
 
 ## Arguments
-- `rtol :: Real` : relative tolerance
-- `nits :: Integer` : maximum number of iterations allowed
+- `εᵣ :: Real` : relative tolerance
+- `Mₙ :: Integer` : maximum number of iterations
 """
-struct NewtonParameters{rtol_T<:Real, nits_T<:Integer} <: AbstractNewtonParameters
-    rtol::rtol_T
-    nits::nits_T
+struct NewtonParameters{εᵣ_T<:Real, Mₙ_T<:Integer} <: AbstractNewtonParameters
+    εᵣ::εᵣ_T
+    Mₙ::Mₙ_T
 end
 
-NewtonParameters(; rtol::Real=1e-3, nits::Integer=10) = NewtonParameters(rtol, nits)
+NewtonParameters(; εᵣ::Real=1e-3, Mₙ::Integer=10) = NewtonParameters(εᵣ, Mₙ)

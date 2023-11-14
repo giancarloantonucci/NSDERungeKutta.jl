@@ -266,11 +266,11 @@ end
 #####
 
 """
-    HeunEuler(; h::Real=0.0, atol::Real=0.0, rtol::Real=1e-5, nits::Integer=100) :: ExplicitRungeKuttaSolver
+    HeunEuler(; h::Real=0.0, εₐ::Real=0.0, εᵣ::Real=1e-5, Mₙ::Integer=100, save_stepsizes::Bool=false) :: ExplicitRungeKuttaSolver
 
 returns an [`ExplicitRungeKuttaSolver`](@ref) for the 2nd-order Heun-Euler method with 1st-order error estimate.
 """
-function HeunEuler(; h::Real=0.0, atol::Real=0.0, rtol::Real=1e-5, nits::Integer=100)
+function HeunEuler(; h::Real=0.0, εₐ::Real=0.0, εᵣ::Real=1e-5, Mₙ::Integer=100, save_stepsizes::Bool=false)
     p = 2
     q = 1
     tableau = ButcherTableau(float([
@@ -279,16 +279,17 @@ function HeunEuler(; h::Real=0.0, atol::Real=0.0, rtol::Real=1e-5, nits::Integer
         p  1/2 1/2;
         q    1   0;
     ]))
-    adaptive = AdaptiveParameters(atol=atol, rtol=rtol, nits=nits)
-    return ERK(tableau, h, adaptive)
+    adaptive = AdaptiveParameters(εₐ=εₐ, εᵣ=εᵣ, Mₙ=Mₙ)
+    stepsize = StepSize(h; save_stepsizes)
+    return ERK(tableau, stepsize, adaptive)
 end
 
 """
-    BogackiShampine(; h::Real=0.0, atol::Real=0.0, rtol::Real=1e-5, nits::Integer=100) :: ExplicitRungeKuttaSolver
+    BogackiShampine(; h::Real=0.0, εₐ::Real=0.0, εᵣ::Real=1e-5, Mₙ::Integer=100, save_stepsizes::Bool=false) :: ExplicitRungeKuttaSolver
 
 returns an [`ExplicitRungeKuttaSolver`](@ref) for the 3rd-order Bogacki-Shampine method with 2nd-order error estimate.
 """
-function BogackiShampine(; h::Real=0.0, atol::Real=0.0, rtol::Real=1e-5, nits::Integer=100)
+function BogackiShampine(; h::Real=0.0, εₐ::Real=0.0, εᵣ::Real=1e-5, Mₙ::Integer=100, save_stepsizes::Bool=false)
     p = 3
     q = 2
     tableau = ButcherTableau(float([
@@ -299,17 +300,18 @@ function BogackiShampine(; h::Real=0.0, atol::Real=0.0, rtol::Real=1e-5, nits::I
           p  2/9 1/3 4/9   0;
           q 7/24 1/4 1/3 1/8;
     ]))
-    adaptive = AdaptiveParameters(atol=atol, rtol=rtol, nits=nits)
-    return ERK(tableau, h, adaptive)
+    adaptive = AdaptiveParameters(εₐ=εₐ, εᵣ=εᵣ, Mₙ=Mₙ)
+    stepsize = StepSize(h; save_stepsizes)
+    return ERK(tableau, stepsize, adaptive)
 end
 
 """
-    Fehlberg45(; h::Real=0.0, atol::Real=0.0, rtol::Real=1e-5, nits::Integer=100) :: ExplicitRungeKuttaSolver
+    Fehlberg45(; h::Real=0.0, εₐ::Real=0.0, εᵣ::Real=1e-5, Mₙ::Integer=100, save_stepsizes::Bool=false) :: ExplicitRungeKuttaSolver
     F45(args...; kwargs...) :: ExplicitRungeKuttaSolver
 
 returns an [`ExplicitRungeKuttaSolver`](@ref) for the 4th-order Fehlberg method with 5th-order error estimate.
 """
-function Fehlberg45(; h::Real=0.0, atol::Real=0.0, rtol::Real=1e-5, nits::Integer=100)
+function Fehlberg45(; h::Real=0.0, εₐ::Real=0.0, εᵣ::Real=1e-5, Mₙ::Integer=100, save_stepsizes::Bool=false)
     p = 4
     q = 5
     tableau = ButcherTableau(float([
@@ -322,18 +324,19 @@ function Fehlberg45(; h::Real=0.0, atol::Real=0.0, rtol::Real=1e-5, nits::Intege
             p    25/216          0  1408/2565   2197/4104   -1/5    0;
             q    16/135          0 6656/12825 28561/56430  -9/50 2/55;
     ]))
-    adaptive = AdaptiveParameters(atol=atol, rtol=rtol, nits=nits)
-    return ERK(tableau, h, adaptive)
+    adaptive = AdaptiveParameters(εₐ=εₐ, εᵣ=εᵣ, Mₙ=Mₙ)
+    stepsize = StepSize(h; save_stepsizes)
+    return ERK(tableau, stepsize, adaptive)
 end
 @doc (@doc Fehlberg45) F45(args...; kwargs...) = Fehlberg45(args...; kwargs...)
 
 """
-    DormandPrince54(; h::Real=0.0, atol::Real=0.0, rtol::Real=1e-5, nits::Integer=100) :: ExplicitRungeKuttaSolver
+    DormandPrince54(; h::Real=0.0, εₐ::Real=0.0, εᵣ::Real=1e-5, Mₙ::Integer=100, save_stepsizes::Bool=false) :: ExplicitRungeKuttaSolver
     DP54(args...; kwargs...) :: ExplicitRungeKuttaSolver
 
 returns an [`ExplicitRungeKuttaSolver`](@ref) for the 5th-order Dormand-Prince method with 4th-order error estimate.
 """
-function DormandPrince54(; h::Real=0.0, atol::Real=0.0, rtol::Real=1e-5, nits::Integer=100)
+function DormandPrince54(; h::Real=0.0, εₐ::Real=0.0, εᵣ::Real=1e-5, Mₙ::Integer=100, save_stepsizes::Bool=false)
     p = 5
     q = 4
     tableau = ButcherTableau(float([
@@ -347,18 +350,19 @@ function DormandPrince54(; h::Real=0.0, atol::Real=0.0, rtol::Real=1e-5, nits::I
            p     35/384           0   500/1113  125/192    -2187/6784    11/84    0;
            q 5179/57600           0 7571/16695  393/640 -92097/339200 187/2100 1/40;
     ]))
-    adaptive = AdaptiveParameters(atol=atol, rtol=rtol, nits=nits)
-    return ERK(tableau, h, adaptive)
+    adaptive = AdaptiveParameters(εₐ=εₐ, εᵣ=εᵣ, Mₙ=Mₙ)
+    stepsize = StepSize(h; save_stepsizes)
+    return ERK(tableau, stepsize, adaptive)
 end
 @doc (@doc DormandPrince54) DP54(args...; kwargs...) = DormandPrince54(args...; kwargs...)
 
 """
-    Verner65(; h::Real=0.0, atol::Real=0.0, rtol::Real=1e-5, nits::Integer=100) :: ExplicitRungeKuttaSolver
+    Verner65(; h::Real=0.0, εₐ::Real=0.0, εᵣ::Real=1e-5, Mₙ::Integer=100, save_stepsizes::Bool=false) :: ExplicitRungeKuttaSolver
     V65(args...; kwargs...) :: ExplicitRungeKuttaSolver
 
 returns an [`ExplicitRungeKuttaSolver`](@ref) for the 6th-order Verner method with 5th-order error estimate.
 """
-function Verner65(; h::Real=0.0, atol::Real=0.0, rtol::Real=1e-5, nits::Integer=100)
+function Verner65(; h::Real=0.0, εₐ::Real=0.0, εᵣ::Real=1e-5, Mₙ::Integer=100, save_stepsizes::Bool=false)
     p = 6
     q = 5
     tableau = ButcherTableau(float([
@@ -373,18 +377,19 @@ function Verner65(; h::Real=0.0, atol::Real=0.0, rtol::Real=1e-5, nits::Integer=
            p        3/40       0     875/2244     23/72    264/1955    0  125/11592 43/616;
            q      13/160       0    2375/5984      5/16       12/85 3/44          0      0;
     ]))
-    adaptive = AdaptiveParameters(atol=atol, rtol=rtol, nits=nits)
-    return ERK(tableau, h, adaptive)
+    adaptive = AdaptiveParameters(εₐ=εₐ, εᵣ=εᵣ, Mₙ=Mₙ)
+    stepsize = StepSize(h; save_stepsizes)
+    return ERK(tableau, stepsize, adaptive)
 end
 @doc (@doc Verner65) V65(args...; kwargs...) = Verner65(args...; kwargs...)
 
 """
-    Fehlberg78(; h::Real=0.0, atol::Real=0.0, rtol::Real=1e-5, nits::Integer=100) :: ExplicitRungeKuttaSolver
+    Fehlberg78(; h::Real=0.0, εₐ::Real=0.0, εᵣ::Real=1e-5, Mₙ::Integer=100, save_stepsizes::Bool=false) :: ExplicitRungeKuttaSolver
     F78(args...; kwargs...) :: ExplicitRungeKuttaSolver
 
 returns an [`ExplicitRungeKuttaSolver`](@ref) for the 7th-order Fehlberg method with 8th-order error estimate.
 """
-function Fehlberg78(; h::Real=0.0, atol::Real=0.0, rtol::Real=1e-5, nits::Integer=100)
+function Fehlberg78(; h::Real=0.0, εₐ::Real=0.0, εᵣ::Real=1e-5, Mₙ::Integer=100, save_stepsizes::Bool=false)
     p = 7
     q = 8
     tableau = ButcherTableau(float([
@@ -404,7 +409,8 @@ function Fehlberg78(; h::Real=0.0, atol::Real=0.0, rtol::Real=1e-5, nits::Intege
            p     41/840    0      0        0         0  34/105      9/35  9/35  9/280 9/280 41/840      0      0;
            q          0    0      0        0         0  34/105      9/35  9/35  9/280 9/280      0 41/840 41/840;
     ]))
-    adaptive = AdaptiveParameters(atol=atol, rtol=rtol, nits=nits)
-    return ERK(tableau, h, adaptive)
+    adaptive = AdaptiveParameters(εₐ=εₐ, εᵣ=εᵣ, Mₙ=Mₙ)
+    stepsize = StepSize(h; save_stepsizes)
+    return ERK(tableau, stepsize, adaptive)
 end
 @doc (@doc Fehlberg78) F78(args...; kwargs...) = Fehlberg78(args...; kwargs...)

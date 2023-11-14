@@ -1,28 +1,24 @@
-mutable struct DiagonallyImplicitRungeKuttaCache{n_T<:Integer, m_T<:Integer, v_T<:AbstractVector{<:Number}, k_T<:AbstractVector{<:AbstractVector{<:Number}}, Uᵢ_T<:AbstractVector{<:Number}, Δkᵢ_T<:AbstractVector{<:Number}, J_T<:(AbstractMatrix{ℂ} where ℂ<:Number), e_T<:Ref{<:Real}} <: AbstractRungeKuttaCache
-    n::n_T # step counter
-    m::m_T # adaptive counter
-    v::v_T # avoids allocation inside `adaptivestep!`
-    k::k_T # stages at step `n`
-    Uᵢ::Uᵢ_T # avoids allocation inside `step!`
-    Δkᵢ::Δkᵢ_T # avoids allocating `Δk`
-    J::J_T # Jacobian of RHS
-    e::e_T # compensated summation error
+mutable struct DiagonallyImplicitRungeKuttaCache{n_T<:Integer, e_T<:Ref{<:Real}, v_T<:AbstractVector{<:Number}, k_T<:AbstractVector{<:AbstractVector{<:Number}}, J_T<:AbstractMatrix{<:Number}} <: AbstractRungeKuttaCache
+    n :: n_T # step counter
+    m :: n_T # adaptive step counter
+    e :: e_T # compensation error in `kahansum()`
+    v :: v_T # avoids allocation for `u[n+1]`
+    Uᵢ :: v_T # avoids allocating intermediate stages in `step!`
+    Δkᵢ :: v_T # avoids allocating stages update in `step!`
+    k :: k_T # stages at step `n`
+    J :: J_T # avoids allocating Jacobian matrix of RHS in `step!`
 end
 
-function DiagonallyImplicitRungeKuttaCache(problem::AbstractInitialValueProblem, solver::DiagonallyImplicitRungeKuttaSolver)
+function RungeKuttaCache(problem::AbstractInitialValueProblem, solver::DiagonallyImplicitRungeKuttaSolver)
     @↓ u0 = problem
     @↓ s = solver.tableau
     n = m = 1
+    e = Ref(0.0)
     v = similar(u0)
-    k = [similar(u0) for i = 1:s]
     Uᵢ = similar(u0)
     Δkᵢ = similar(u0)
+    k = [similar(u0) for i = 1:s]
     d = length(u0)
     J = similar(u0, d, d)
-    e = Ref(0.0)
-    return DiagonallyImplicitRungeKuttaCache(n, m, v, k, Uᵢ, Δkᵢ, J, e)
+    return DiagonallyImplicitRungeKuttaCache(n, m, e, v, Uᵢ, Δkᵢ, k, J)
 end
-
-#---------------------------------- FUNCTIONS ----------------------------------
-
-RungeKuttaCache(problem::AbstractInitialValueProblem, solver::DiagonallyImplicitRungeKuttaSolver) = DiagonallyImplicitRungeKuttaCache(problem, solver)

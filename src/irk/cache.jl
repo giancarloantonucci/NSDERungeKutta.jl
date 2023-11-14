@@ -1,28 +1,24 @@
-mutable struct ImplicitRungeKuttaCache{n_T<:Integer, m_T<:Integer, v_T<:AbstractVector{<:Number}, k_T<:AbstractVector{<:AbstractVector{<:Number}}, Δk_T<:AbstractVector{<:AbstractVector{<:Number}}, V_T<:AbstractVector{<:Number}, J_T<:(AbstractMatrix{ℂ} where ℂ<:Number), e_T<:Ref{<:Real}} <: AbstractRungeKuttaCache
+mutable struct ImplicitRungeKuttaCache{n_T<:Integer, e_T<:Ref{<:Real}, v_T<:AbstractVector{<:Number}, k_T<:AbstractVector{<:AbstractVector{<:Number}}, J_T<:(AbstractMatrix{ℂ} where ℂ<:Number)} <: AbstractRungeKuttaCache
     n::n_T # step counter
-    m::m_T # adaptive counter
-    v::v_T # avoids allocation inside `adaptivestep!`
-    k::k_T # stages at step `n`
-    Δk::Δk_T # stages update
-    V::V_T # `vec(k)` or `vec(Δk)`
-    J::J_T # Jacobian of RHS
+    m::n_T # adaptive step counter
     e::e_T # compensated summation error
+    v::v_T # avoids allocation for `u[n+1]`
+    V::v_T # avoids allocation for `vec(k)` and `vec(Δk)`
+    k::k_T # stages at step `n`
+    Δk::k_T # stages update
+    J::J_T # Jacobian of RHS
 end
 
-function ImplicitRungeKuttaCache(problem::AbstractInitialValueProblem, solver::ImplicitRungeKuttaSolver)
+function RungeKuttaCache(problem::AbstractInitialValueProblem, solver::ImplicitRungeKuttaSolver)
     @↓ u0 = problem
     @↓ s = solver.tableau
     n = m = 1
+    e = Ref(0.0)
     v = similar(u0)
-    k = [similar(u0) for i = 1:s]
-    Δk = [similar(u0) for i = 1:s]
     d = length(u0)
     V = similar(u0, s*d)
+    k = [similar(u0) for i = 1:s]
+    Δk = [similar(u0) for i = 1:s]
     J = similar(u0, d, d)
-    e = Ref(0.0)
-    return ImplicitRungeKuttaCache(n, m, v, k, Δk, V, J, e)
+    return ImplicitRungeKuttaCache(n, m, e, v, V, k, Δk, J)
 end
-
-#---------------------------------- FUNCTIONS ----------------------------------
-
-RungeKuttaCache(problem::AbstractInitialValueProblem, solver::ImplicitRungeKuttaSolver) = ImplicitRungeKuttaCache(problem, solver)

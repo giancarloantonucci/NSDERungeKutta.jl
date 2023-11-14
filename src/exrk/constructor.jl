@@ -11,8 +11,8 @@ ExRK(args...; kwargs...)
 
 # Arguments
 - `tableau :: AbstractButcherTableau`
-- `stepsize :: Union{AbstractStepSize, Real}`
-- `adaptive :: Union{AbstractAdaptiveParameters, Nothing}`
+- `stepsize :: AbstractStepSize`
+- `adaptive :: AbstractAdaptiveParameters`
 
 # Methods
 
@@ -21,17 +21,17 @@ ExRK(args...; kwargs...)
 
 returns the `solution` of a `problem` using `solver`.
 """
-struct ExplicitExponentialRungeKuttaSolver{tableau_T<:AbstractButcherTableau, stepsize_T<:AbstractStepSize, adaptive_T<:Union{AbstractAdaptiveParameters, Nothing}} <: AbstractRungeKuttaSolver
-    tableau::tableau_T
-    stepsize::stepsize_T
-    adaptive::adaptive_T
+struct ExplicitExponentialRungeKuttaSolver{tableau_T<:AbstractButcherTableau, stepsize_T<:AbstractStepSize, adaptive_T<:Union{AbstractAdaptiveParameters,Nothing}} <: AbstractRungeKuttaSolver
+    tableau :: tableau_T
+    stepsize :: stepsize_T
+    adaptive :: adaptive_T
 end
 
-ExplicitExponentialRungeKuttaSolver(tableau::AbstractButcherTableau, h::Real, adaptive::Union{AbstractAdaptiveParameters, Nothing}) = ExplicitExponentialRungeKuttaSolver(tableau, StepSize(h), adaptive)
-ExplicitExponentialRungeKuttaSolver(tableau::AbstractButcherTableau, stepsize::Union{AbstractStepSize, Real}) = ExplicitExponentialRungeKuttaSolver(tableau, stepsize, nothing)
+ExplicitExponentialRungeKuttaSolver(tableau::AbstractButcherTableau, h::Real, adaptive::Union{AbstractAdaptiveParameters,Nothing}) = ExplicitExponentialRungeKuttaSolver(tableau, StepSize(h; save_stepsizes=false), adaptive)
+ExplicitExponentialRungeKuttaSolver(tableau::AbstractButcherTableau, stepsize::Union{AbstractStepSize,Real}) = ExplicitExponentialRungeKuttaSolver(tableau, stepsize, nothing)
 @doc (@doc ExplicitExponentialRungeKuttaSolver) ExRK(args...; kwargs...) = ExplicitExponentialRungeKuttaSolver(args...; kwargs...)
 
 #----------------------------------- METHODS -----------------------------------
 
-(solver::ExplicitExponentialRungeKuttaSolver)(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem) = solve!(solution, problem, solver)
-(solver::ExplicitExponentialRungeKuttaSolver)(problem::AbstractInitialValueProblem) = solve(problem, solver)
+(solver::ExplicitExponentialRungeKuttaSolver)(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem; kwargs...) = solve!(solution, problem, solver; kwargs...)
+(solver::ExplicitExponentialRungeKuttaSolver)(problem::AbstractInitialValueProblem; kwargs...) = solve(problem, solver; kwargs...)

@@ -10,7 +10,7 @@ function f!(du, u, t)
 end
 problem = IVP(f!, u0, tspan)
 
-@testset "Explicit" begin
+@testset "ERK" begin
     solver = ExplicitEuler(h = 1e-3)
     @test solver isa ExplicitRungeKuttaSolver
     solution = solve(problem, solver)
@@ -93,7 +93,7 @@ problem = IVP(f!, u0, tspan)
     @test solution isa RungeKuttaSolution
 end
 
-@testset "Diagonally Implicit" begin
+@testset "DIRK" begin
     solver = ImplicitEuler(h = 1e-3)
     @test solver isa DiagonallyImplicitRungeKuttaSolver
     solution = solve(problem, solver)
@@ -136,7 +136,7 @@ end
     @test solution isa RungeKuttaSolution
 end
 
-@testset "Implicit" begin
+@testset "IRK" begin
     solver = LobattoIIIC2(h = 1e-3)
     @test solver isa ImplicitRungeKuttaSolver
     solution = solve(problem, solver)
@@ -187,6 +187,6 @@ end
     @test solution isa RungeKuttaSolution
 end
 
-@testset "Stability" begin
+@testset "ℛ(z)" begin
     @test ℛ(0.0, Euler().tableau) == 1.0
 end

@@ -1,18 +1,18 @@
 function step!(cache::ImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, rhs::NonlinearRightHandSide, solver::ImplicitRungeKuttaSolver)
-    @↓ n, v, k, Δk, V, J, e = cache
+    @↓ n, e, v, V, k, Δk, J = cache
     @↓ u, t = solution
     @↓ Df! = rhs
     @↓ tableau, newton, stepsize = solver
     @↓ A, b, c, s = tableau
     @↓ h = stepsize
-    @↓ rtol, nits = newton
+    @↓ εᵣ, Mₙ = newton
 
     # Stages:
     zero!(k)
     Df!(J, v, u[n], t[n])
     # DF = I - kron(h * A, J)
     DF = factorize(I - h * kron(A, J))
-    for l = 1:nits
+    for l = 1:Mₙ
         for i = 1:s
             # Uᵢ = u[n] + h * sum(a[i,j] * k[j] for j = 1:s)
             zero!(v)
@@ -42,7 +42,7 @@ function step!(cache::ImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolut
         for i in eachindex(k)
             @. k[i] += Δk[i]
         end
-        if norm(Δk) < rtol * norm(k)
+        if norm(Δk) < εᵣ * norm(k)
             break
         end
     end

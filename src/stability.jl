@@ -9,8 +9,8 @@ returns the stability function of `solver`:
 """
 function ℛ(z::Number, tableau::AbstractButcherTableau)
     @↓ A, b, s = tableau
-    e = ones(s)
-    return det(I - z * (A - e * b')) / det(I - z * A)
+    𝟙 = ones(s)
+    return det(I - z * (A - 𝟙 * b')) / det(I - z * A)
 end
 ℛ(z::Number, solver::AbstractRungeKuttaSolver) = ℛ(z, solver.tableau)
 
@@ -22,8 +22,8 @@ returns the stability function of `solver`.
 """
 function ℛ(Z::AbstractMatrix, tableau::AbstractButcherTableau)
     @↓ A, b, s = tableau
-    e = ones(s)
-    tmp = kron(e, Z)
+    𝟙 = ones(s)
+    tmp = kron(𝟙, Z)
     tmp = (I - kron(A, Z)) \ tmp
     tmp = kron(b', Matrix(1.0I, size(Z)...)) * tmp
     return I + tmp

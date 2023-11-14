@@ -1,27 +1,24 @@
-mutable struct ImplicitExplicitRungeKuttaCache{n_T<:Integer, m_T<:Integer, v_T<:AbstractVector{<:Number}, kᴵ_T<:AbstractVector{<:AbstractVector{<:Number}}, kᴱ_T<:AbstractVector{<:AbstractVector{<:Number}}, Uᵢ_T<:AbstractVector{<:Number}, J_T<:(AbstractMatrix{ℂ} where ℂ<:Number), e_T<:Ref{<:Real}} <: AbstractRungeKuttaCache
-    n::n_T # step counter
-    m::m_T # adaptive counter
-    v::v_T # avoids allocation inside `adaptivestep!`
-    kᴵ::kᴵ_T # implicit stages at step `n`
-    kᴱ::kᴱ_T # explicit stages at step `n`
-    Uᵢ::Uᵢ_T # avoids allocation inside `step!`
-    J::J_T # Jacobian of stiff part of RHS
-    e::e_T # compensated summation error
+mutable struct ImplicitExplicitRungeKuttaCache{n_T <: Integer, e_T <: Ref{<:Real}, v_T <: AbstractVector{<:Number}, k_T <: AbstractVector{<:AbstractVector{<:Number}}, J_T <: AbstractMatrix{<:Number}, } <: AbstractRungeKuttaCache
+    n :: n_T # step counter
+    m :: n_T # adaptive step counter
+    e :: e_T # compensated summation error
+    v :: v_T # avoids allocation for `u[n+1]`
+    Uᵢ :: v_T # avoids allocation inside `step!`
+    kᴵ :: k_T # implicit stages at step `n`
+    kᴱ :: k_T # explicit stages at step `n`
+    J :: J_T # Jacobian of stiff part of RHS
 end
 
-function ImplicitExplicitRungeKuttaCache(problem::AbstractInitialValueProblem, solver::ImplicitExplicitRungeKuttaSolver)
+function RungeKuttaCache(problem::AbstractInitialValueProblem, solver::ImplicitExplicitRungeKuttaSolver)
     @↓ u0 = problem
     @↓ s = solver.implicitableau
     n = m = 1
+    e = Ref(0.0)
+    v = similar(u0)
+    Uᵢ = similar(u0)
     kᴵ = [similar(u0) for i = 1:s]
     kᴱ = [similar(u0) for i = 1:s]
     d = length(u0)
-    Uᵢ = similar(u0, d)
     J = similar(u0, d, d)
-    e = Ref(0.0)
-    return ImplicitExplicitRungeKuttaCache(n, m, v, kᴵ, kᴱ, Uᵢ, J, e)
+    return ImplicitExplicitRungeKuttaCache(n, m, e, v, Uᵢ, kᴵ, kᴱ, J)
 end
-
-#---------------------------------- FUNCTIONS ----------------------------------
-
-RungeKuttaCache(problem::AbstractInitialValueProblem, solver::ImplicitExplicitRungeKuttaSolver) = ImplicitExplicitRungeKuttaCache(problem, solver)

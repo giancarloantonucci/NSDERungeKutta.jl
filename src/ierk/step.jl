@@ -1,5 +1,5 @@
 function step!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, rhs::SplitRightHandSide{𝑁, 𝑀}, solver::ImplicitExplicitRungeKuttaSolver) where {𝑁<:NonlinearRightHandSide, 𝑀<:NonlinearRightHandSide}
-    @↓ n, v, kᴵ, kᴱ, Uᵢ, J, e = cache
+    @↓ n, e, v, Uᵢ, kᴵ, kᴱ, J = cache
     @↓ u, t = solution
     @↓ stiff, nonstiff = rhs
     @↓ Df! = stiff
@@ -7,7 +7,7 @@ function step!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKu
     @↓ Aᴵ ← A, bᴵ ← b, cᴵ ← c, s = implicitableau
     @↓ Aᴱ ← A, bᴱ ← b, cᴱ ← c = explicitableau
     @↓ h = stepsize
-    @↓ rtol, nits = newton
+    @↓ εᵣ, Mₙ = newton
 
     # Stages:
     Df!(J, v, u[n], t[n])
@@ -30,7 +30,7 @@ function step!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKu
         ΔUᵢ = kᴱ[i] # to avoid allocs
         # Fᵢ' = I - h * Aᴵ[i,i] * L
         M = factorize(I - h * Aᴵ[i,i] * J)
-        for l = 1:nits
+        for l = 1:Mₙ
             # kᴵ[i] = fₛ(t[n] + h * cᴵ[i], Uᵢ)
             stiff(kᴵ[i], Uᵢ, t[n] + h * cᴵ[i])
             # Fᵢ = Eᵢ + h * Aᴵ[i,i] * kᴵ[i] - Uᵢ
@@ -39,7 +39,7 @@ function step!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKu
             ldiv!(M, ΔUᵢ)
             # Uᵢ += ΔUᵢ
             @. Uᵢ += ΔUᵢ
-            if norm(ΔUᵢ) < rtol * norm(Uᵢ)
+            if norm(ΔUᵢ) < εᵣ * norm(Uᵢ)
                 break
             end
         end

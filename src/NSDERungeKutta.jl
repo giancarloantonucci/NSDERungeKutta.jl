@@ -47,7 +47,7 @@ include("irk/adaptivestep.jl")
 include("irk/solvers.jl")
 
 include("stability.jl")
-include("plot.jl")
+include("plots_recipes.jl")
 
 export AbstractRungeKuttaSolver
 export AbstractRungeKuttaSolution

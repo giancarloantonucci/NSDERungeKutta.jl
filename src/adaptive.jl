@@ -5,18 +5,18 @@ A composite type for the parameters of an adaptive [`AbstractRungeKuttaSolver`](
 
 # Constructors
 ```julia
-AdaptiveParameters(; atol::Real=0.0, rtol::Real=1e-5, nits::Integer=100)
+AdaptiveParameters(εₐ::Real=0.0, εᵣ::Real=1e-5, Mₙ::Integer=100)
 ```
 
 ## Arguments
-- `atol :: Real` : absolute tolerance.
-- `rtol :: Real` : relative tolerance.
-- `nits :: Integer` : maximum number of iterations.
+- `εₐ :: Real` : absolute tolerance
+- `εᵣ :: Real` : relative tolerance
+- `Mₙ :: Integer` : maximum number of iterations
 """
-struct AdaptiveParameters{atol_T<:Real, rtol_T<:Real, nits_T<:Integer} <: AbstractAdaptiveParameters
-    atol::atol_T
-    rtol::rtol_T
-    nits::nits_T
+struct AdaptiveParameters{εₐ_T<:Real, εᵣ_T<:Real, Mₙ_T<:Integer} <: AbstractAdaptiveParameters
+    εₐ :: εₐ_T
+    εᵣ :: εᵣ_T
+    Mₙ :: Mₙ_T
 end
 
-AdaptiveParameters(; atol::Real=0.0, rtol::Real=1e-5, nits::Integer=100) = AdaptiveParameters(atol, rtol, nits)
+AdaptiveParameters(; εₐ::Real=0.0, εᵣ::Real=1e-5, Mₙ::Integer=100) = AdaptiveParameters(εₐ, εᵣ, Mₙ)

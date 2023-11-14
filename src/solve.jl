@@ -18,7 +18,7 @@ end
 
 computes the `solution` of `problem` using `solver`.
 """
-function NSDEBase.solve!(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver)
+function solve!(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver)
     cache = RungeKuttaCache(problem, solver)
     @↓ u0, (t0, tN) ← tspan = problem
     @↓ u, t = solution
@@ -47,8 +47,8 @@ end
 
 computes the solution of `problem` using `solver`.
 """
-function NSDEBase.solve(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver)
+function NSDEBase.solve(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; kwargs...)
     solution = RungeKuttaSolution(problem, solver)
-    solve!(solution, problem, solver)
+    solve!(solution, problem, solver; kwargs...)
     return solution
 end

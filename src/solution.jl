@@ -10,20 +10,20 @@ RungeKuttaSolution(problem, solver)
 ```
 
 # Arguments
-- `u :: AbstractVector{𝕍} where 𝕍<:AbstractVector{ℂ} where ℂ<:Number` : numerical solution.
-- `t :: AbstractVector{ℝ} where ℝ<:Real` : time grid.
+- `u :: AbstractVector{<:AbstractVector{<:Number}}` : numerical solution
+- `t :: AbstractVector{<:Real}` : time grid
 
 # Functions
-- [`extract`](@ref) : extract all values for a specific variable.
-- [`firstindex`](@ref) : get the first index.
-- [`getindex`](@ref) : get specified value(s) and time.
-- [`lastindex`](@ref) : get the last index.
-- [`length`](@ref) : get the number of time steps.
-- [`setindex!`](@ref) : set value(s) and time.
-- [`numtimesteps`](@ref) : get the number of time steps.
-- [`numvariables`](@ref) : get the number of variables.
+- [`extract`](@ref) : extract all values for a specific variable
+- [`firstindex`](@ref) : get the first index
+- [`getindex`](@ref) : get specified value(s) and time
+- [`lastindex`](@ref) : get the last index
+- [`length`](@ref) : get the number of time steps
+- [`setindex!`](@ref) : set value(s) and time
+- [`numtimesteps`](@ref) : get the number of time steps
+- [`numvariables`](@ref) : get the number of variables
 """
-struct RungeKuttaSolution{u_T<:(AbstractVector{𝕍} where 𝕍<:AbstractVector{ℂ} where ℂ<:Number), t_T<:(AbstractVector{ℝ} where ℝ<:Real)} <: AbstractRungeKuttaSolution
+struct RungeKuttaSolution{u_T<:AbstractVector{<:AbstractVector{<:Number}}, t_T<:AbstractVector{<:Real}} <: AbstractRungeKuttaSolution
     u::u_T
     t::t_T
 end
