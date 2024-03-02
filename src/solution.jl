@@ -89,18 +89,18 @@ end
 #---------------------------------- FUNCTIONS ----------------------------------
 
 """
+    length(solution::RungeKuttaSolution)
+
+returns the number of time steps in `solution`.
+"""
+Base.length(solution::RungeKuttaSolution) = length(solution.t)
+
+"""
     numtimesteps(solution::RungeKuttaSolution)
 
 returns the number of time steps in `solution`.
 """
 numtimesteps(solution::RungeKuttaSolution) = length(solution.t)
-
-"""
-    length(solution::RungeKuttaSolution)
-
-returns the number of time steps in `solution`.
-"""
-Base.length(solution::RungeKuttaSolution) = numtimesteps(solution)
 
 """
     numvariables(solution::RungeKuttaSolution)
