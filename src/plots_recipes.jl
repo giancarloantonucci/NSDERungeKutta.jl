@@ -1,4 +1,4 @@
-RecipesBase.@recipe function f(solution::RungeKuttaSolution; variables=nothing, is_complex=false)
+RecipesBase.@recipe function f(solution::RungeKuttaSolution; variables=nothing, is_complex=false, skip=1)
     gridalpha --> 0.2
     minorgrid --> 0.1
     minorgridstyle --> :dash
@@ -9,9 +9,9 @@ RecipesBase.@recipe function f(solution::RungeKuttaSolution; variables=nothing, 
     elseif variables isa Integer
         variables = [variables]
     elseif variables isa Tuple
-        # variables = [variable for variable in variables]
+        # skip
     elseif variables isa AbstractVector
-        # variables = variables
+        # skip
     else
         throw(ArgumentError("Got $(typeof(variables)) instead of either `Integer`, `Tuple`, or `AbstractVector`."))
     end
@@ -20,8 +20,9 @@ RecipesBase.@recipe function f(solution::RungeKuttaSolution; variables=nothing, 
         for i in variables
             RecipesBase.@series begin
                 seriescolor --> i
-                ([real.(u[n][i]) for n = 1:N], [imag.(u[n][i]) for n = 1:N])
-                # (t, [real.(u[n][i]) for n = 1:N], [imag.(u[n][i]) for n = 1:N])
+                # TODO: Choose best representation
+                ([real.(u[n][i]) for n = 1:skip:N], [imag.(u[n][i]) for n = 1:skip:N])
+                # (t[1:skip:N], [real.(u[n][i]) for n = 1:N], [imag.(u[n][i]) for n = 1:skip:N])
             end
         end
     else
@@ -32,13 +33,13 @@ RecipesBase.@recipe function f(solution::RungeKuttaSolution; variables=nothing, 
                     label := plotattributes[:label][i]
                 end
                 seriescolor --> i
-                (t, [u[n][variable] for n = 1:N])
+                (t[1:skip:N], [u[n][variable] for n = 1:skip:N])
             end
         end
     end
 end
 
-RecipesBase.@recipe function f(wrapper::NSDEBase._PhasePlot{<:RungeKuttaSolution})
+RecipesBase.@recipe function f(wrapper::NSDEBase._PhasePlot{<:RungeKuttaSolution}; skip=1)
     gridalpha --> 0.2
     minorgrid --> 0.1
     minorgridstyle --> :dash
@@ -47,7 +48,7 @@ RecipesBase.@recipe function f(wrapper::NSDEBase._PhasePlot{<:RungeKuttaSolution
     (d, N) = size(solution)
     variables = haskey(plotattributes, :variables) ? plotattributes[:variables] : (1:d)
     @↓ u, t = solution
-    return tuple([[u[n][i] for n = 1:N] for i in variables]...)
+    return tuple([[u[n][i] for n = 1:skip:N] for i in variables]...)
 end
 
 RecipesBase.@userplot STABILITY
