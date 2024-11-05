@@ -4,7 +4,6 @@ using Reexport
 using ArrowMacros
 using LinearAlgebra
 @reexport using NSDEBase
-# TODO: Conditional loading RecipesBase.jl/MakieCore.jl depending on user env
 using RecipesBase
 
 include("abstract.jl")
