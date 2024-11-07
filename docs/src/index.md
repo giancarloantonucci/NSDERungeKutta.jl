@@ -1,32 +1,39 @@
-# RungeKutta.jl
+# NSDERungeKutta.jl
 
-This is the documentation of [RungeKutta.jl](https://github.com/giancarloantonucci/RungeKutta.jl), a Julia package implementing Runge-Kutta methods.
+This is the documentation of [NSDERungeKutta.jl](https://github.com/giancarloantonucci/NSDERungeKutta.jl), a Julia package implementing Runge-Kutta methods.
 
 ## Manual
 
 ```@contents
-Depth = 3
 ```
+
+<!-- Depth = 3 -->
 
 ## API
 
 All exported types and functions are considered part of the public API and thus documented in this manual.
 
+```@autodocs
+Modules = [NSDERungeKutta]
+```
+
 ### Abstract types
 
-```@docs
+<!-- ```@docs
 AbstractRungeKuttaSolver
+``` -->
+
+<!-- 
 AbstractRungeKuttaSolution
 AbstractRungeKuttaParameters
 AbstractButcherTableau
 AbstractStepSize
 AbstractAdaptiveParameters
-AbstractNewtonParameters
-```
+AbstractNewtonParameters -->
 
 ### Composite types
 
-```@docs
+<!-- ```@docs
 ExplicitRungeKuttaSolver
 ImplicitRungeKuttaSolver
 ExplicitExponentialRungeKuttaSolver
@@ -35,11 +42,11 @@ ButcherTableau
 StepSize
 AdaptiveParameters
 NewtonParameters
-```
+``` -->
 
 #### Solvers
 
-```@docs
+<!-- ```@docs
 Euler
 Midpoint
 Heun2
@@ -70,18 +77,18 @@ RadauIA5
 RadauIIA3
 RadauIIA5
 ExponentialRK4
-```
+``` -->
 
 ### Functions
 
-```@docs
+<!-- ```@docs
 solve!
 solve
-```
+``` -->
 
 ### Utilities
 
-```@docs
+<!-- ```@docs
 ℛ
 extract
 getindex
@@ -89,7 +96,7 @@ lastindex
 length
 setindex!
 size
-```
+``` -->
 
 ## Index
 

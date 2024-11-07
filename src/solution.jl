@@ -66,7 +66,7 @@ end
 """
     (solution::RungeKuttaSolution)(tₚ::Real, f::Function)
 
-uses Hermite's cubic splines to interpolate `solution` and approximate its value at `tₚ`. Note that it needs the derivative function `f(u, t)`, e.g. from an [`AbstractRightHandSide`](@ref) subtype.
+uses Hermite's cubic splines to interpolate `solution` and approximate its value at `tₚ`. Note that it needs the derivative function `f(u, t)`, e.g. from an [`NSDEBase.AbstractRightHandSide`](@extref) subtype.
 """
 function (solution::RungeKuttaSolution)(tₚ::Real, f::Function)
     @↓ u, t = solution
