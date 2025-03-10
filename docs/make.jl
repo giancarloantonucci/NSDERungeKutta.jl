@@ -8,26 +8,19 @@ PAGES = [
 ]
 
 links = InterLinks(
-    "sphinx" => "https://www.sphinx-doc.org/en/master/",
-    "matplotlib" => "https://matplotlib.org/3.7.3/objects.inv",
-    "Julia" => (
-        "https://docs.julialang.org/en/v1/",
-        joinpath(@__DIR__, "inventories", "Julia.toml")
-    ),
-    "Documenter" => (
-        "https://documenter.juliadocs.org/stable/",
-        "https://documenter.juliadocs.org/stable/objects.inv",
-        joinpath(@__DIR__, "inventories", "Documenter.toml")
-    ),
-);
+    "NSDEBase" => (
+        "https://giancarloantonucci.github.io/NSDEBase.jl/dev/",
+        "https://giancarloantonucci.github.io/NSDEBase.jl/dev/objects.inv"
+    )
+)
 
 makedocs(;
     sitename = "NSDERungeKutta.jl",
     format = Documenter.HTML(),
-    # modules = [NSDERungeKutta],
+    modules = [NSDERungeKutta],
     pages = PAGES,
     authors = "Giancarlo A. Antonucci <giancarlo.antonucci@icloud.com>",
-    plugins = links,
+    plugins = [links],
 )
 
 deploydocs(;
