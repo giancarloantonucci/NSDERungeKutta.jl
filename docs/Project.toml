@@ -7,4 +7,4 @@ NSDEBase = "5aa61ba9-7752-4810-b2ec-484f26c3f007"
 Documenter = "1"
 
 [sources]
-NSDEBase = {url = "https://github.com/giancarloantonucci/NSDEBase.jl"}
+NSDEBase = { url = "https://github.com/giancarloantonucci/NSDEBase.jl", rev = "main" }
