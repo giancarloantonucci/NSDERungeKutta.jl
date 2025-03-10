@@ -1,4 +1,4 @@
-RecipesBase.@recipe function f(solution::RungeKuttaSolution; variables=nothing, is_complex=false, skip=1)
+RecipesBase.@recipe function f(solution::RungeKuttaSolution; variables=nothing, iscomplex=false, skip=1)
     gridalpha --> 0.2
     minorgrid --> 0.1
     minorgridstyle --> :dash
@@ -16,7 +16,7 @@ RecipesBase.@recipe function f(solution::RungeKuttaSolution; variables=nothing, 
         throw(ArgumentError("Got $(typeof(variables)) instead of either `Integer`, `Tuple`, or `AbstractVector`."))
     end
     @↓ u, t = solution
-    if is_complex
+    if iscomplex
         for i in variables
             RecipesBase.@series begin
                 seriescolor --> i
