@@ -48,11 +48,14 @@ jobs:
 
       - name: Instantiate environment
         run: |
-          julia --project=docs -e '
-            using Pkg
+          julia --project=@. -e '
+            using Pkg;
             Pkg.rm("NSDEBase")
-            Pkg.add(url="https://github.com/giancarloantonucci/NSDEBase.jl")
-            Pkg.instantiate()'
+            Pkg.develop(PackageSpec(url="https://github.com/giancarloantonucci/NSDEBase.jl"));
+            Pkg.resolve();
+            Pkg.instantiate();
+            Pkg.build();
+            Pkg.precompile();'
         
       - name: Build package
         uses: julia-actions/julia-buildpkg@v1
