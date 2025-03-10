@@ -2,13 +2,6 @@ using LinearAlgebra
 using NSDERungeKutta
 using Test
 
-using Pkg
-for (uuid, pkg) in Pkg.dependencies()
-    if pkg.name == "NSDEBase"
-        @info "Testing NSDERungeKutta with NSDEBase version: $(pkg.version) from $(pkg.source)"
-    end
-end
-
 u0 = ones(3)
 tspan = (0.0, 1e-3)
 function f!(du, u, t)
