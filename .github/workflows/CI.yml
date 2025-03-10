@@ -47,7 +47,13 @@ jobs:
             ${{ runner.os }}-
 
       - name: Instantiate environment
-        run: julia --project=@. -e 'using Pkg; Pkg.instantiate()'
+        run: |
+          julia --project=@. -e '
+            using Pkg
+            Pkg.rm("NSDEBase")
+            Pkg.develop(PackageSpec(url="https://github.com/giancarloantonucci/NSDEBase.jl"))
+            Pkg.resolve()
+            Pkg.instantiate()'
 
       - name: Build package
         uses: julia-actions/julia-buildpkg@v1
