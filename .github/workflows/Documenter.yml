@@ -28,11 +28,6 @@ jobs:
             Pkg.instantiate()
             Pkg.build()
             Pkg.precompile()'
-
-      - name: Download Julia inventory
-        run: |
-          mkdir -p docs/inventories
-          curl -o docs/inventories/Julia.toml https://docs.julialang.org/en/v1/objects.inv
       
       - name: Build and deploy documentation
         env:
