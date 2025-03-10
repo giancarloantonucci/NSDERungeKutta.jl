@@ -19,6 +19,9 @@ jobs:
           version: '1'
           show-versioninfo: true
       
+      - name: Add NSDEBase from GitHub
+        run: julia --project=docs -e 'using Pkg; Pkg.add(url="https://github.com/giancarloantonucci/NSDEBase.jl"); Pkg.instantiate()'
+      
       - name: Install dependencies
         run: |
           julia --project=docs -e '
