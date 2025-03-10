@@ -25,6 +25,7 @@ jobs:
             using Pkg
             Pkg.rm("NSDEBase")
             Pkg.develop(PackageSpec(url="https://github.com/giancarloantonucci/NSDEBase.jl"))
+            Pkg.develop(PackageSpec(path=pwd()))
             Pkg.resolve()
             Pkg.instantiate()'
       
