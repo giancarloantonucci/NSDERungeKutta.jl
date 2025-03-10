@@ -45,11 +45,8 @@ jobs:
             ${{ runner.os }}-julia-${{ env.cache-name }}-
             ${{ runner.os }}-julia-
             ${{ runner.os }}-
-      
-      - name: Instantiate environment
-        run: julia --project=@. -e 'using Pkg; Pkg.instantiate()'
 
-      - name: Add NSDEBase from GitHub
+      - name: Instantiate environment
         run: |
           julia --project=docs -e '
             using Pkg
