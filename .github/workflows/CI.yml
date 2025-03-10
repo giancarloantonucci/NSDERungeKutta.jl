@@ -21,7 +21,7 @@ jobs:
         arch:
           - x64
         experimental: [false]
-    
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -31,7 +31,7 @@ jobs:
         with:
           version: ${{ matrix.version }}
           arch: ${{ matrix.arch }}
-      
+
       - name: Cache dependencies
         uses: actions/cache@v4
         env:
@@ -47,19 +47,11 @@ jobs:
             ${{ runner.os }}-
 
       - name: Instantiate environment
-        run: |
-          julia --project=@. -e '
-            using Pkg;
-            Pkg.rm("NSDEBase")
-            Pkg.develop(PackageSpec(url="https://github.com/giancarloantonucci/NSDEBase.jl"));
-            Pkg.resolve();
-            Pkg.instantiate();
-            Pkg.build();
-            Pkg.precompile();'
-        
+        run: julia --project=@. -e 'using Pkg; Pkg.instantiate()'
+
       - name: Build package
         uses: julia-actions/julia-buildpkg@v1
-      
+
       - name: Run tests
         uses: julia-actions/julia-runtest@v1
 
@@ -67,6 +59,6 @@ jobs:
         uses: julia-actions/julia-processcoverage@v1
         with:
           directories: src
-      
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
