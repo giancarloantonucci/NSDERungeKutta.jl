@@ -24,6 +24,7 @@ jobs:
           julia --project=docs -e '
             using Pkg
             Pkg.develop(PackageSpec(path=pwd()))
+            Pkg.rm("NSDEBase")
             Pkg.add(url="https://github.com/giancarloantonucci/NSDEBase.jl")
             Pkg.instantiate()
             Pkg.build()
