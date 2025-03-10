@@ -7,6 +7,9 @@ PAGES = [
     "Examples" => "examples.md",
 ]
 
+# Ensure the inventories directory exists
+mkpath(joinpath(@__DIR__, "inventories"))
+
 links = InterLinks(
     "sphinx" => "https://www.sphinx-doc.org/en/master/",
     "matplotlib" => "https://matplotlib.org/3.7.3/objects.inv",
