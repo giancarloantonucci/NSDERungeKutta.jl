@@ -48,6 +48,9 @@ jobs:
       
       - name: Instantiate environment
         run: julia --project=@. -e 'using Pkg; Pkg.instantiate()'
+
+      - name: Add NSDEBase from GitHub
+        run: julia --project=@. -e 'using Pkg; Pkg.add(url="https://github.com/giancarloantonucci/NSDEBase.jl"); Pkg.instantiate()'
       
       - name: Build package
         uses: julia-actions/julia-buildpkg@v1
