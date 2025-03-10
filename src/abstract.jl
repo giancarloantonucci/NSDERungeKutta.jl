@@ -1,23 +1,23 @@
-"An abstract type for a Runge-Kutta solver."
+"An abstract type for Runge-Kutta solvers of [`NSDEBase.AbstractInitialValueProblem`](@extref)s."
 abstract type AbstractRungeKuttaSolver <: AbstractInitialValueSolver end
 
-"An abstract type for a Runge-Kutta solution."
+"An abstract type for Runge-Kutta solutions of [`NSDEBase.AbstractInitialValueProblem`](@extref)s."
 abstract type AbstractRungeKuttaSolution <: AbstractInitialValueSolution end
 
 "An abstract type for Runge-Kutta solver parameters."
 abstract type AbstractRungeKuttaParameters <: AbstractInitialValueParameters end
 
-"An abstract type for the temporary variables in a Runge-Kutta solver."
+"An abstract type for caching intermediate computations in Runge-Kutta solvers."
 abstract type AbstractRungeKuttaCache <: AbstractInitialValueCache end # any cache or intermediate storage
 
-"An abstract type for a Butcher tableau."
+"An abstract type for Butcher tableaus."
 abstract type AbstractButcherTableau <: AbstractRungeKuttaParameters end
 
-"An abstract type for the time-step size, useful for adaptive solvers."
+"An abstract type for time-step sizes, useful for embedded solvers."
 abstract type AbstractStepSize <: AbstractRungeKuttaParameters end
 
-"An abstract type for the parameters of an adaptive (or embedded) Runge-Kutta solver."
+"An abstract type for parameters of embedded Runge-Kutta solvers."
 abstract type AbstractAdaptiveParameters <: AbstractRungeKuttaParameters end
 
-"An abstract type for parameters of the Newton steps in an implicit Runge-Kutta solver."
+"An abstract type for parameters of Newton steps in implicit Runge-Kutta solvers."
 abstract type AbstractNewtonParameters <: AbstractRungeKuttaParameters end
