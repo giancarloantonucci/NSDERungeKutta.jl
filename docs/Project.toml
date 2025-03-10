@@ -4,4 +4,4 @@ DocumenterInterLinks = "d12716ef-a0f6-4df4-a9f1-a5a34e75c656"
 NSDEBase = "5aa61ba9-7752-4810-b2ec-484f26c3f007"
 
 [compat]
-Documenter = "0.27"
+Documenter = "1"
