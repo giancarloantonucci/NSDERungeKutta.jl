@@ -1,6 +1,9 @@
 using LinearAlgebra
 using NSDERungeKutta
 using Test
+# using Aqua
+
+# Aqua.test_all(NSDEBase)
 
 u0 = ones(3)
 tspan = (0.0, 1e-3)
