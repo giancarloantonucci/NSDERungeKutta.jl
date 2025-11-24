@@ -57,9 +57,9 @@ RecipesBase.@userplot STABILITY
 RecipesBase.recipetype(::Val{:stability}, args...) = STABILITY(args)
 RecipesBase.@recipe function f(h::STABILITY; resolution=100, span=range(-5,5,length=resolution), xspan=span, yspan=span)
     R = if h.args[1] isa ButcherTableau
-        z -> ℛ(z, h.args[1])
+        z -> stability_function(z, h.args[1])
     elseif h.args[1] isa AbstractRungeKuttaSolver
-        z -> ℛ(z, h.args[1].tableau)
+        z -> stability_function(z, h.args[1].tableau)
     elseif h.args[1] isa Function
         h.args[1]
     else
@@ -79,9 +79,9 @@ RecipesBase.@userplot STABILITYF
 RecipesBase.recipetype(::Val{:stabilityf}, args...) = STABILITYF(args)
 RecipesBase.@recipe function f(h::STABILITYF; resolution=100, span=range(-5,5,length=resolution), xspan=span, yspan=span)
     R = if h.args[1] isa ButcherTableau
-        z -> ℛ(z, h.args[1])
+        z -> stability_function(z, h.args[1])
     elseif h.args[1] isa AbstractRungeKuttaSolver
-        z -> ℛ(z, h.args[1].tableau)
+        z -> stability_function(z, h.args[1].tableau)
     elseif h.args[1] isa Function
         h.args[1]
     else
@@ -103,9 +103,9 @@ RecipesBase.@userplot ORDERSTAR
 RecipesBase.recipetype(::Val{:orderstar}, args...) = ORDERSTAR(args)
 RecipesBase.@recipe function f(h::ORDERSTAR; resolution=100, span=range(-5,5,length=resolution), xspan=span, yspan=span)
     R = if h.args[1] isa ButcherTableau
-        z -> ℛ(z, h.args[1])
+        z -> stability_function(z, h.args[1])
     elseif h.args[1] isa AbstractRungeKuttaSolver
-        z -> ℛ(z, h.args[1].tableau)
+        z -> stability_function(z, h.args[1].tableau)
     elseif h.args[1] isa Function
         h.args[1]
     else
@@ -125,9 +125,9 @@ RecipesBase.@userplot ORDERSTARF
 RecipesBase.recipetype(::Val{:orderstarf}, args...) = ORDERSTARF(args)
 RecipesBase.@recipe function f(h::ORDERSTARF; resolution=100, span=range(-5,5,length=resolution), xspan=span, yspan=span)
     R = if h.args[1] isa ButcherTableau
-        z -> ℛ(z, h.args[1])
+        z -> stability_function(z, h.args[1])
     elseif h.args[1] isa AbstractRungeKuttaSolver
-        z -> ℛ(z, h.args[1].tableau)
+        z -> stability_function(z, h.args[1].tableau)
     elseif h.args[1] isa Function
         h.args[1]
     else

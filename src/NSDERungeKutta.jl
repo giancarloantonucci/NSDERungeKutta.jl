@@ -121,6 +121,6 @@ export GaussLegendre6
 export butchertableau
 export stepsize
 export numtimesteps, numvariables, extract
-export ℛ
+export stability_function
 
 end
