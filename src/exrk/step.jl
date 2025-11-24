@@ -37,6 +37,6 @@ function step!(cache::ExplicitExponentialRungeKuttaCache, solution::AbstractRung
     mul!(w, e_hL, u[n])
     @. u[n+1] = w + h * v
     # t[n+1] = t[n] + h
-    t[n+1] = kahansum(t[n], h, e)
+    t[n+1] = compensated_sum(t[n], h, e)
     return u[n+1], t[n+1]
 end

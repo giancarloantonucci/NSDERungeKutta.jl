@@ -2,13 +2,27 @@
 
 hairernorm(v) = sqrt(sum(abs2, v) / length(v))
 
-# Kahan's compensated summation for improved numerical accuracy
-function kahansum(a::AbstractFloat, b::AbstractFloat, e::Ref{<:AbstractFloat})
-    corrected_b = b + e[]
-    sum = a + corrected_b
-    compensation = corrected_b - (sum - a)
-    e[] = compensation
-    return sum
+"""
+    compensated_sum(sum::T, addend::T, error::Ref{T}) where T<:AbstractFloat
+
+Adds `addend` to `sum` using the Kahan-Babuška-Neumaier algorithm to minimize 
+floating-point round-off error. The accumulated error is stored in the `error` Ref.
+"""
+@inline function compensated_sum(sum::T, addend::T, error::Ref{T}) where T<:AbstractFloat
+    # 1. Recover the previous compensation
+    v = addend + error[]
+    
+    # 2. Perform the addition
+    new_sum = sum + v
+    
+    # 3. Update the error (Neumaier)
+    if abs(sum) >= abs(v)
+        error[] = (sum - new_sum) + v
+    else
+        error[] = (v - new_sum) + sum
+    end
+    
+    return new_sum
 end
 
 # Linear spline interpolation between two points

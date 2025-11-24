@@ -51,7 +51,7 @@ function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRunge
     end
     @. u[n+1] = u[n] + h * v
     # t[n+1] = t[n] + h
-    t[n+1] = kahansum(t[n], h, e)
+    t[n+1] = compensated_sum(t[n], h, e)
 
     return u[n+1], t[n+1]
 end
@@ -92,7 +92,7 @@ function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRunge
     end
     @. u[n+1] = u[n] + h * v
     # t[n+1] = t[n] + h
-    t[n+1] = kahansum(t[n], h, e)
+    t[n+1] = compensated_sum(t[n], h, e)
 
     return u[n+1], t[n+1]
 end
