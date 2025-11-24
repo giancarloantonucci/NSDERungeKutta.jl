@@ -1,3 +1,5 @@
+# NSDERungeKutta/src/utils.jl
+
 hairernorm(v) = sqrt(sum(abs2, v) / length(v))
 
 # Kahan's compensated summation for improved numerical accuracy

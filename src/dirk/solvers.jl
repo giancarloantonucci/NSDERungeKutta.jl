@@ -1,3 +1,5 @@
+# NSDERungeKutta/src/dirk/solvers.jl
+
 """
     BackwardEuler(; h::Real=0.0, εᵣ::Real=1e-3, Mₙ::Integer=10) :: DiagonallyImplicitRungeKuttaSolver
     ImplicitEuler(args...; kwargs...) :: DiagonallyImplicitRungeKuttaSolver

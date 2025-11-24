@@ -1,3 +1,5 @@
+# NSDERungeKutta/src/stability.jl
+
 @doc raw"""
     ℛ(z::Number, tableau::AbstractButcherTableau) :: Number
     ℛ(z::Number, solver::AbstractRungeKuttaSolver) :: Number

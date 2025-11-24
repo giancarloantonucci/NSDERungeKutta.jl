@@ -1,3 +1,5 @@
+# NSDERungeKutta/src/plots_recipes.jl
+
 RecipesBase.@recipe function f(solution::RungeKuttaSolution; variables=nothing, iscomplex=false, skip=1)
     gridalpha --> 0.2
     minorgrid --> 0.1

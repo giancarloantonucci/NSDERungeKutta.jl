@@ -1,3 +1,5 @@
+# NSDERungeKutta/src/exrk/solvers.jl
+
 function KassamTrefethenStabilisation(Z::AbstractMatrix, f::Function)
     N = 64
     θ = ((1:N/2) .- 0.5) * 2π/N * 1im
