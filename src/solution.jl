@@ -7,13 +7,14 @@ A composite type for an [`AbstractRungeKuttaSolution`](@ref) obtained using an [
 
 # Constructors
 ```julia
-RungeKuttaSolution(u, t)
-RungeKuttaSolution(problem, solver)
+RungeKuttaSolution(u, t, k)
+RungeKuttaSolution(problem, solver; dense=false)
 ```
 
 # Arguments
 - `u :: AbstractVector{<:AbstractVector{<:Number}}` : numerical solution
 - `t :: AbstractVector{<:Real}` : time grid
+- `k :: AbstractVector{<:AbstractVector{<:AbstractVector{<:Number}}}` : stages history (for dense output)
 
 # Functions
 - [`extract`](@ref) : extract all values for a specific variable
@@ -25,12 +26,17 @@ RungeKuttaSolution(problem, solver)
 - [`numtimesteps`](@ref) : get the number of time steps
 - [`numvariables`](@ref) : get the number of variables
 """
-struct RungeKuttaSolution{u_T<:AbstractVector{<:AbstractVector{<:Number}}, t_T<:AbstractVector{<:Real}} <: AbstractRungeKuttaSolution
-    u::u_T
-    t::t_T
+struct RungeKuttaSolution{
+            u_T <: AbstractVector{<:AbstractVector{<:Number}},
+            t_T <: AbstractVector{<:Real},
+            k_T <: Union{AbstractVector{<:AbstractVector{<:AbstractVector{<:Number}}}, Nothing}
+        } <: AbstractRungeKuttaSolution
+    u :: u_T
+    t :: t_T
+    k :: k_T
 end
 
-function RungeKuttaSolution(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver)
+function RungeKuttaSolution(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; dense::Bool=false)
     @↓ u0, (t0, tN) ← tspan = problem
     @↓ h = solver.stepsize
     N = ceil(Int, (tN - t0) / h) + 1 # e.g. tspan = (0, 1), h = 0.3 -> t = [0.0, 0.3, 0.6, 0.9, 1.2]
@@ -38,7 +44,15 @@ function RungeKuttaSolution(problem::AbstractInitialValueProblem, solver::Abstra
     u[1] = u0
     t = Vector{typeof(t0)}(undef, N)
     t[1] = t0
-    return RungeKuttaSolution(u, t)
+
+    if dense
+        # Outer: time, Middle: stages, Inner: state
+        k = Vector{Vector{typeof(u0)}}()
+        sizehint!(k, N)
+        return RungeKuttaSolution(u, t, k)
+    else
+        return RungeKuttaSolution(u, t, nothing)
+    end
 end
 
 #----------------------------------- METHODS -----------------------------------
@@ -86,6 +100,63 @@ function (solution::RungeKuttaSolution)(tₚ::Real, f::Function)
             end
         end
     end
+end
+
+"""
+    (solution::RungeKuttaSolution)(tₚ::Real, tableau::AbstractButcherTableau)
+
+Evaluates the dense output solution at `tₚ` using the stored stages and tableau coefficients.
+"""
+function (solution::RungeKuttaSolution)(tₚ::Real, tableau::AbstractButcherTableau)
+    @↓ u, t, k = solution
+    
+    if k isa Nothing || tableau.b_dense isa Nothing
+        # Fallback to linear spline if data is missing
+        return solution(tₚ) 
+    end
+
+    N = length(t)
+    # Find index n such that t[n] <= tₚ <= t[n+1]
+    n = searchsortedlast(t, tₚ)
+    
+    if n == N
+        return u[N]
+    end
+
+    if n == 0
+        return u[1]
+    end
+
+    # Calculation for dense output
+    dt = t[n+1] - t[n]
+    θ = (tₚ - t[n]) / dt
+    
+    # b(θ) calculation
+    # b_dense is a matrix where column j contains coeffs for stage j
+    # b_j(θ) = b_dense[1,j]*θ + b_dense[2,j]*θ^2 + ...
+    
+    uₚ = copy(u[n]) # Start with u_n
+    
+    # Perform the summation: u(θ) = u_n + h * Σ b_j(θ) * k_j
+    # Note: k[n] contains the stages for step n
+    
+    stages = k[n]
+    s = length(stages)
+    
+    for j = 1:s
+        # Evaluate polynomial for weight j
+        # coeffs = tableau.b_dense[:, j]
+        bj_θ = 0.0
+        θ_pow = θ
+        for p in axes(tableau.b_dense, 1)
+             bj_θ += tableau.b_dense[p, j] * θ_pow
+             θ_pow *= θ
+        end
+        
+        @. uₚ += dt * bj_θ * stages[j]
+    end
+    
+    return uₚ
 end
 
 #---------------------------------- FUNCTIONS ----------------------------------
@@ -144,25 +215,44 @@ extract(solution::RungeKuttaSolution) = extract(solution, 0:numvariables(solutio
 
 returns new a [`RungeKuttaSolution`](@ref) containing the fields of `solution` at index `i`.
 """
-Base.getindex(solution::RungeKuttaSolution, i::Integer) = RungeKuttaSolution(solution.u[i], solution.t[i])
+function Base.getindex(solution::RungeKuttaSolution, i::Integer)
+    @↓ u, t, k = solution
+    new_u = [u[i]]
+    new_t = [t[i]]
+    new_k = k isa Nothing ? nothing : [k[i]]
+    return RungeKuttaSolution(new_u, new_t, new_k)
+end
 
 """
     getindex(solution::RungeKuttaSolution, v::AbstractVector) :: RungeKuttaSolution
 
 returns a new [`RungeKuttaSolution`](@ref) containing the fields of `solution` at the indices `v`.
 """
-Base.getindex(solution::RungeKuttaSolution, v::AbstractVector) = RungeKuttaSolution(solution.u[v], solution.t[v])
+function Base.getindex(solution::RungeKuttaSolution, v::AbstractVector)
+    @↓ u, t, k = solution
+    new_k = k isa Nothing ? nothing : k[v]
+    return RungeKuttaSolution(solution.u[v], solution.t[v], new_k)
+end
 
 """
     setindex!(solution::RungeKuttaSolution, values::Tuple, i::Integer)
 
 stores the values from `values` into the fields of `solution` at the specified index `i`.
+If `solution` is dense (has `k`), `values` must be a 3-tuple `(u, t, k)`.
+Otherwise, `values` must be a 2-tuple `(u, t)`.
 """
 function Base.setindex!(solution::RungeKuttaSolution, values::Tuple, i::Integer)
-    @↓ u, t = solution
-    u_new, t_new = values
-    u[i] = u_new
-    t[i] = t_new
+    @↓ u, t, k = solution
+    if k isa Nothing
+        u_new, t_new = values
+        u[i] = u_new
+        t[i] = t_new
+    else
+        u_new, t_new, k_new = values
+        u[i] = u_new
+        t[i] = t_new
+        k[i] = k_new
+    end
     return solution
 end
 
@@ -170,12 +260,20 @@ end
     setindex!(solution::RungeKuttaSolution, values::RungeKuttaSolution, i::Integer)
 
 stores the fields of `values` into the fields of `solution` at the specified index `i`.
+Assumes `values` contains data for a single time step (e.g. from `getindex`).
 """
 function Base.setindex!(solution::RungeKuttaSolution, values::RungeKuttaSolution, i::Integer)
-    @↓ u, t = solution
-    @↓ u_new, t_new = values
+    @↓ u, t, k = solution
+    @↓ u_new, t_new, k_new = values
     u[i] = u_new
     t[i] = t_new
+    if !(k isa Nothing)
+        if k_new isa Nothing
+            error("Cannot assign non-dense solution data to a dense solution at index $i.")
+        else
+            k[i] = k_new
+        end
+    end
     return solution
 end
 
@@ -185,10 +283,17 @@ end
 stores the fields of `values` into the fields of `solution` at the specified indices `v`.
 """
 function Base.setindex!(solution::RungeKuttaSolution, values::RungeKuttaSolution, v::AbstractVector)
-    @↓ u, t = solution
-    @↓ u_new, t_new = values
+    @↓ u, t, k = solution
+    @↓ u_new, t_new, k_new = values
     @. u[v] = u_new
     @. t[v] = t_new
+    if !(k isa Nothing)
+        if k_new isa Nothing
+            error("Cannot assign non-dense solution data to a dense solution.")
+        else
+            @. k[v] = k_new
+        end
+    end
     return solution
 end
 

@@ -9,10 +9,11 @@ returns an [`ExplicitRungeKuttaSolver`](@ref) for the 1st-order Euler method.
 """
 function Euler(; h::Real=0.0)
     p = 1
+    b_dense = hcat([1.0])
     tableau = ButcherTableau(float([
         0 0;
         p 1;
-    ]))
+    ]); b_dense)
     return ERK(tableau, h)
 end
 @doc (@doc Euler) ExplicitEuler(args...; kwargs...) = Euler(args...; kwargs...)
@@ -294,6 +295,11 @@ returns an [`ExplicitRungeKuttaSolver`](@ref) for the 3rd-order Bogacki-Shampine
 function BogackiShampine(; h::Real=0.0, εₐ::Real=0.0, εᵣ::Real=1e-5, Mₙ::Integer=100, save_stepsizes::Bool=false)
     p = 3
     q = 2
+    b_dense = float([
+         1.0  0.0  0.0  0.0; # θ^1
+        -4/3  1.0  4/3 -1.0; # θ^2
+         5/9 -2/3 -8/9  1.0; # θ^3
+    ])
     tableau = ButcherTableau(float([
           0    0   0   0   0;
         1/2  1/2   0   0   0;
@@ -301,7 +307,7 @@ function BogackiShampine(; h::Real=0.0, εₐ::Real=0.0, εᵣ::Real=1e-5, Mₙ:
           1  2/9 1/3 4/9   0;
           p  2/9 1/3 4/9   0;
           q 7/24 1/4 1/3 1/8;
-    ]))
+    ]); b_dense)
     adaptive = AdaptiveParameters(εₐ=εₐ, εᵣ=εᵣ, Mₙ=Mₙ)
     stepsize = StepSize(h; save_stepsizes)
     return ERK(tableau, stepsize, adaptive)

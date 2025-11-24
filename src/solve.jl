@@ -16,28 +16,45 @@ function adaptivestep!(cache::AbstractRungeKuttaCache, solution::AbstractRungeKu
 end
 
 """
-    solve!(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver) :: RungeKuttaSolution
+    solve!(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; dense::Bool=false) :: RungeKuttaSolution
 
 computes the `solution` of `problem` using `solver`.
 """
 function solve!(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver)
     cache = RungeKuttaCache(problem, solver)
     @↓ u0, (t0, tN) ← tspan = problem
-    @↓ u, t = solution
+    @↓ u, t, k = solution
     @↓ n = cache
     N0 = N = length(t)
+
     # Integrate until reaching the end time `tN`
     while t[n] < tN
         step!(cache, solution, problem, solver)
+
+        # Save stages for dense output
+        if !(k isa Nothing)
+            # cache.k holds stages for the step just taken.
+            # Copy to avoid mutation in next step.
+            push!(k, copy.(cache.k))
+        end
+
         adaptivestep!(cache, solution, solver)
+
         @↓ n = cache
         # If the solution array is full and the end time hasn't been reached yet, append memory for more time steps
         if n == N && t[n] < tN
             append!(u, [similar(u[n]) for i = 1:N0])
             append!(t, similar(t, N0))
+
+            # Reserve space for k if it exists
+            if !(k isa Nothing)
+                sizehint!(k, length(k) + N0)
+            end
+
             N += N0
         end
     end
+
     # Resize the solution arrays to match the final number of time steps
     resize!(u, n)
     resize!(t, n)
@@ -45,12 +62,12 @@ function solve!(solution::AbstractRungeKuttaSolution, problem::AbstractInitialVa
 end
 
 """
-    solve(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver) :: RungeKuttaSolution
+    solve(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; dense::Bool=false, kwargs...) :: RungeKuttaSolution
 
 computes the solution of `problem` using `solver`.
 """
-function NSDEBase.solve(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; kwargs...)
-    solution = RungeKuttaSolution(problem, solver)
+function NSDEBase.solve(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; dense::Bool=false, kwargs...)
+    solution = RungeKuttaSolution(problem, solver; dense=dense)
     solve!(solution, problem, solver; kwargs...)
     return solution
 end
