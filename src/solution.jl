@@ -41,7 +41,7 @@ function RungeKuttaSolution(problem::AbstractInitialValueProblem, solver::Abstra
     @↓ h = solver.stepsize
     N = ceil(Int, (tN - t0) / h) + 1 # e.g. tspan = (0, 1), h = 0.3 -> t = [0.0, 0.3, 0.6, 0.9, 1.2]
     u = [similar(u0) for _ = 1:N]
-    u[1] = u0
+    copyto!(u[1], u0)
     t = Vector{typeof(t0)}(undef, N)
     t[1] = t0
 

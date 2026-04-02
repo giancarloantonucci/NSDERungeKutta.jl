@@ -17,7 +17,8 @@ function RungeKuttaCache(
             problem::AbstractInitialValueProblem,
             solver::ExplicitRungeKuttaSolver
         )
-    @↓ u0 = problem
+    @↓ u0, tspan = problem
+    t0, tN = tspan
     @↓ s = solver.tableau
     n = m = 1
     e = Ref(zero(eltype(t0)))
