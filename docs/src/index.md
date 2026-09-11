@@ -1,6 +1,6 @@
 # NSDERungeKutta.jl
 
-This is the documentation of [NSDERungeKutta.jl](https://github.com/giancarloantonucci/NSDERungeKutta.jl), a Julia package implementing Runge-Kutta methods: explicit, embedded adaptive explicit, diagonally implicit, fully implicit and implicit-explicit (IMEX) families over one shared solving shell.
+This is the documentation of [NSDERungeKutta.jl](https://github.com/giancarloantonucci/NSDERungeKutta.jl), a Julia package implementing Runge-Kutta methods: explicit, embedded adaptive explicit, diagonally implicit, fully implicit, implicit-explicit (IMEX) and exponential (EXPRK) families over one shared solving shell.
 
 ## Installation
 

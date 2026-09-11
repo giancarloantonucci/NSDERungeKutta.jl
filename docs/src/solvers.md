@@ -32,6 +32,14 @@ One coupled Newton solve over all stages per step.
 
 These solve a `SplitRightHandSide` ``f = f_s + f_{ns}``: the stiff part implicitly (direct solve if linear, Newton if not), the non-stiff part explicitly.
 
+## Exponential (EXPRK)
+
+`LawsonEuler`, `NorsettEuler`/`ETDEuler`/`ExponentialEuler` (1), `ETD2RK` (2), `ETD3RK` (3), `ETD4RK`/`ETDRK4`, `Lawson4`, `Krogstad`, `HochbruckOstermann4`/`HochOst4` (4).
+
+For semilinear problems ``u' = Lu + g(t) + f_{ns}(u, t)``, supplied as a `SplitRightHandSide` whose stiff part is a `LinearRightHandSide` (or as a plain `LinearRightHandSide`, on which every scheme is exact up to the accuracy of the matrix exponential). The linear part is propagated exactly: the stage and weight coefficients of an `ExponentialTableau` are operator functions of ``z = hL`` built from the φ-functions ``\varphi_k``, which `phifunctions` evaluates by scaled diagonal Padé (the EXPINT convention). Lawson schemes are classical Runge–Kutta methods in the integrating-factor variables; ETD, Krogstad and Hochbruck–Ostermann schemes are exponential integrators proper, with the stiff-order conditions of the latter. Because ``e^{hL}`` and the ``\varphi_k(hL)`` are computed once per solver, the step size is fixed: these solvers take no adaptive parameters.
+
+`test/oracle.jl` checks the φ engine against 256-bit ground truth and a contour integral, the shipped tableaus against their operator identities, and the whole against the Kuramoto–Sivashinsky benchmark.
+
 ## Dense output and interpolation
 
 `solution(t)` interpolates: linear spline by default, cubic Hermite given the derivative (`solution(t, f)`), and — with `solve(…; dense = true)` on a solver whose tableau carries dense-output weights — the method's own continuous extension via `solution(t, solver.tableau)`.

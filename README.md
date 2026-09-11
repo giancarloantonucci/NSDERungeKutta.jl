@@ -79,12 +79,14 @@ This package currently supports the following methods:
 
 - `IMEXEuler`, `IMEXSSP2_222`, `IMEXSSP2_322`, `IMEXSSP2_332`, `IMEXSSP3_332`.
 
+**Exponential (EXPRK)**, on a `SplitRightHandSide` `f = L·u + g(t) + fₙₛ(u, t)` whose stiff part is linear — the linear flow is propagated exactly through φ-functions of `hL`:
+
+- `LawsonEuler`, `NorsettEuler`/`ETDEuler`/`ExponentialEuler` (1), `ETD2RK` (2), `ETD3RK` (3), `ETD4RK`/`ETDRK4`, `Lawson4`, `Krogstad`, `HochbruckOstermann4`/`HochOst4` (4). Coefficients are operator functions on an `ExponentialTableau`; `phifunctions(z)` evaluates the φₖ.
+
+**Implicit solvers** accept a Newton stage only when its residual is within `εₐ + εᵣ·max(‖x‖, ‖f‖)`; if `Mₙ` iterations pass without that, the step throws `NewtonFailure` rather than continuing with an unconverged stage. Tune with the `εᵣ`, `εₐ`, `Mₙ` keywords of every implicit solver.
+
 **Adaptive stepping** is available for the embedded explicit solvers: pass tolerances (`εᵣ`, `εₐ`) and, if wanted, `save_stepsizes = true` to record accepted and rejected steps. It needs an embedded pair, so handing `AdaptiveParameters` to a solver whose tableau has none throws at construction rather than silently stepping at fixed size.
 
 ## Plotting
 
-This package ships native recipes for both major plotting ecosystems; which one you get is decided simply by which you load — the commands are the standard ones either way.
-
-- `using Plots` → `plot(solution)`, `phaseplot(solution)`, `stability(solver)`.
-
-Attributes have the same names and semantics in both.
+Recipes for [Plots.jl](https://github.com/JuliaPlots/Plots.jl): `plot(solution)` for time series, `phaseplot(solution)` for phase portraits, `stability`/`stabilityf` and `orderstar`/`orderstarf` for a solver's stability region and order star, and `plot(hs::StepSizes)` for accepted and rejected step sizes of an adaptive run. Attributes: `variables` (which components), `iscomplex` (plot real and imaginary parts), `skip` (subsample), `resolution` and `span` for the region plots.
