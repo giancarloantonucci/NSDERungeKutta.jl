@@ -1,9 +1,9 @@
 # NSDERungeKutta/src/abstract.jl
 
-"An abstract type for Runge-Kutta solvers of [`NSDEBase.AbstractInitialValueProblem`](@extref)s."
+"An abstract type for Runge-Kutta solvers of `NSDEBase.AbstractInitialValueProblem`s."
 abstract type AbstractRungeKuttaSolver <: AbstractInitialValueSolver end
 
-"An abstract type for Runge-Kutta solutions of [`NSDEBase.AbstractInitialValueProblem`](@extref)s."
+"An abstract type for Runge-Kutta solutions of `NSDEBase.AbstractInitialValueProblem`s."
 abstract type AbstractRungeKuttaSolution <: AbstractInitialValueSolution end
 
 "An abstract type for Runge-Kutta solver parameters."

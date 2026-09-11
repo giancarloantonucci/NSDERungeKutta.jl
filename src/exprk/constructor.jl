@@ -5,8 +5,8 @@
 
 A composite type for one-step exponential Runge-Kutta solvers of semilinear
 problems `u' = Lu + g(t) + fₙₛ(u, t)`, supplied as a
-[`NSDEBase.SplitRightHandSide`](@extref) whose stiff part is a
-[`NSDEBase.LinearRightHandSide`](@extref), or as a plain
+`NSDEBase.SplitRightHandSide` whose stiff part is a
+`NSDEBase.LinearRightHandSide`, or as a plain
 `LinearRightHandSide` (on which every scheme propagates the linear flow
 exactly, up to the Padé accuracy of the precomputed exponential).
 
