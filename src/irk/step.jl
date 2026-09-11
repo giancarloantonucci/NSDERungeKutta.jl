@@ -7,14 +7,20 @@ function step!(cache::ImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolut
     @↓ tableau, newton, stepsize = solver
     @↓ A, b, c, s = tableau
     @↓ h = stepsize
-    @↓ εᵣ, Mₙ = newton
+    @↓ Mₙ = newton
 
     # Stages:
     zero!(k)
     Df!(J, v, u[n], t[n])
     # DF = I - kron(h * A, J)
     DF = factorize(I - h * kron(A, J))
-    for l = 1:Mₙ
+    # Residual-checked simplified Newton on the coupled stage system (see
+    # dirk/step.jl for the contract).
+    converged = false
+    updates = 0
+    rnorm = tol = zero(float(h))
+    for l = 0:Mₙ
+        fnorm = zero(float(h))
         for i = 1:s
             # Uᵢ = u[n] + h * sum(a[i,j] * k[j] for j = 1:s)
             zero!(v)
@@ -24,10 +30,18 @@ function step!(cache::ImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolut
                 end
             end
             @. v = u[n] + h * v
-            # F[i] = f(t[n] + h * c[i], Uᵢ) - k[i]
+            # r[i] = f(t[n] + h * c[i], Uᵢ) - k[i]
             rhs(Δk[i], v, t[n] + h * c[i])
+            fnorm = hypot(fnorm, norm(Δk[i])) # stable accumulation, see `stagesnorm`
             @. Δk[i] -= k[i]
         end
+        rnorm = stagesnorm(Δk)
+        tol = newton_tolerance(newton, stagesnorm(k), fnorm)
+        if newton_accept(rnorm, tol)
+            converged = true
+            break
+        end
+        (l == Mₙ || !isfinite(rnorm)) && break
         # Δk = DF \ F
         # TO-DO: ldiv!(DF, Δk)
         for i = 1:s
@@ -44,10 +58,10 @@ function step!(cache::ImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolut
         for i in eachindex(k)
             @. k[i] += Δk[i]
         end
-        if norm(Δk) < εᵣ * norm(k)
-            break
-        end
+        updates += 1
+        stagesfinite(k) || break
     end
+    newton_check(converged, rnorm, tol, t[n], 0, updates) # stage 0: the coupled system
 
     # Step:
     # u[n+1] = u[n] + h * sum(b[i] * k[i] for i = 1:s)
@@ -86,7 +100,7 @@ function step!(cache::ImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolut
         d = length(k[i])
         @. V[(i-1)*d+1:i*d] = k[i]
     end
-    ldiv!(DF, V)
+    directldiv!(DF, V) # NOT ldiv!: CHOLMOD factors (sparse SPD L) lack it — see utils.jl
     for i = 1:s
         d = length(k[i])
         @. k[i] = V[(i-1)*d+1:i*d]

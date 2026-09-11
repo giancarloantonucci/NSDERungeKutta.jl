@@ -7,7 +7,7 @@ function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRunge
     @↓ tableau, stepsize, newton = solver
     @↓ A, b, c, s = tableau
     @↓ h = stepsize
-    @↓ εᵣ, Mₙ = newton
+    @↓ Mₙ = newton
 
     # Stages:
     Df!(J, v, u[n], t[n])
@@ -25,20 +25,37 @@ function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRunge
         # DFᵢ = I - h * A[i,i] * J
         zero!(k[i])
         DFᵢ = factorize(I - h * A[i,i] * J)
-        for l = 1:Mₙ
+        # Residual-checked simplified Newton: evaluate the stage equation at
+        # the current iterate, accept on a small RESIDUAL, otherwise update.
+        # `Mₙ` bounds the number of updates; the residual is always evaluated
+        # once more after the last update, so an accepted stage has been
+        # checked as it stands, and the increment size is never the verdict.
+        converged = false
+        updates = 0
+        rnorm = tol = zero(float(h))
+        for l = 0:Mₙ
             # Uᵢ = Eᵢ + h * A[i,i] * k[i]
             @. Uᵢ = v + h * A[i,i] * k[i]
-            # Fᵢ = f(t[n] + h * c[i], Uᵢ) - k[i]
+            # rᵢ = f(t[n] + h * c[i], Uᵢ) - k[i]
             rhs(Δkᵢ, Uᵢ, t[n] + h * c[i])
+            fnorm = norm(Δkᵢ)
             @. Δkᵢ -= k[i]
-            # Δkᵢ = DFᵢ \ Fᵢ
-            ldiv!(DFᵢ, Δkᵢ)
-            # k[i] += Δkᵢ
-            @. k[i] += Δkᵢ
-            if norm(Δkᵢ) < εᵣ * norm(k[i])
+            rnorm = norm(Δkᵢ)
+            tol = newton_tolerance(newton, norm(k[i]), fnorm)
+            if newton_accept(rnorm, tol)
+                converged = true
                 break
             end
+            (l == Mₙ || !isfinite(rnorm)) && break
+            # Δkᵢ = DFᵢ \ rᵢ ; k[i] += Δkᵢ
+            ldiv!(DFᵢ, Δkᵢ)
+            @. k[i] += Δkᵢ
+            updates += 1
+            all(isfinite, k[i]) || break
         end
+        # Never use an unconverged stage: the step is wrong by an unknown
+        # amount, and a fixed-step solver has no controller to catch it.
+        newton_check(converged, rnorm, tol, t[n], i, updates)
     end
 
     # Step:
@@ -57,7 +74,7 @@ function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRunge
 end
 
 function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, rhs::LinearRightHandSide, solver::DiagonallyImplicitRungeKuttaSolver)
-    @↓ n, v, k, e = cache
+    @↓ n, v, Δkᵢ, k, e = cache
     @↓ u, t = solution
     @↓ L = rhs
     @↓ tableau, stepsize = solver
@@ -77,9 +94,9 @@ function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRunge
         # DFᵢ = I - h * A[i,i] * L
         DFᵢ = factorize(I - h * A[i,i] * L)
         # Fᵢ = L * Eᵢ + g(t[n] + h * c[i])
-        rhs(k[i], v, t[n] + h * c[i])
+        rhs(k[i], Δkᵢ, v, t[n] + h * c[i]) # 4-arg form: `Δkᵢ` is idle here and serves as scratch
         # k[i] = DFᵢ \ Fᵢ
-        ldiv!(DFᵢ, k[i])
+        directldiv!(DFᵢ, k[i]) # NOT ldiv!: CHOLMOD factors (sparse SPD L) lack it — see utils.jl
     end
 
     # Step:

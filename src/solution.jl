@@ -69,14 +69,12 @@ function (solution::RungeKuttaSolution)(tₚ::Real)
         return u[1]
     elseif tₚ ≥ t[N]
         return u[N]
-    else
-        for n in 2:N
-            if t[n-1] ≤ tₚ < t[n]
-                uₚ = linearspline(tₚ, t[n-1], t[n], u[n-1], u[n])
-                return uₚ
-            end
-        end
     end
+    # Binary search, like the dense-output path: this call sits inside the
+    # Parareal hot loop (chunk boundary values, every sweep), where a linear
+    # scan over a 10³-step chunk multiplies through steps × s × N × K × M.
+    n = searchsortedlast(t, tₚ) # t[n] ≤ tₚ < t[n+1]
+    return linearspline(tₚ, t[n], t[n+1], u[n], u[n+1])
 end
 
 """
@@ -91,15 +89,10 @@ function (solution::RungeKuttaSolution)(tₚ::Real, f::Function)
         return u[1]
     elseif tₚ ≥ t[N]
         return u[N]
-    else
-        for n in 2:N
-            if t[n-1] ≤ tₚ < t[n]
-                duₙ₋₁, duₙ = f(u[n-1], t[n-1]), f(u[n], t[n])
-                uₚ = hermitecubicspline(tₚ, t[n-1], t[n], u[n-1], u[n], duₙ₋₁, duₙ)
-                return uₚ
-            end
-        end
     end
+    n = searchsortedlast(t, tₚ) # t[n] ≤ tₚ < t[n+1]
+    duₙ, duₙ₊₁ = f(u[n], t[n]), f(u[n+1], t[n+1])
+    return hermitecubicspline(tₚ, t[n], t[n+1], u[n], u[n+1], duₙ, duₙ₊₁)
 end
 
 """
@@ -210,88 +203,137 @@ returns all variables of `solution`, including `t`.
 """
 extract(solution::RungeKuttaSolution) = extract(solution, 0:numvariables(solution))
 
+# Stage history lives on INTERVALS, not nodes: `k[n]` holds the stages of the
+# step from `t[n]` to `t[n+1]`, so a dense solution with N nodes has N − 1
+# entries in `k` (see `solve!`). Every indexer below honours that: a single node
+# owns no interval, a contiguous range of m nodes owns m − 1 intervals, and a
+# non-contiguous selection owns none that could be reused (the polynomials
+# between non-adjacent nodes are not the ones stored), so it is refused rather
+# than fitted with the wrong stages.
+
 """
     getindex(solution::RungeKuttaSolution, i::Integer) :: RungeKuttaSolution
 
-returns new a [`RungeKuttaSolution`](@ref) containing the fields of `solution` at index `i`.
+returns a new [`RungeKuttaSolution`](@ref) containing the fields of `solution`
+at node `i`. A single node carries no interval, so the slice has no dense stage
+history even when `solution` does.
 """
 function Base.getindex(solution::RungeKuttaSolution, i::Integer)
+    @↓ u, t = solution
+    return RungeKuttaSolution([u[i]], [t[i]], nothing)
+end
+
+"""
+    getindex(solution::RungeKuttaSolution, v::AbstractUnitRange) :: RungeKuttaSolution
+
+returns a new [`RungeKuttaSolution`](@ref) containing the fields of `solution`
+at the contiguous nodes `v`, together with the stage history of the
+`length(v) − 1` intervals between them (when `solution` is dense).
+"""
+function Base.getindex(solution::RungeKuttaSolution, v::AbstractUnitRange)
     @↓ u, t, k = solution
-    new_u = [u[i]]
-    new_t = [t[i]]
-    new_k = k isa Nothing ? nothing : [k[i]]
-    return RungeKuttaSolution(new_u, new_t, new_k)
+    new_k = (k isa Nothing || isempty(v)) ? nothing : k[first(v):last(v)-1]
+    return RungeKuttaSolution(u[v], t[v], new_k)
 end
 
 """
     getindex(solution::RungeKuttaSolution, v::AbstractVector) :: RungeKuttaSolution
 
-returns a new [`RungeKuttaSolution`](@ref) containing the fields of `solution` at the indices `v`.
+returns a new [`RungeKuttaSolution`](@ref) containing the fields of `solution`
+at the nodes `v`. For a non-contiguous selection of a dense solution the
+stored stage polynomials do not describe the gaps between the chosen nodes,
+so the request is refused with an `ArgumentError`; slice `solution.u` and
+`solution.t` directly if only the nodes are wanted.
 """
 function Base.getindex(solution::RungeKuttaSolution, v::AbstractVector)
     @↓ u, t, k = solution
-    new_k = k isa Nothing ? nothing : k[v]
-    return RungeKuttaSolution(solution.u[v], solution.t[v], new_k)
+    if !(k isa Nothing) && !(isempty(v) || v == first(v):last(v))
+        throw(ArgumentError("cannot slice a dense `RungeKuttaSolution` at non-contiguous nodes: the stored stages belong to adjacent intervals only. Use a range, or index `solution.u`/`solution.t` directly."))
+    end
+    new_k = (k isa Nothing || isempty(v)) ? nothing : k[first(v):last(v)-1]
+    return RungeKuttaSolution(u[v], t[v], new_k)
 end
+
+# Writing through the indexer into a DENSE solution: the stage history is a
+# per-interval record that must agree with the nodes on both sides of each
+# interval. Changing a node without the two adjoining intervals' stages
+# leaves those intervals describing a curve through the OLD node, and
+# `solution(t, tableau)` would then silently interpolate off the stored
+# trajectory. There is no way to repair that from node data alone, so the
+# indexer refuses partial writes into a dense solution; either write the whole
+# solution (all nodes with all `N − 1` interval stages), or edit `u`, `t`
+# and `k` directly and take responsibility for their consistency. Non-dense
+# solutions carry no such record and accept any node write.
+
+_dense_partial_write() = throw(ArgumentError(
+    "cannot write single nodes into a dense `RungeKuttaSolution`: the stored stages of the adjoining intervals would no longer match the nodes. Write the whole solution (all nodes and all interval stages), or edit `solution.u`, `solution.t` and `solution.k` directly."))
+
+_contiguous(v::AbstractVector) = isempty(v) || v == first(v):last(v)
 
 """
     setindex!(solution::RungeKuttaSolution, values::Tuple, i::Integer)
 
-stores the values from `values` into the fields of `solution` at the specified index `i`.
-If `solution` is dense (has `k`), `values` must be a 3-tuple `(u, t, k)`.
-Otherwise, `values` must be a 2-tuple `(u, t)`.
+stores `(u, t)` from `values` at node `i` of a non-dense `solution`. A dense
+solution refuses the write (see the note on partial writes above).
 """
 function Base.setindex!(solution::RungeKuttaSolution, values::Tuple, i::Integer)
     @↓ u, t, k = solution
-    if k isa Nothing
-        u_new, t_new = values
-        u[i] = u_new
-        t[i] = t_new
-    else
-        u_new, t_new, k_new = values
-        u[i] = u_new
-        t[i] = t_new
-        k[i] = k_new
-    end
+    k isa Nothing || _dense_partial_write()
+    length(values) == 2 || throw(ArgumentError("expected a `(u, t)` pair, got a $(length(values))-tuple."))
+    u_new, t_new = values
+    u[i] = u_new
+    t[i] = t_new
     return solution
 end
 
 """
     setindex!(solution::RungeKuttaSolution, values::RungeKuttaSolution, i::Integer)
 
-stores the fields of `values` into the fields of `solution` at the specified index `i`.
-Assumes `values` contains data for a single time step (e.g. from `getindex`).
+stores the single node held by `values` (e.g. from `getindex`) at node `i` of
+a non-dense `solution`. A dense solution refuses the write (see the note on
+partial writes above).
 """
 function Base.setindex!(solution::RungeKuttaSolution, values::RungeKuttaSolution, i::Integer)
     @↓ u, t, k = solution
-    @↓ u_new, t_new, k_new = values
-    u[i] = u_new
-    t[i] = t_new
-    if !(k isa Nothing)
-        if k_new isa Nothing
-            error("Cannot assign non-dense solution data to a dense solution at index $i.")
-        else
-            k[i] = k_new
-        end
-    end
+    k isa Nothing || _dense_partial_write()
+    length(values) == 1 || throw(DimensionMismatch("expected a single-node slice, got $(length(values)) nodes."))
+    u[i] = values.u[1]
+    t[i] = values.t[1]
     return solution
 end
 
 """
     setindex!(solution::RungeKuttaSolution, values::RungeKuttaSolution, v::AbstractVector)
 
-stores the fields of `values` into the fields of `solution` at the specified indices `v`.
+stores the nodes of `values` at the nodes `v` of `solution`. On a non-dense
+target any `v` is accepted. On a dense target the write must cover the WHOLE
+solution — `v` equal to `1:length(solution)` and `values` dense with the
+matching `length(v) − 1` interval stages — so that nodes and stages are
+replaced together; anything less is refused (see the note above). All checks
+run before anything is modified.
 """
 function Base.setindex!(solution::RungeKuttaSolution, values::RungeKuttaSolution, v::AbstractVector)
     @↓ u, t, k = solution
-    @↓ u_new, t_new, k_new = values
-    @. u[v] = u_new
-    @. t[v] = t_new
+    @↓ u_new ← u, t_new ← t, k_new ← k = values
+    # Validate everything first: a refused write must leave `solution` intact.
+    length(u_new) == length(v) && length(t_new) == length(v) ||
+        throw(DimensionMismatch("expected $(length(v)) nodes, got $(length(u_new))."))
+    all(i -> checkbounds(Bool, t, i), v) || throw(BoundsError(solution, v))
     if !(k isa Nothing)
-        if k_new isa Nothing
-            error("Cannot assign non-dense solution data to a dense solution.")
-        else
-            @. k[v] = k_new
+        (_contiguous(v) && !isempty(v) && first(v) == firstindex(t) && last(v) == lastindex(t)) ||
+            _dense_partial_write()
+        k_new isa Nothing && throw(ArgumentError("a dense solution can only be overwritten by a dense one carrying its interval stages."))
+        length(k_new) == length(v) - 1 ||
+            throw(DimensionMismatch("expected $(length(v) - 1) stage entries for $(length(v)) nodes, got $(length(k_new))."))
+    end
+    for (j, i) in enumerate(v)
+        u[i] = u_new[j]
+        t[i] = t_new[j]
+    end
+    if !(k isa Nothing)
+        intervals = first(v):last(v)-1 # computed OUTSIDE any broadcast: `@.` would dot `first`/`last`
+        for (j, i) in enumerate(intervals)
+            k[i] = k_new[j]
         end
     end
     return solution

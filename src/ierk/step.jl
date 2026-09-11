@@ -9,7 +9,7 @@ function step!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKu
     @↓ Aᴵ ← A, bᴵ ← b, cᴵ ← c, s = implicitableau
     @↓ Aᴱ ← A, bᴱ ← b, cᴱ ← c = explicitableau
     @↓ h = stepsize
-    @↓ εᵣ, Mₙ = newton
+    @↓ Mₙ = newton
 
     # Stages:
     Df!(J, v, u[n], t[n])
@@ -32,19 +32,32 @@ function step!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKu
         ΔUᵢ = kᴱ[i] # to avoid allocs
         # Fᵢ' = I - h * Aᴵ[i,i] * L
         M = factorize(I - h * Aᴵ[i,i] * J)
-        for l = 1:Mₙ
+        # Residual-checked simplified Newton on Uᵢ (see dirk/step.jl). On
+        # exit kᴵ[i] = fₛ(Uᵢ) at the ACCEPTED Uᵢ, not at the previous one.
+        converged = false
+        updates = 0
+        rnorm = tol = zero(float(h))
+        for l = 0:Mₙ
             # kᴵ[i] = fₛ(t[n] + h * cᴵ[i], Uᵢ)
             fₛ(kᴵ[i], Uᵢ, t[n] + h * cᴵ[i])
-            # Fᵢ = Eᵢ + h * Aᴵ[i,i] * kᴵ[i] - Uᵢ
-            @. ΔUᵢ = v + h * Aᴵ[i,i] * kᴵ[i] - Uᵢ
-            # ΔUᵢ = Fᵢ' \ Fᵢ
-            ldiv!(M, ΔUᵢ)
-            # Uᵢ += ΔUᵢ
-            @. Uᵢ += ΔUᵢ
-            if norm(ΔUᵢ) < εᵣ * norm(Uᵢ)
+            # rᵢ = Eᵢ + h * Aᴵ[i,i] * kᴵ[i] - Uᵢ
+            @. ΔUᵢ = v + h * Aᴵ[i,i] * kᴵ[i]
+            gnorm = norm(ΔUᵢ)
+            @. ΔUᵢ -= Uᵢ
+            rnorm = norm(ΔUᵢ)
+            tol = newton_tolerance(newton, norm(Uᵢ), gnorm)
+            if newton_accept(rnorm, tol)
+                converged = true
                 break
             end
+            (l == Mₙ || !isfinite(rnorm)) && break
+            # ΔUᵢ = Fᵢ' \ rᵢ ; Uᵢ += ΔUᵢ
+            ldiv!(M, ΔUᵢ)
+            @. Uᵢ += ΔUᵢ
+            updates += 1
+            all(isfinite, Uᵢ) || break
         end
+        newton_check(converged, rnorm, tol, t[n], i, updates)
 
         # kᴱ[i] = fₙₛ(t[n] + h * cᴱ[i], Uᵢ)
         fₙₛ(kᴱ[i], Uᵢ, t[n] + h * cᴱ[i])
@@ -97,9 +110,9 @@ function step!(cache::ImplicitExplicitRungeKuttaCache, solution::AbstractRungeKu
         g! isa Nothing ? zero!(Uᵢ) : g!(Uᵢ, t[n] + h * cᴵ[i])
         @. Uᵢ = v + h * Aᴵ[i,i] * Uᵢ
         # Uᵢ = Fᵢ' \ Fᵢ
-        ldiv!(M, Uᵢ)
+        directldiv!(M, Uᵢ) # NOT ldiv!: CHOLMOD factors (sparse SPD L) lack it — see utils.jl
         # kᴵ[i] = L * Uᵢ + g(t[n] + h * cᴵ[i])
-        fₛ(kᴵ[i], Uᵢ, t[n] + h * cᴵ[i])
+        fₛ(kᴵ[i], v, Uᵢ, t[n] + h * cᴵ[i]) # 4-arg form: `v` is idle after the ldiv! and serves as scratch
         # kᴱ[i] = fₙₛ(t[n] + h * cᴱ[i], U)
         fₙₛ(kᴱ[i], Uᵢ, t[n] + h * cᴱ[i])
     end

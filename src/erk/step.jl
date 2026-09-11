@@ -1,7 +1,7 @@
 # NSDERungeKutta/src/erk/step.jl
 
 function step!(cache::ExplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, rhs::AbstractRightHandSide, solver::ExplicitRungeKuttaSolver)
-    @↓ n, v, e, k = cache
+    @↓ n, v, w, e, k = cache
     @↓ u, t = solution
     @↓ tableau, stepsize = solver
     @↓ A, b, c, s = tableau
@@ -18,7 +18,7 @@ function step!(cache::ExplicitRungeKuttaCache, solution::AbstractRungeKuttaSolut
         end
         @. v = u[n] + h * v
         # k[i] = f(t[n] + h * c[i], Uᵢ)
-        rhs(k[i], v, t[n] + h * c[i])
+        rhs(k[i], w, v, t[n] + h * c[i]) # 4-arg form: `w` is scratch, so forcing/split RHSs stay allocation-free
     end
 
     # Step:

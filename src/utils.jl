@@ -44,3 +44,39 @@ function hermitecubicspline(x, x_prev, x_curr, y_prev, y_curr, dy_prev, dy_curr)
     y = @. c0 + c1 * (x - x_prev) + c2 * (x - x_prev)^2 + c3 * (x - x_prev)^3
     return y
 end
+
+"""
+    directldiv!(M, v)
+
+In-place left-division `v = M \\ v` for a factorisation `M`. Identical to
+`LinearAlgebra.ldiv!(M, v)` except for factorisation types that ship without a
+two-argument in-place method — notably `SparseArrays.CHOLMOD.Factor`, which
+`factorize` returns for symmetric positive-definite SPARSE matrices (i.e.
+every method-of-lines Laplacian fed to the direct-linear DIRK/IERK/IRK
+branches as `I - hA⋅L`) and which supports only `\\` (checked through Julia 1.13). The
+fallback allocates one vector per call; the per-step `factorize` sitting next
+to every call site already allocates strictly more, so the hot-path cost is
+unchanged in order. CHOLMOD's `\\` also handles a complex right-hand side
+against a real factor (real/imaginary split), covering the `iscomplex`
+spectral path.
+"""
+directldiv!(M, v) = ldiv!(M, v)
+
+# Where the CHOLMOD bindings live depends on the Julia version. From 1.9 the
+# SuiteSparse solvers were merged into SparseArrays (`SparseArrays.CHOLMOD`).
+# On 1.6–1.8 they are the separate `SuiteSparse` stdlib; it is part of the
+# system image there and already loaded whenever SparseArrays is, so it can be
+# taken from `Base.loaded_modules` without declaring a dependency that would
+# not exist on newer Julias. If, on an old Julia, it is somehow not loaded,
+# the specialised method is simply not defined and a CHOLMOD factor falls
+# through to `ldiv!`, whose MethodError names the problem.
+@static if VERSION ≥ v"1.9"
+    directldiv!(M::SparseArrays.CHOLMOD.Factor, v) = copyto!(v, M \ v)
+else
+    let id = Base.PkgId(Base.UUID("4607b0f0-06f3-5cda-b6b1-a6196a1729e9"), "SuiteSparse")
+        if haskey(Base.loaded_modules, id)
+            SuiteSparse = Base.loaded_modules[id]
+            @eval directldiv!(M::$(SuiteSparse.CHOLMOD.Factor), v) = copyto!(v, M \ v)
+        end
+    end
+end

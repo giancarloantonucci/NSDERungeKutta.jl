@@ -182,6 +182,7 @@ RecipesBase.@recipe function f(ts::AbstractVector, hs::StepSizes)
         y_rej = eltype(hs.accepted)[]
         
         for (n, rejections) in enumerate(hs.rejected)
+            n > length(ts) && continue # the trailing (empty) bin has no abscissa
             for h in rejections
                 push!(x_rej, ts[n])
                 push!(y_rej, h)

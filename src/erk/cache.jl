@@ -10,6 +10,7 @@ mutable struct ExplicitRungeKuttaCache{
     m :: n_T  # adaptive step counter
     e :: e_T  # compensated summation error
     v :: v_T  # avoids allocation for `u[n+1]`
+    w :: v_T  # scratch passed to 4-argument RHS calls (allocation-free forcing/split)
     k :: k_T  # stages at step `n`
 end
 
@@ -23,6 +24,7 @@ function RungeKuttaCache(
     n = m = 1
     e = Ref(zero(eltype(t0)))
     v = similar(u0)
+    w = similar(u0)
     k = [similar(u0) for i = 1:s]
-    return ExplicitRungeKuttaCache(n, m, e, v, k)
+    return ExplicitRungeKuttaCache(n, m, e, v, w, k)
 end

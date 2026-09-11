@@ -27,6 +27,10 @@ struct ExplicitRungeKuttaSolver{tableau_T<:AbstractButcherTableau, stepsize_T<:A
     tableau :: tableau_T
     stepsize :: stepsize_T
     adaptive :: adaptive_T
+    function ExplicitRungeKuttaSolver(tableau::tableau_T, stepsize::stepsize_T, adaptive::adaptive_T) where {tableau_T<:AbstractButcherTableau, stepsize_T<:AbstractStepSize, adaptive_T<:Union{AbstractAdaptiveParameters,Nothing}}
+        check_adaptive(tableau, adaptive) # adaptivity needs an embedded pair; fail at construction
+        return new{tableau_T, stepsize_T, adaptive_T}(tableau, stepsize, adaptive)
+    end
 end
 
 ExplicitRungeKuttaSolver(tableau::AbstractButcherTableau, h::Real, adaptive::Union{AbstractAdaptiveParameters,Nothing}) = ExplicitRungeKuttaSolver(tableau, StepSize(h; save_stepsizes=false), adaptive)

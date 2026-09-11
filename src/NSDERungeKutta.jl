@@ -5,6 +5,7 @@ module NSDERungeKutta
 using Reexport
 using ArrowMacros
 using LinearAlgebra
+import SparseArrays
 @reexport using NSDEBase
 using RecipesBase
 
@@ -14,6 +15,7 @@ include("solution.jl")
 include("solve.jl")
 
 include("tableau.jl")
+include("tableau_show.jl")
 include("stepsize.jl")
 include("newton.jl")
 include("adaptive.jl")
@@ -21,32 +23,29 @@ include("adaptive.jl")
 include("erk/constructor.jl")
 include("erk/cache.jl")
 include("erk/step.jl")
-include("erk/adaptivestep.jl")
 include("erk/solvers.jl")
 
 include("dirk/constructor.jl")
 include("dirk/cache.jl")
 include("dirk/step.jl")
-include("dirk/adaptivestep.jl")
 include("dirk/solvers.jl")
 
 include("ierk/constructor.jl")
 include("ierk/cache.jl")
 include("ierk/step.jl")
-include("ierk/adaptivestep.jl")
 include("ierk/solvers.jl")
-
-include("exrk/constructor.jl")
-include("exrk/cache.jl")
-include("exrk/step.jl")
-include("exrk/adaptivestep.jl")
-include("exrk/solvers.jl")
 
 include("irk/constructor.jl")
 include("irk/cache.jl")
 include("irk/step.jl")
-include("irk/adaptivestep.jl")
 include("irk/solvers.jl")
+
+include("phi.jl")
+include("exprk/tableau.jl")
+include("exprk/constructor.jl")
+include("exprk/cache.jl")
+include("exprk/step.jl")
+include("exprk/solvers.jl")
 
 include("stability.jl")
 include("plots_recipes.jl")
@@ -57,6 +56,7 @@ export AbstractRungeKuttaParameters
 
 export RungeKuttaSolution
 export ButcherTableau
+export NewtonParameters, NewtonFailure
 
 export ExplicitRungeKuttaSolver, ERK
 export Euler, ExplicitEuler
@@ -101,8 +101,14 @@ export IMEXSSP2_322
 export IMEXSSP2_332
 export IMEXSSP3_332
 
-export ExplicitExponentialRungeKuttaSolver, ExRK
-export ETDRK4
+export ExponentialRungeKuttaSolver, EXPRK
+export ExponentialTableau
+export phifunctions, expphifunctions
+export LawsonEuler, Lawson4
+export NorsettEuler, ETDEuler, ExponentialEuler
+export ETD2RK, ETD3RK, ETD4RK, ETDRK4
+export Krogstad
+export HochbruckOstermann4, HochOst4
 
 export ImplicitRungeKuttaSolver, IRK
 export LobattoIIIC2

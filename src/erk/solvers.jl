@@ -5,7 +5,6 @@
     ExplicitEuler(args...; kwargs...) :: ExplicitRungeKuttaSolver
 
 returns an [`ExplicitRungeKuttaSolver`](@ref) for the 1st-order Euler method.
-```
 """
 function Euler(; h::Real=0.0)
     p = 1
@@ -97,7 +96,7 @@ function RungeKutta3(; h::Real=0.0)
     ]))
     return ERK(tableau, h)
 end
-@doc (@doc RungeKutta4) RK3(args...; kwargs...) = RungeKutta3(args...; kwargs...)
+@doc (@doc RungeKutta3) RK3(args...; kwargs...) = RungeKutta3(args...; kwargs...)
 
 """
     Ralston3(; h::Real=0.0) :: ExplicitRungeKuttaSolver
@@ -257,7 +256,7 @@ function Butcher7(; h::Real=0.0)
          2/11  148/1331   0 150/1331     -56/1331               0         0           0       0      0;
           2/3  -404/243   0  -170/27    4024/1701      10648/1701         0           0       0      0;
           6/7 2466/2401   0 1242/343 -19176/16807    -51909/16807 1053/2401           0       0      0;
-            0     5/164   0        0       96/539     -1815/20384 -405/2464     49/1144       0      0;
+            0     5/154   0        0       96/539     -1815/20384 -405/2464     49/1144       0      0;
             1   -113/32   0  -195/22         32/7      29403/3584  -729/512   1029/1408   21/16      0;
             p         0   0        0       32/105 1771561/6289920  243/2560 16807/74880 77/1440 11/270;
     ]))

@@ -1,20 +1,36 @@
 name = "NSDERungeKutta"
 uuid = "3978d399-9848-4322-9a48-ca26b732c7dc"
+version = "0.2.0"
 authors = ["Giancarlo A. Antonucci"]
-version = "0.1.0"
 
 [deps]
 ArrowMacros = "46a4b217-d1c8-4502-9c1a-7bf73a71908c"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
-MakieCore = "20f20a25-4f0e-4fdf-b5d1-57303727442b"
 NSDEBase = "5aa61ba9-7752-4810-b2ec-484f26c3f007"
-Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
+SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [compat]
-ArrowMacros = "0.1, 0.2"
-NSDEBase = "0.3"
-RecipesBase = "0.7.0, 0.8, 1.0"
-Reexport = "0.2, 1.0"
-julia = "1.10, 1"
+Aqua = "0.8"
+ArrowMacros = "0.2"
+LinearAlgebra = "1"
+NSDEBase = "0.3.1"
+Printf = "1"
+RecipesBase = "1"
+Reexport = "1"
+SparseArrays = "1"
+Test = "1"
+julia = "1.6"
+
+[extras]
+Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+NSDEBase = "5aa61ba9-7752-4810-b2ec-484f26c3f007"
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
+SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Aqua", "LinearAlgebra", "NSDEBase", "Printf", "RecipesBase", "SparseArrays", "Test"]

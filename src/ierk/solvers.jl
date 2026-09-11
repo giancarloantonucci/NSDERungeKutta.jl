@@ -1,12 +1,12 @@
 # NSDERungeKutta/src/ierk/solvers.jl
 
 """
-    IMEXEuler(; h::Real=0.0, εᵣ::Real=1e-3, Mₙ::Integer=10) :: ImplicitExplicitRungeKuttaSolver
+    IMEXEuler(; h::Real=0.0, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10) :: ImplicitExplicitRungeKuttaSolver
     IMEXSSP1_111(args...; kwargs...) :: ImplicitExplicitRungeKuttaSolver
 
 returns an [`ImplicitExplicitRungeKuttaSolver`](@ref) for the 1st-order IMEXEuler method.
 """
-function IMEXEuler(; h::Real=0.0, εᵣ::Real=1e-3, Mₙ::Integer=10)
+function IMEXEuler(; h::Real=0.0, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10)
     pᴵ = pᴱ = 1
     implicitableau = ButcherTableau(float([
          1 1;
@@ -16,17 +16,17 @@ function IMEXEuler(; h::Real=0.0, εᵣ::Real=1e-3, Mₙ::Integer=10)
          0 0;
         pᴱ 1;
     ]))
-    newton = NewtonParameters(εᵣ=εᵣ, Mₙ=Mₙ)
+    newton = NewtonParameters(εᵣ=εᵣ, εₐ=εₐ, Mₙ=Mₙ)
     return IERK(implicitableau, explicitableau, h, newton)
 end
 @doc (@doc IMEXEuler) IMEXSSP1_111(args...; kwargs...) = IMEXEuler(args...; kwargs...)
 
 """
-    IMEXSSP2_222(; h::Real=0.0, εᵣ::Real=1e-3, Mₙ::Integer=10) :: ImplicitExplicitRungeKuttaSolver
+    IMEXSSP2_222(; h::Real=0.0, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10) :: ImplicitExplicitRungeKuttaSolver
 
 returns an [`ImplicitExplicitRungeKuttaSolver`](@ref) for the 2nd-order IMEX-SSP2(2,2,2) L-stable scheme.
 """
-function IMEXSSP2_222(; h::Real=0.0, εᵣ::Real=1e-3, Mₙ::Integer=10)
+function IMEXSSP2_222(; h::Real=0.0, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10)
     pᴵ = pᴱ = 2
     γ = 1 - 1/√2
     implicitableau = ButcherTableau(float([
@@ -39,16 +39,16 @@ function IMEXSSP2_222(; h::Real=0.0, εᵣ::Real=1e-3, Mₙ::Integer=10)
          1   1   0;
         pᴱ 1/2 1/2;
     ]))
-    newton = NewtonParameters(εᵣ=εᵣ, Mₙ=Mₙ)
+    newton = NewtonParameters(εᵣ=εᵣ, εₐ=εₐ, Mₙ=Mₙ)
     return IERK(implicitableau, explicitableau, h, newton)
 end
 
 """
-    IMEXSSP2_322(; h::Real=0.0, εᵣ::Real=1e-3, Mₙ::Integer=10) :: ImplicitExplicitRungeKuttaSolver
+    IMEXSSP2_322(; h::Real=0.0, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10) :: ImplicitExplicitRungeKuttaSolver
 
 returns an [`ImplicitExplicitRungeKuttaSolver`](@ref) for the 2nd-order IMEX-SSP2(3,2,2) stiffly-accurate scheme.
 """
-function IMEXSSP2_322(; h::Real=0.0, εᵣ::Real=1e-3, Mₙ::Integer=10)
+function IMEXSSP2_322(; h::Real=0.0, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10)
     pᴵ = pᴱ = 2
     implicitableau = ButcherTableau(float([
         1/2  1/2   0   0;
@@ -58,26 +58,26 @@ function IMEXSSP2_322(; h::Real=0.0, εᵣ::Real=1e-3, Mₙ::Integer=10)
         ]))
     explicitableau = ButcherTableau(float([
          0   0   0   0;
-         1   0   0   0;
+         0   0   0   0;
          1   0   1   0;
         pᴱ   0 1/2 1/2;
     ]))
-    newton = NewtonParameters(εᵣ=εᵣ, Mₙ=Mₙ)
+    newton = NewtonParameters(εᵣ=εᵣ, εₐ=εₐ, Mₙ=Mₙ)
     return IERK(implicitableau, explicitableau, h, newton)
 end
 
 """
-    IMEXSSP2_332(; h::Real=0.0, εᵣ::Real=1e-3, Mₙ::Integer=10) :: ImplicitExplicitRungeKuttaSolver
+    IMEXSSP2_332(; h::Real=0.0, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10) :: ImplicitExplicitRungeKuttaSolver
 
 returns an [`ImplicitExplicitRungeKuttaSolver`](@ref) for the 2nd-order IMEX-SSP2(3,3,2) stiffly-accurate scheme.
 """
-function IMEXSSP2_332(; h::Real=0.0, εᵣ::Real=1e-3, Mₙ::Integer=10)
+function IMEXSSP2_332(; h::Real=0.0, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10)
     pᴵ = pᴱ = 2
     implicitableau = ButcherTableau(float([
         1/4 1/4   0   0;
         1/4   0 1/4   0;
           1 1/3 1/3 1/3;
-         pᴵ 1/3 1/3 1/2;
+         pᴵ 1/3 1/3 1/3;
     ]))
     explicitableau = ButcherTableau(float([
           0   0   0   0;
@@ -85,17 +85,20 @@ function IMEXSSP2_332(; h::Real=0.0, εᵣ::Real=1e-3, Mₙ::Integer=10)
           1 1/2 1/2   0;
          pᴱ 1/3 1/3 1/3;
     ]))
-    newton = NewtonParameters(εᵣ=εᵣ, Mₙ=Mₙ)
+    newton = NewtonParameters(εᵣ=εᵣ, εₐ=εₐ, Mₙ=Mₙ)
     return IERK(implicitableau, explicitableau, h, newton)
 end
 
 """
-    IMEXSSP3_332(; h::Real=0.0, εᵣ::Real=1e-3, Mₙ::Integer=10) :: ImplicitExplicitRungeKuttaSolver
+    IMEXSSP3_332(; h::Real=0.0, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10) :: ImplicitExplicitRungeKuttaSolver
 
-returns an [`ImplicitExplicitRungeKuttaSolver`](@ref) for the 3rd-order IMEX-SSP3(3,3,2) L-stable scheme.
+returns an [`ImplicitExplicitRungeKuttaSolver`](@ref) for the 2nd-order IMEX-SSP3(3,3,2) L-stable scheme.
+(In the SSPk(s,σ,p) naming, k is the SSP order of the *explicit part* and the final p is the
+order of the IMEX scheme itself: this one pairs the 3rd-order SSPRK3 explicit part with an
+L-stable implicit part into an order-2 scheme.)
 """
-function IMEXSSP3_332(; h::Real=0.0, εᵣ::Real=1e-3, Mₙ::Integer=10)
-    pᴵ = pᴱ = 3
+function IMEXSSP3_332(; h::Real=0.0, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10)
+    pᴵ = pᴱ = 2
     γ = 1 - 1/√2
     implicitableau = ButcherTableau(float([
           γ     γ   0   0;
@@ -109,6 +112,6 @@ function IMEXSSP3_332(; h::Real=0.0, εᵣ::Real=1e-3, Mₙ::Integer=10)
         1/2 1/4 1/4   0;
          pᴱ 1/6 1/6 2/3;
     ]))
-    newton = NewtonParameters(εᵣ=εᵣ, Mₙ=Mₙ)
+    newton = NewtonParameters(εᵣ=εᵣ, εₐ=εₐ, Mₙ=Mₙ)
     return IERK(implicitableau, explicitableau, h, newton)
 end
