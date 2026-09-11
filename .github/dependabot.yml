@@ -1,0 +1,22 @@
+# .github/dependabot.yml  (note: this file sits in .github/, not .github/workflows/)
+#
+# Keeps the GitHub Actions versions current (the stale setup-julia@v1 and
+# codecov@v4 came from nobody doing this). This does NOT cover the Julia
+# [compat] bounds; CompatHelper did that, and it is gone. Until the package
+# is registered in General the Julia bounds are maintained BY HAND, which is
+# a deliberate choice: the only bounds that move are the NSDE↔NSDE ones, and
+# no bot can see those while the packages are unregistered.
+#
+# Once the package is in General, add this block and Dependabot takes over
+# the Julia bounds too:
+#
+#   - package-ecosystem: julia
+#     directory: /
+#     schedule:
+#       interval: weekly
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

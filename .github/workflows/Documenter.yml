@@ -1,37 +1,41 @@
 name: Documenter
 on:
   push:
-    branches:
-      - master
-    tags: '*'
+    branches: [master]
+    tags: ['*']
   pull_request:
+
+permissions:
+  contents: write       # deploydocs pushes to gh-pages
+  actions: write        # julia-actions/cache deletes its own stale caches
+  statuses: write       # preview status on PRs
+  pull-requests: read
+
 jobs:
   build:
     name: Documenter
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-      
-      - name: Set up Julia
-        uses: julia-actions/setup-julia@v1
+      - uses: actions/checkout@v6
+      - uses: julia-actions/setup-julia@v3
         with:
           version: '1'
           show-versioninfo: true
-      
+      - uses: julia-actions/cache@v3
+
+      # docs/Project.toml carries a [sources] table (honoured by Pkg on
+      # Julia ≥ 1.11) pointing the unregistered NSDE dependencies at their
+      # repositories at the released tags, so this step needs nothing but
+      # the package itself.
       - name: Install dependencies
+        shell: julia --color=yes --project=docs {0}
         run: |
-          julia --project=docs -e '
-            using Pkg
-            Pkg.rm("NSDEBase")
-            Pkg.develop(PackageSpec(url="https://github.com/giancarloantonucci/NSDEBase.jl"))
-            Pkg.develop(PackageSpec(path=pwd()))
-            Pkg.resolve()
-            Pkg.instantiate()'
-      
+          using Pkg
+          Pkg.develop(PackageSpec(path=pwd()))
+          Pkg.instantiate()
+
       - name: Build and deploy documentation
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
-        run: julia --project make.jl
-        working-directory: docs
+        run: julia --color=yes --project=docs docs/make.jl

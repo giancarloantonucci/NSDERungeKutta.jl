@@ -8,5 +8,5 @@ Documenter = "1"
 DocumenterInterLinks = "1"
 
 [sources.NSDEBase]
-rev = "master"
+rev = "v0.3.1"
 url = "https://github.com/giancarloantonucci/NSDEBase.jl"

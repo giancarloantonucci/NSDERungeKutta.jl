@@ -6,13 +6,13 @@ A Julia package implementing Runge-Kutta methods.
 
 ## Installation
 
-<!-- This package is a [registered package](https://juliahub.com/ui/Search?q=NSDERungeKutta&type=packages) compatible with Julia v1.10 and above. From the Julia REPL,
+<!-- This package is a [registered package](https://juliahub.com/ui/Search?q=NSDERungeKutta&type=packages) compatible with Julia v1.6 and above. From the Julia REPL,
 
 ```
 ]add NSDERungeKutta
 ``` -->
 
-This package is compatible with Julia v1.10 and above. From the Julia REPL,
+This package is compatible with Julia v1.6 and above. From the Julia REPL,
 
 ```
 ]add https://github.com/giancarloantonucci/NSDERungeKutta.jl
@@ -65,10 +65,26 @@ This package currently supports the following methods:
 **Explicit**:
 
 - `Euler`/`ExplicitEuler`, `Heun2`, `Midpoint`/`ExplicitMidpoint`, `Ralston2`, `Heun3`, `RungeKutta3`/`RK3`, `Ralston3`, `SSPRK3`, `Ralston4`, `RungeKutta4`/`RK4`, `Rule38`, `Butcher5`, `KuttaNystrom5`, `Butcher6`, `Butcher7`,
-- (Embedded) `HeunEuler`, `BogackiShampine`, `Fehlberg45`, `DormandPrince54`, `Verner65`, `Fehlberg78`.
+- (Embedded, adaptive) `HeunEuler`, `BogackiShampine`, `Fehlberg45`, `DormandPrince54`, `Verner65`, `Fehlberg78`.
 
 **Diagonally Implicit**:
+
 - `BackwardEuler`/`ImplicitEuler`, `ImplicitMidpoint`/`GaussLegendre2`, `SDIRK2`, `LobattoIII2`, `CrankNicolson`/`LobattoIIIA2`, `SDIRK3`, `RadauI3`, `RadauII3`, `SDIRK4`, `LobattoIII4`.
 
 **Implicit**:
+
 - `LobattoIIIC2`, `RadauIA3`, `RadauIIA3`, `GaussLegendre4`, `LobattoIIIA4`, `LobattoIIIB4`, `LobattoIIIC4`, `RadauI5`, `RadauIA5`, `RadauII5`, `RadauIIA5`, `GaussLegendre6`.
+
+**Implicit-Explicit (IMEX)**, on a `SplitRightHandSide` `f = fₛ + fₙₛ`, with a linear or nonlinear stiff part:
+
+- `IMEXEuler`, `IMEXSSP2_222`, `IMEXSSP2_322`, `IMEXSSP2_332`, `IMEXSSP3_332`.
+
+**Adaptive stepping** is available for the embedded explicit solvers: pass tolerances (`εᵣ`, `εₐ`) and, if wanted, `save_stepsizes = true` to record accepted and rejected steps. It needs an embedded pair, so handing `AdaptiveParameters` to a solver whose tableau has none throws at construction rather than silently stepping at fixed size.
+
+## Plotting
+
+This package ships native recipes for both major plotting ecosystems; which one you get is decided simply by which you load — the commands are the standard ones either way.
+
+- `using Plots` → `plot(solution)`, `phaseplot(solution)`, `stability(solver)`.
+
+Attributes have the same names and semantics in both.

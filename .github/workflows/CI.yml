@@ -1,70 +1,70 @@
 name: CI
 on:
-  - push
-  - pull_request
+  push:
+    branches: [master]
+    tags: ['*']
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
+permissions:
+  contents: read
+  actions: write        # julia-actions/cache deletes its own stale caches
 
 jobs:
   test:
-    name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
+    name: Julia ${{ matrix.version }} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.experimental }}
     strategy:
       fail-fast: false
       matrix:
-        version:
-          - '1.10'
-          - '1'
-        os:
-          - ubuntu-latest
-          - macOS-latest
-          - windows-latest
-        arch:
-          - x64
-        experimental: [false]
-
+        # The declared minimum (Project.toml `julia = "1.6"`, verified by a
+        # local sweep 1.6–1.13) spelled out, so the oldest tested version does
+        # not move when the LTS label moves, plus the current stable.
+        version: ['1.6', '1']
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        # macos-latest is Apple Silicon and Julia 1.6 ships Intel-only macOS
+        # binaries, so that pair cannot run natively: swap in the Intel runner
+        # for the minimum version and keep Apple Silicon for current stable.
+        exclude:
+          - version: '1.6'
+            os: macos-latest
+        include:
+          - version: '1.6'
+            os: macos-15-intel
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Set up Julia
-        uses: julia-actions/setup-julia@v1
+      - uses: actions/checkout@v6
+      - uses: julia-actions/setup-julia@v3
         with:
           version: ${{ matrix.version }}
-          arch: ${{ matrix.arch }}
+      - uses: julia-actions/cache@v3
 
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-artifacts
-        with:
-          path: |
-            ~/.julia/artifacts
-            ~/.julia/compiled
-          key: ${{ runner.os }}-julia-${{ env.cache-name }}-${{ hashFiles('**/Project.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-julia-${{ env.cache-name }}-
-            ${{ runner.os }}-julia-
-            ${{ runner.os }}-
-
-      - name: Instantiate environment
+      # The NSDE packages are not in a registry, so Pkg cannot resolve them
+      # from the compat bounds alone. Build a throw-away environment with the
+      # unregistered upstreams at their RELEASED tags — never master — dev the
+      # package into it, then hand over to Pkg.test. Pkg.test builds the test
+      # sandbox itself from this package's [deps], its [targets] test extras
+      # and its [compat], runs with --check-bounds=yes, and reuses the tagged
+      # upstreams already in this environment's manifest (which is how an
+      # unregistered test dependency resolves).
+      - name: Test against the released upstreams
+        shell: julia --color=yes {0}
         run: |
-          julia --project=@. -e '
-            using Pkg
-            Pkg.rm("NSDEBase")
-            Pkg.develop(PackageSpec(url="https://github.com/giancarloantonucci/NSDEBase.jl"))
-            Pkg.resolve()
-            Pkg.instantiate()'
+          using Pkg
+          Pkg.activate(temp=true)
+          Pkg.add([
+              PackageSpec(url="https://github.com/giancarloantonucci/NSDEBase.jl", rev="v0.3.1"),
+          ])
+          Pkg.develop(path=pwd())
+          Pkg.test("NSDERungeKutta"; coverage=true)
 
-      - name: Build package
-        uses: julia-actions/julia-buildpkg@v1
-
-      - name: Run tests
-        uses: julia-actions/julia-runtest@v1
-
-      - name: Process code coverage
-        uses: julia-actions/julia-processcoverage@v1
+      - uses: julia-actions/julia-processcoverage@v1
         with:
           directories: src
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v7
+        with:
+          files: lcov.info
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
