@@ -20,14 +20,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # The declared minimum (Project.toml `julia = "1.6"`, verified by a
-        # local sweep 1.6–1.13) spelled out, so the oldest tested version does
-        # not move when the LTS label moves, plus the current stable.
+        # The declared minimum (Project.toml `julia = "1.6"`, verified 1.6–1.13)
+        # spelled out so it does not move with the LTS label, plus current stable.
         version: ['1.6', '1']
         os: [ubuntu-latest, macos-latest, windows-latest]
         # macos-latest is Apple Silicon and Julia 1.6 ships Intel-only macOS
-        # binaries, so that pair cannot run natively: swap in the Intel runner
-        # for the minimum version and keep Apple Silicon for current stable.
+        # binaries: swap in the Intel runner for the minimum version.
         exclude:
           - version: '1.6'
             os: macos-latest
@@ -35,31 +33,15 @@ jobs:
           - version: '1.6'
             os: macos-15-intel
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v6
       - uses: julia-actions/setup-julia@v3
         with:
           version: ${{ matrix.version }}
       - uses: julia-actions/cache@v3
-
-      # The NSDE packages are not in a registry, so Pkg cannot resolve them
-      # from the compat bounds alone. Build a throw-away environment with the
-      # unregistered upstreams at their RELEASED tags — never master — dev the
-      # package into it, then hand over to Pkg.test. Pkg.test builds the test
-      # sandbox itself from this package's [deps], its [targets] test extras
-      # and its [compat], runs with --check-bounds=yes, and reuses the tagged
-      # upstreams already in this environment's manifest (which is how an
-      # unregistered test dependency resolves).
-      - name: Test against the released upstreams
-        shell: julia --color=yes {0}
-        run: |
-          using Pkg
-          Pkg.activate(temp=true)
-          Pkg.add([
-              PackageSpec(url="https://github.com/giancarloantonucci/NSDEBase.jl", rev="v0.3.1"),
-          ])
-          Pkg.develop(path=pwd())
-          Pkg.test("NSDERungeKutta"; coverage=true)
-
+      # Every dependency, including the NSDE packages, resolves from General:
+      # the stock build/test actions are all that is needed.
+      - uses: julia-actions/julia-buildpkg@v1
+      - uses: julia-actions/julia-runtest@v1
       - uses: julia-actions/julia-processcoverage@v1
         with:
           directories: src
