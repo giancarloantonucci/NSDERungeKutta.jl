@@ -36,7 +36,18 @@ struct RungeKuttaSolution{
     k :: k_T
 end
 
+# IMEX methods have two stage families. The current dense-history container
+# stores only one, so reject the request before allocating or advancing a step.
+# Keep this check shared with solve! for callers reusing an existing solution.
+function check_dense_support(solver::AbstractRungeKuttaSolver, dense::Bool)
+    if dense && solver isa ImplicitExplicitRungeKuttaSolver
+        throw(ArgumentError("Dense stage output is not implemented for IMEX solvers: both implicit and explicit stage histories are required. Use dense=false; the returned solution still supports linear interpolation."))
+    end
+    return nothing
+end
+
 function RungeKuttaSolution(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; dense::Bool=false)
+    check_dense_support(solver, dense)
     @↓ u0, (t0, tN) ← tspan = problem
     @↓ h = solver.stepsize
     N = ceil(Int, (tN - t0) / h) + 1 # e.g. tspan = (0, 1), h = 0.3 -> t = [0.0, 0.3, 0.6, 0.9, 1.2]
@@ -352,3 +363,4 @@ Base.firstindex(solution::RungeKuttaSolution) = firstindex(solution.t)
 returns the last index of `solution`.
 """
 Base.lastindex(solution::RungeKuttaSolution) = lastindex(solution.t)
+

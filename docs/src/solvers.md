@@ -42,8 +42,14 @@ For semilinear problems ``u' = Lu + g(t) + f_{ns}(u, t)``, supplied as a `SplitR
 
 ## Dense output and interpolation
 
+IMEX solvers require `dense=false`: storing and interpolating both implicit
+and explicit stage families is not yet implemented. A request for `dense=true`
+throws `ArgumentError` before stepping; ordinary linear interpolation remains
+available on the returned solution.
+
 `solution(t)` interpolates: linear spline by default, cubic Hermite given the derivative (`solution(t, f)`), and — with `solve(…; dense = true)` on a solver whose tableau carries dense-output weights — the method's own continuous extension via `solution(t, solver.tableau)`.
 
 ## Stability functions
 
 `stability_function(z, solver)` evaluates ``R(z)`` (scalar or matrix argument); the plot recipes `stability`/`stabilityf` and `orderstar`/`orderstarf` draw stability regions and order stars.
+

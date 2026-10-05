@@ -33,6 +33,7 @@ end
 computes the `solution` of `problem` using `solver` and a pre-allocated `cache`.
 """
 function NSDEBase.solve!(cache::AbstractRungeKuttaCache, solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver)
+    check_dense_support(solver, solution.k !== nothing)
     # Reset cache state for reuse
     cache.n = 1
     cache.m = 1
@@ -140,10 +141,13 @@ end
 """
     solve(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; dense::Bool=false, kwargs...) :: RungeKuttaSolution
 
-computes the solution of `problem` using `solver`.
+computes the solution of `problem` using `solver`. `dense=true` stores stage
+history for dense interpolation. IMEX solvers currently require `dense=false`;
+their returned solutions still support linear interpolation.
 """
 function NSDEBase.solve(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; dense::Bool=false)
     solution = RungeKuttaSolution(problem, solver; dense=dense)
     NSDEBase.solve!(solution, problem, solver)
     return solution
 end
+

@@ -1,6 +1,6 @@
 name = "NSDERungeKutta"
 uuid = "3978d399-9848-4322-9a48-ca26b732c7dc"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["Giancarlo A. Antonucci"]
 
 [deps]
@@ -14,13 +14,13 @@ SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 [compat]
 Aqua = "0.8"
 ArrowMacros = "0.2"
-LinearAlgebra = "1"
+LinearAlgebra = "<0.0.1, 1"
 NSDEBase = "0.3.1"
-Printf = "1"
+Printf = "<0.0.1, 1"
 RecipesBase = "1"
 Reexport = "1"
-SparseArrays = "1"
-Test = "1"
+SparseArrays = "<0.0.1, 1"
+Test = "<0.0.1, 1"
 julia = "1.6"
 
 [extras]
@@ -34,3 +34,5 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
 test = ["Aqua", "LinearAlgebra", "NSDEBase", "Printf", "RecipesBase", "SparseArrays", "Test"]
+
+

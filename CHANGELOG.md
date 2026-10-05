@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1
+
+### Fixed
+- `dense=true` with an IMEX solver errored on the first accepted step, because the cache holds two stage families. It is now refused with an `ArgumentError` before stepping, in both `solve` and `solve!`.
+- Stdlib compat bounds are `"<0.0.1, 1"`, so the package resolves on Julia 1.6 to 1.8 as declared.
+
 ## 0.2.0
 
 Requires NSDEBase 0.3.1 (four-argument RHS form).
