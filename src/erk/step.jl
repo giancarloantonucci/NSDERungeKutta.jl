@@ -1,5 +1,3 @@
-# NSDERungeKutta/src/erk/step.jl
-
 @inline function step!(
     cache::ExplicitRungeKuttaCache,
     solution::AbstractRungeKuttaSolution,
@@ -9,7 +7,7 @@
 )
     @↓ n, v, w, e, k = cache
     @↓ u, t = solution
-    @↓ tableau, stepsize = solver
+    @↓ tableau = solver
     @↓ A, b, c, s = tableau
 
     # Stages:

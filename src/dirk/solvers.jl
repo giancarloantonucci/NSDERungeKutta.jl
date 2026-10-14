@@ -1,10 +1,8 @@
-# NSDERungeKutta/src/dirk/solvers.jl
-
 """
     BackwardEuler(; h::Real, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10) :: DiagonallyImplicitRungeKuttaSolver
     ImplicitEuler(args...; kwargs...) :: DiagonallyImplicitRungeKuttaSolver
 
-returns an [`DiagonallyImplicitRungeKuttaSolver`](@ref) for the 1st-order backward Euler method.
+returns a [`DiagonallyImplicitRungeKuttaSolver`](@ref) for the 1st-order backward Euler method.
 """
 function BackwardEuler(; h::Real, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10)
     p = 1
@@ -21,7 +19,7 @@ end
     ImplicitMidpoint(; h::Real, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10) :: DiagonallyImplicitRungeKuttaSolver
     GaussLegendre2(args...; kwargs...) :: DiagonallyImplicitRungeKuttaSolver
 
-returns an [`DiagonallyImplicitRungeKuttaSolver`](@ref) for the 2nd-order implicit midpoint method.
+returns a [`DiagonallyImplicitRungeKuttaSolver`](@ref) for the 2nd-order implicit midpoint method.
 """
 function ImplicitMidpoint(; h::Real, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10)
     p = 2
@@ -38,7 +36,7 @@ end
 """
     SDIRK2(; h::Real, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10) :: DiagonallyImplicitRungeKuttaSolver
 
-returns an [`DiagonallyImplicitRungeKuttaSolver`](@ref) for the 2nd-order SDIRK method.
+returns a [`DiagonallyImplicitRungeKuttaSolver`](@ref) for the 2nd-order SDIRK method.
 """
 function SDIRK2(; h::Real, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10)
     p = 2
@@ -54,7 +52,7 @@ end
 """
     LobattoIII2(; h::Real, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10) :: DiagonallyImplicitRungeKuttaSolver
 
-returns an [`DiagonallyImplicitRungeKuttaSolver`](@ref) for the 2nd-order Lobatto III method.
+returns a [`DiagonallyImplicitRungeKuttaSolver`](@ref) for the 2nd-order Lobatto III method.
 """
 function LobattoIII2(; h::Real, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10)
     p = 2
@@ -71,7 +69,7 @@ end
     CrankNicolson(; h::Real, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10) :: DiagonallyImplicitRungeKuttaSolver
     LobattoIIIA2(args...; kwargs...) :: DiagonallyImplicitRungeKuttaSolver
 
-returns an [`DiagonallyImplicitRungeKuttaSolver`](@ref) for the 2nd-order Crank-Nicolson method.
+returns a [`DiagonallyImplicitRungeKuttaSolver`](@ref) for the 2nd-order Crank-Nicolson method.
 """
 function CrankNicolson(; h::Real, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10)
     p = 2
@@ -88,7 +86,7 @@ end
 """
     SDIRK3(; h::Real, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10) :: DiagonallyImplicitRungeKuttaSolver
 
-returns an [`DiagonallyImplicitRungeKuttaSolver`](@ref) for the 3rd-order SDIRK method.
+returns a [`DiagonallyImplicitRungeKuttaSolver`](@ref) for the 3rd-order SDIRK method.
 """
 function SDIRK3(; h::Real, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10)
     p = 3
@@ -105,7 +103,7 @@ end
 """
     RadauI3(; h::Real, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10) :: DiagonallyImplicitRungeKuttaSolver
 
-returns an [`DiagonallyImplicitRungeKuttaSolver`](@ref) for the 3rd-order Radau I method.
+returns a [`DiagonallyImplicitRungeKuttaSolver`](@ref) for the 3rd-order Radau I method.
 """
 function RadauI3(; h::Real, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10)
     p = 3
@@ -121,7 +119,7 @@ end
 """
     RadauII3(; h::Real, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10) :: DiagonallyImplicitRungeKuttaSolver
 
-returns an [`DiagonallyImplicitRungeKuttaSolver`](@ref) for the 3rd-order Radau II method.
+returns a [`DiagonallyImplicitRungeKuttaSolver`](@ref) for the 3rd-order Radau II method.
 """
 function RadauII3(; h::Real, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10)
     p = 3
@@ -137,7 +135,7 @@ end
 """
     SDIRK4(; h::Real, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10) :: DiagonallyImplicitRungeKuttaSolver
 
-returns an [`DiagonallyImplicitRungeKuttaSolver`](@ref) for the 4th-order SDIRK method.
+returns a [`DiagonallyImplicitRungeKuttaSolver`](@ref) for the 4th-order SDIRK method.
 """
 function SDIRK4(; h::Real, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10)
     p = 4
@@ -160,7 +158,7 @@ end
 """
     LobattoIII4(; h::Real, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10) :: DiagonallyImplicitRungeKuttaSolver
 
-returns an [`DiagonallyImplicitRungeKuttaSolver`](@ref) for the 4th-order Lobatto III method.
+returns a [`DiagonallyImplicitRungeKuttaSolver`](@ref) for the 4th-order Lobatto III method.
 """
 function LobattoIII4(; h::Real, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10)
     p = 4

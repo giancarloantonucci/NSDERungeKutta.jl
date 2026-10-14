@@ -1,5 +1,3 @@
-# .github/dependabot.yml  (note: this file sits in .github/, not .github/workflows/)
-#
 # NSDERungeKutta is registered in General, so Dependabot covers both the GitHub
 # Actions versions and the Julia [compat] bounds.
 version: 2
@@ -13,9 +11,7 @@ updates:
     schedule:
       interval: weekly
     ignore:
-      - dependency-name: Distributed
       - dependency-name: LinearAlgebra
-      - dependency-name: Serialization
+      - dependency-name: Printf
+      - dependency-name: SparseArrays
       - dependency-name: Test
-
-

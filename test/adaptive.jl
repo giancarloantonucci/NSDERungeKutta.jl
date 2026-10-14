@@ -23,9 +23,8 @@
         rsol = solve(problem, recording)
         hs = rsol.stepsizes
         @test hs !== nothing
-        # The record is the REALISED history, not the controller's proposals:
-        # accepted[i] is exactly the i-th step taken. (The old code pushed the
-        # post-update h; only length checks lived here, so it went unnoticed.)
+        # The record is the realised history, not the controller's proposals:
+        # accepted[i] is exactly the i-th step taken.
         @test length(hs.accepted) == numtimesteps(rsol) - 1
         @test hs.accepted ≈ diff(rsol.t)
         # rejected[i]: the h values that FAILED before accepted step i, plus a

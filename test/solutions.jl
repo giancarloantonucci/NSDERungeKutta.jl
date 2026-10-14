@@ -50,7 +50,7 @@ end
     @test numtimesteps(solution) == length(solution.t)
     @test length(extract(solution, 1)) == numtimesteps(solution)
 
-    # setindex! with a solution slice (the fixed `@↓ … ← …` path)
+    # setindex! with a solution slice
     solution[2] = solution[1]
     @test solution.u[2] == solution.u[1]
     @test solution.t[2] == solution.t[1]
@@ -60,12 +60,12 @@ end
 end
 
 @testset "dense slicing: stages live on intervals, not nodes" begin
-    # A dense solution with N nodes stores N − 1 stage sets. The indexers used
-    # to read `k[i]` at node i, so `sol[end]` threw a BoundsError.
+    # A dense solution with N nodes stores N − 1 stage sets, so the indexers
+    # must not read `k[i]` at node i: `sol[end]` has no interval of its own.
     dense = solve(dahlquist, Euler(h=0.5); dense=true)   # t = 0, 0.5, 1
     N = length(dense)
     @test length(dense.k) == N - 1
-    last = dense[end]                                          # used to throw
+    last = dense[end]
     @test last.u == [dense.u[end]] && last.t == [dense.t[end]] && last.k === nothing
     @test dense[1].k === nothing                               # a node owns no interval
     slice = dense[1:2]                                         # two nodes, one interval
@@ -97,8 +97,7 @@ end
 end
 
 @testset "RecipesBase recipes (headless)" begin
-    # `apply_recipe` exercises the Plots-side recipe surface with no Plots
-    # dependency — previously the one exported surface the suite never
+    # `apply_recipe` exercises the Plots-side recipe surface without Plots.
     sol = solve(Lorenz([2.0, 3.0, -14.0], (0.0, 1.0)), RK4(h=1e-2))
     for attrs in (
         Dict{Symbol,Any}(),
@@ -107,16 +106,27 @@ end
     )
         @test RecipesBase.apply_recipe(attrs, sol) isa Vector{RecipesBase.RecipeData}
     end
-    @test RecipesBase.apply_recipe(Dict{Symbol,Any}(), NSDEBase._PhasePlot(sol)) isa
-        Vector{RecipesBase.RecipeData}
+    for attrs in (Dict{Symbol,Any}(), Dict{Symbol,Any}(:variables => 2))
+        @test RecipesBase.apply_recipe(attrs, NSDEBase._PhasePlot(sol)) isa
+            Vector{RecipesBase.RecipeData}
+    end
     zsol = solve(Dahlquist([1.0 + 0.0im], (0.0, 1.0); λ=-0.5 + 1.0im), RK4(h=1e-2))
     @test RecipesBase.apply_recipe(Dict{Symbol,Any}(:iscomplex => true), zsol) isa
         Vector{RecipesBase.RecipeData}
-    # The step-size record recipes, including the trailing-bin guard:
-    recording = DormandPrince54(h=0.1, εᵣ=1e-4, save_stepsizes=true)
-    rsol = solve(Logistic(0.3, (0.0, 1.0)), recording)
-    hs = rsol.stepsizes
-    @test RecipesBase.apply_recipe(Dict{Symbol,Any}(), hs) isa Vector{RecipesBase.RecipeData}
-    @test RecipesBase.apply_recipe(Dict{Symbol,Any}(), rsol.t[1:(end - 1)], hs) isa
-        Vector{RecipesBase.RecipeData}
+    # The step-size record recipes, including the trailing-bin guard, with and
+    # without rejected steps (a large first step at a tight tolerance is rejected):
+    for recording in (
+        DormandPrince54(h=0.1, εᵣ=1e-4, save_stepsizes=true),
+        DormandPrince54(h=0.9, εᵣ=1e-10, save_stepsizes=true),
+    )
+        rsol = solve(Logistic(0.3, (0.0, 1.0)), recording)
+        hs = rsol.stepsizes
+        @test RecipesBase.apply_recipe(Dict{Symbol,Any}(), hs) isa Vector{RecipesBase.RecipeData}
+        @test RecipesBase.apply_recipe(Dict{Symbol,Any}(), rsol.t[1:(end - 1)], hs) isa
+            Vector{RecipesBase.RecipeData}
+    end
+    rejected = solve(
+        Logistic(0.3, (0.0, 1.0)), DormandPrince54(h=0.9, εᵣ=1e-10, save_stepsizes=true)
+    )
+    @test sum(length, rejected.stepsizes.rejected) > 0
 end

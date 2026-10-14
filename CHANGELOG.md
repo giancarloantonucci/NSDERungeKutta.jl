@@ -1,23 +1,55 @@
 # Changelog
 
-## 0.3.0 development revision (unreleased)
+## 0.3.0 (unreleased)
 
-- Make NewtonFailure and the new StepFailure subtypes of SolverFailure; numerical adaptive retry/precision failures are distinct from invalid arguments.
-- Reject and shrink NaN adaptive trials, restoring time compensation on rejection. Start nonlinear IMEX Newton stages from their predictor and reject zero Newton tolerances.
-- Replace rounded Ralston4 coefficients with closed forms and audit primary, embedded and continuous-extension order conditions using RootedTrees. Add the fourth-order Dormand–Prince continuous extension; reject unsupported dense output.
-- Copy solution assignments and fix component labels, phase-plot keywords and unsupported stability inputs.
-- Correct embedded error scaling: include h, use componentwise endpoint scales and an RMS norm, and accept equality. Validate tolerances and default the absolute tolerance to 1e-12. Adaptive histories and results change.
-- Use the problem time type for compensated time sums across all solver families. Reuse plain exponential final-step coefficients. Test the getting-started example.
-- Validate exponential steps against the coefficient cache step; shortened final steps use their own cached coefficients. Exponential constructors require `h`.
-- Start adaptive solution storage small, independently of the initial step. Reject step-size reductions that cannot advance floating-point time.
+Requires NSDEBase 0.4.
 
-- Fold rounding-sized tails into the preceding step. Integration constructors require
-  `h`; stability recipes also accept method constructors. Adaptive kernels receive
-  the realised step directly, without rebuilding solver settings.
+### Breaking
 
-- Immutable step-size settings and solution-owned adaptive histories remove cross-run/thread mutation. Fixed and adaptive solves land on the endpoint, with a shortened last step. Chunk plans share one divisibility policy. Full and final exponential coefficients are prepared once per chunk cache. Removed obsolete Julia-version shims.
+- Every integration method requires `h`; exponential constructors included.
+- Solver settings are immutable: adaptive histories live on the solution
+  (`solution.stepsizes`), and `withstepsize(solver, h)` returns changed
+  settings instead of mutating them.
+- Fixed and adaptive solves land on the endpoint with a shortened last step;
+  rounding-sized tails are folded into the preceding step.
+- Embedded error control includes `h`, scales each component by both endpoint
+  states, uses an RMS norm and accepts equality. The default absolute
+  tolerance is `1e-12`, and tolerances are validated. Adaptive step histories
+  and results change.
+- `dense=true` is refused for methods without a continuous extension.
+- Supported Julia: `1.10` and later (was `1.6`).
 
-- All Julia sources, tests, and examples follow the repository JuliaFormatter configuration. Historical implementation notes have been removed from current API descriptions.
+### Added
+
+- `chunk_solver` support: a fixed schedule from a nominal duration, shared
+  across translated chunks, with full and final exponential coefficients
+  prepared once per chunk cache.
+- `StepFailure`; `NewtonFailure` and `StepFailure` subtype NSDEBase's
+  `SolverFailure`, so numerical failures are distinct from invalid arguments.
+- A fourth-order continuous extension for Dormand–Prince 5(4).
+- Order-condition checks with RootedTrees for primary, embedded and
+  continuous-extension weights.
+- Stability recipes accept method constructors.
+
+### Changed
+
+- Compensated time sums use the problem's time type in every solver family.
+- Adaptive solution storage starts small and grows on demand.
+- Adaptive kernels receive the realised step directly.
+- Nonlinear IMEX Newton iterations start from the stage predictor; Newton
+  tolerances may not both be zero.
+- Exponential steps are checked against the step their coefficients were
+  built for; a shortened final step uses its own coefficients.
+- Sources, tests and examples follow the repository JuliaFormatter
+  configuration (Blue style), checked in CI.
+
+### Fixed
+
+- `Ralston4` uses closed-form coefficients instead of rounded ones.
+- Nonfinite adaptive trials are rejected and shrunk, and a rejection restores
+  the time compensation; a step that cannot advance time raises `StepFailure`.
+- Solution assignment copies its input; component labels, phase-plot keywords
+  and unsupported stability inputs are handled correctly.
 
 ## 0.2.2
 

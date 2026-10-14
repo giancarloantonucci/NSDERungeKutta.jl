@@ -1,5 +1,3 @@
-# NSDERungeKutta/src/adaptive.jl
-
 """
     StepFailure <: SolverFailure
 
@@ -18,13 +16,14 @@ A composite type for the parameters of an adaptive [`AbstractRungeKuttaSolver`](
 
 # Constructors
 ```julia
-AdaptiveParameters(εₐ::Real=1e-12, εᵣ::Real=1e-5, Mₙ::Integer=100)
+AdaptiveParameters(εₐ, εᵣ, Mₙ)
+AdaptiveParameters(; εₐ=1e-12, εᵣ=1e-5, Mₙ=100)
 ```
 
 ## Arguments
 - `εₐ :: Real` : absolute tolerance
 - `εᵣ :: Real` : relative tolerance
-- `Mₙ :: Integer` : maximum number of iterations
+- `Mₙ :: Integer` : maximum number of attempts per step
 """
 struct AdaptiveParameters{εₐ_T<:Real,εᵣ_T<:Real,Mₙ_T<:Integer} <: AbstractAdaptiveParameters
     εₐ::εₐ_T

@@ -1,5 +1,3 @@
-# NSDERungeKutta/src/dirk/cache.jl
-
 mutable struct DiagonallyImplicitRungeKuttaCache{
     n_T<:Integer,
     e_T<:Ref{<:AbstractFloat},

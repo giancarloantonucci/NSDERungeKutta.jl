@@ -23,10 +23,8 @@ jobs:
           show-versioninfo: true
       - uses: julia-actions/cache@v3
 
-      # docs/Project.toml carries a [sources] table (honoured by Pkg on
-      # Julia ≥ 1.11) pointing the unregistered NSDE dependencies at their
-      # repositories at the released tags, so this step needs nothing but
-      # the package itself.
+      # docs/Project.toml holds the documentation dependencies; the package
+      # itself is dev-ed from the checkout.
       - name: Install dependencies
         shell: julia --color=yes --project=docs {0}
         run: |

@@ -1,5 +1,4 @@
-# Inert until the package is in a registry: TagBot reacts to registry merges.
-# Kept so it goes live the moment the package is registered in General.
+# Tags and releases each version once its General registry PR is merged.
 # The deprecated `lookback` input and the over-broad permissions list of the
 # stock template are dropped.
 name: TagBot

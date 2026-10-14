@@ -1,5 +1,3 @@
-# NSDERungeKutta/src/dirk/constructor.jl
-
 """
     DiagonallyImplicitRungeKuttaSolver <: AbstractRungeKuttaSolver
 

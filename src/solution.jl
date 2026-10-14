@@ -1,5 +1,3 @@
-# NSDERungeKutta/src/solution.jl
-
 """
     RungeKuttaSolution <: AbstractRungeKuttaSolution
 
@@ -113,7 +111,9 @@ end
 """
     (solution::RungeKuttaSolution)(tₚ::Real, f::Function)
 
-uses Hermite's cubic splines to interpolate `solution` and approximate its value at `tₚ`. Note that it needs the derivative function `f(u, t)`, e.g. from an `NSDEBase.AbstractRightHandSide` subtype.
+uses cubic Hermite splines to interpolate `solution` and approximate its value
+at `tₚ`. It needs the derivative function `f(u, t)`, for example the
+right-hand side of the problem.
 """
 function (solution::RungeKuttaSolution)(tₚ::Real, f::Function)
     @↓ u, t = solution
@@ -131,7 +131,8 @@ end
 """
     (solution::RungeKuttaSolution)(tₚ::Real, tableau::AbstractButcherTableau)
 
-Evaluates the dense output solution at `tₚ` using the stored stages and tableau coefficients.
+evaluates the dense output of `solution` at `tₚ` from the stored stages and the
+continuous extension of `tableau`.
 """
 function (solution::RungeKuttaSolution)(tₚ::Real, tableau::AbstractButcherTableau)
     @↓ u, t, k = solution
@@ -216,7 +217,7 @@ returns a tuple containing the number of variables and time steps in `solution`.
 Base.size(solution::RungeKuttaSolution) = (numvariables(solution), numtimesteps(solution))
 
 """
-    extract(solution::RungeKuttaSolution, i::Integer) :: RungeKuttaSolution
+    extract(solution::RungeKuttaSolution, i::Integer) :: AbstractVector
 
 returns the `i`-th variable of `solution`. `i = 0` returns `t`.
 """
@@ -225,7 +226,7 @@ function extract(solution::RungeKuttaSolution, i::Integer)
 end
 
 """
-    extract(solution::RungeKuttaSolution, v::AbstractVector) :: RungeKuttaSolution
+    extract(solution::RungeKuttaSolution, v::AbstractVector) :: Tuple
 
 returns the variables of `solution` indicated by the indices `v`.
 """
@@ -234,7 +235,7 @@ function extract(solution::RungeKuttaSolution, v::AbstractVector)
 end
 
 """
-    extract(solution::RungeKuttaSolution) :: RungeKuttaSolution
+    extract(solution::RungeKuttaSolution) :: Tuple
 
 returns all variables of `solution`, including `t`.
 """
@@ -386,7 +387,7 @@ function Base.setindex!(solution::RungeKuttaSolution, values::RungeKuttaSolution
         t[i] = t_new[j]
     end
     if !(k isa Nothing)
-        intervals = first(v):(last(v) - 1) # computed OUTSIDE any broadcast: `@.` would dot `first`/`last`
+        intervals = first(v):(last(v) - 1)
         for (j, i) in enumerate(intervals)
             k[i] = copy.(k_new[j])
         end

@@ -15,5 +15,9 @@ struct StepSize{T<:Real} <: AbstractStepSize
     end
 end
 
-"Return the configured initial step size."
+"""
+    stepsize(solver::AbstractRungeKuttaSolver) :: Real
+
+returns the configured (initial) step size of `solver`.
+"""
 stepsize(solver::AbstractRungeKuttaSolver) = solver.stepsize.h

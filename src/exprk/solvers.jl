@@ -1,5 +1,3 @@
-# NSDERungeKutta/src/exprk/solvers.jl
-#
 # Coefficient functions ported VERBATIM from the EXPINT package's scheme files
 # (Berland, Skaflestad & Wright, ACM TOMS 33(1), 2007), with Matlab's empty
 # entries `[]` rendered as `nothing`. Classical order `p` and stiff order `q`

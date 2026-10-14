@@ -7,6 +7,20 @@ function stability_plot_input(input::AbstractRungeKuttaSolver)
     )
     return input.tableau
 end
+
+# The scalar function R(z) a stability or order-star recipe draws, from a method
+# constructor, a configured solver, a tableau or R itself.
+function stability_plot_function(input)
+    input = stability_plot_input(input)
+    input isa ButcherTableau && return z -> stability_function(z, input)
+    input isa Function && return input
+    return throw(
+        ArgumentError(
+            "Expected ButcherTableau, AbstractRungeKuttaSolver, or Function. Got $(typeof(input)) instead.",
+        ),
+    )
+end
+
 for method in (
     Euler,
     Heun2,
@@ -151,20 +165,7 @@ RecipesBase.recipetype(::Val{:stability}, args...) = STABILITY(args)
 RecipesBase.@recipe function f(
     h::STABILITY; resolution=100, span=range(-5, 5, length=resolution), xspan=span, yspan=span
 )
-    input = stability_plot_input(h.args[1])
-    R = if input isa ButcherTableau
-        z -> stability_function(z, input)
-    elseif input isa AbstractRungeKuttaSolver
-        z -> stability_function(z, input.tableau)
-    elseif input isa Function
-        input
-    else
-        throw(
-            ArgumentError(
-                "Expected ButcherTableau, AbstractRungeKuttaSolver, or Function. Got $(typeof(h.args)) instead.",
-            ),
-        )
-    end
+    R = stability_plot_function(h.args[1])
     legend --> false
     levels --> [1.0]
     seriestype --> :contour
@@ -180,20 +181,7 @@ RecipesBase.recipetype(::Val{:stabilityf}, args...) = STABILITYF(args)
 RecipesBase.@recipe function f(
     h::STABILITYF; resolution=100, span=range(-5, 5, length=resolution), xspan=span, yspan=span
 )
-    input = stability_plot_input(h.args[1])
-    R = if input isa ButcherTableau
-        z -> stability_function(z, input)
-    elseif input isa AbstractRungeKuttaSolver
-        z -> stability_function(z, input.tableau)
-    elseif input isa Function
-        input
-    else
-        throw(
-            ArgumentError(
-                "Expected ButcherTableau, AbstractRungeKuttaSolver, or Function. Got $(typeof(h.args)) instead.",
-            ),
-        )
-    end
+    R = stability_plot_function(h.args[1])
     clims --> (0, 1)
     colorbar --> true
     legend --> false
@@ -211,20 +199,7 @@ RecipesBase.recipetype(::Val{:orderstar}, args...) = ORDERSTAR(args)
 RecipesBase.@recipe function f(
     h::ORDERSTAR; resolution=100, span=range(-5, 5, length=resolution), xspan=span, yspan=span
 )
-    input = stability_plot_input(h.args[1])
-    R = if input isa ButcherTableau
-        z -> stability_function(z, input)
-    elseif input isa AbstractRungeKuttaSolver
-        z -> stability_function(z, input.tableau)
-    elseif input isa Function
-        input
-    else
-        throw(
-            ArgumentError(
-                "Expected ButcherTableau, AbstractRungeKuttaSolver, or Function. Got $(typeof(h.args)) instead.",
-            ),
-        )
-    end
+    R = stability_plot_function(h.args[1])
     legend --> false
     levels --> [1.0]
     seriestype --> :contour
@@ -240,20 +215,7 @@ RecipesBase.recipetype(::Val{:orderstarf}, args...) = ORDERSTARF(args)
 RecipesBase.@recipe function f(
     h::ORDERSTARF; resolution=100, span=range(-5, 5, length=resolution), xspan=span, yspan=span
 )
-    input = stability_plot_input(h.args[1])
-    R = if input isa ButcherTableau
-        z -> stability_function(z, input)
-    elseif input isa AbstractRungeKuttaSolver
-        z -> stability_function(z, input.tableau)
-    elseif input isa Function
-        input
-    else
-        throw(
-            ArgumentError(
-                "Expected ButcherTableau, AbstractRungeKuttaSolver, or Function. Got $(typeof(h.args)) instead.",
-            ),
-        )
-    end
+    R = stability_plot_function(h.args[1])
     clims --> (0, 1)
     colorbar --> true
     legend --> false

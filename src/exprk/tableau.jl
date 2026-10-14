@@ -1,5 +1,3 @@
-# NSDERungeKutta/src/exprk/tableau.jl
-
 @doc raw"""
     ExponentialTableau <: AbstractRungeKuttaParameters
 

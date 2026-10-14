@@ -1,5 +1,3 @@
-# NSDERungeKutta/src/ierk/constructor.jl
-
 """
     ImplicitExplicitRungeKuttaSolver <: AbstractRungeKuttaSolver
 
@@ -53,7 +51,7 @@ struct ImplicitExplicitRungeKuttaSolver{
         # An IMEX error estimate needs embedded pairs on BOTH tableaus and a
         # two-family controller; neither exists yet, so fail loudly:
         if !(adaptive isa Nothing)
-            throw(ArgumentError("Adaptive stepping is not implemented for IMEX solvers in v1."))
+            throw(ArgumentError("Adaptive stepping is not implemented for IMEX solvers."))
         end
         return new{implicitableau_T,explicitableau_T,stepsize_T,newton_T,adaptive_T}(
             implicitableau, explicitableau, stepsize, newton, adaptive

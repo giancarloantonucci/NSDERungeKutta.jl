@@ -8,7 +8,7 @@ usage and basic numerical behaviour; they are not performance benchmarks.
 
 ```@example serial
 using NSDERungeKutta, LinearAlgebra
-pendulum = IVP((u,t) -> [u[2], -sin(u[1])], [π/4, 0.0], (0.0, 2.0))
+pendulum = IVP((u, t) -> [u[2], -sin(u[1])], [π/4, 0.0], (0.0, 2.0))
 fixed = RK4(h=0.03)
 sol = solve(pendulum, fixed)
 @assert sol.t[end] == 2.0
@@ -68,7 +68,7 @@ implicit = solve(stiff, RadauIIA5(h=0.05))
 @assert norm(implicit.u[end] - [exp(-1), exp(-100)]) < 1e-5
 
 # This backward-Euler stage has no real solution: x = 1 + x^2.
-impossible_stage = IVP((u,t) -> u.^2, [1.0], (0.0, 1.0))
+impossible_stage = IVP((u, t) -> u .^ 2, [1.0], (0.0, 1.0))
 failed = try
     solve(impossible_stage, BackwardEuler(h=1.0, Mₙ=2))
     false
@@ -100,7 +100,7 @@ x = dx .* collect(0:n-1)
 D2 = spdiagm(-1=>ones(n-1), 0=>fill(-2.0,n), 1=>ones(n-1))
 D2[1,n] = D2[n,1] = 1.0
 L = (0.01/dx^2) * D2
-pde = IVP(L, (u,t) -> u .- u.^3,
+pde = IVP(L, (u, t) -> u .- u .^ 3,
           0.1 .* sin.(x) .+ 0.05 .* cos.(3 .* x), (0.0, 0.2))
 imex = solve(pde, IMEXSSP2_222(h=0.01))
 etd = solve(pde, ETDRK4(h=0.01))

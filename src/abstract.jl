@@ -1,5 +1,3 @@
-# NSDERungeKutta/src/abstract.jl
-
 "An abstract type for Runge-Kutta solvers of `NSDEBase.AbstractInitialValueProblem`s."
 abstract type AbstractRungeKuttaSolver <: AbstractInitialValueSolver end
 
@@ -10,7 +8,7 @@ abstract type AbstractRungeKuttaSolution <: AbstractInitialValueSolution end
 abstract type AbstractRungeKuttaParameters <: AbstractInitialValueParameters end
 
 "An abstract type for caching intermediate computations in Runge-Kutta solvers."
-abstract type AbstractRungeKuttaCache <: AbstractInitialValueCache end # any cache or intermediate storage
+abstract type AbstractRungeKuttaCache <: AbstractInitialValueCache end
 
 "An abstract type for Butcher tableaus."
 abstract type AbstractButcherTableau <: AbstractRungeKuttaParameters end

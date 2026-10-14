@@ -1,5 +1,3 @@
-# NSDERungeKutta/src/exprk/step.jl
-#
 # EXPINT's `expglm` main loop specialised to one-step methods (r = 1), with
 # the stepsize h folded into the 5-argument mul!s instead of pre-scaling the
 # stages: Uᵢ = U[i]u[n] + hΣⱼAᵢⱼk[j], k[i] = fₙₛ(Uᵢ, tᵢ) + g(tᵢ), and
@@ -21,7 +19,7 @@ function step!(
         ),
     )
     @↓ u, t = solution
-    @↓ tableau, stepsize = solver
+    @↓ tableau = solver
     @↓ c, s = tableau
     @↓ fₛ, fₙₛ = rhs
     @↓ g! = fₛ
@@ -72,7 +70,7 @@ function step!(
         ),
     )
     @↓ u, t = solution
-    @↓ tableau, stepsize = solver
+    @↓ tableau = solver
     @↓ c, s = tableau
     @↓ g! = rhs
 

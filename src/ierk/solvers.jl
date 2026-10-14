@@ -1,5 +1,3 @@
-# NSDERungeKutta/src/ierk/solvers.jl
-
 """
     IMEXEuler(; h::Real, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10) :: ImplicitExplicitRungeKuttaSolver
     IMEXSSP1_111(args...; kwargs...) :: ImplicitExplicitRungeKuttaSolver

@@ -36,10 +36,12 @@ end
             end
         end
     end
-    # The old rounded Ralston tableau passes a coarse convergence fit but
-    # fails even second-order trees at the tolerance used above.
+    # Ralston's tableau rounded to eight digits passes a coarse convergence fit
+    # but fails even second-order trees at the tolerance used above.
     A = [0.0 0 0 0; 0.4 0 0 0; 0.29697761 0.15875964 0 0; 0.21810040 -3.05096516 3.83286476 0]
     b = [0.17476028, -0.55148066, 1.20553560, 0.17118478]
-    old = RungeKuttaMethod(A, b)
-    @test any(abs(elementary_weight(t, old)-1/density(t)) > 1e-12 for t in RootedTreeIterator(2))
+    rounded = RungeKuttaMethod(A, b)
+    @test any(
+        abs(elementary_weight(t, rounded) - 1 / density(t)) > 1e-12 for t in RootedTreeIterator(2)
+    )
 end

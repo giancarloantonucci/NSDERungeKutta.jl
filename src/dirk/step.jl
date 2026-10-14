@@ -1,5 +1,3 @@
-# NSDERungeKutta/src/dirk/step.jl
-
 function step!(
     cache::DiagonallyImplicitRungeKuttaCache,
     solution::AbstractRungeKuttaSolution,
@@ -10,7 +8,7 @@ function step!(
     @↓ n, e, v, Uᵢ, Δkᵢ, k, J = cache
     @↓ u, t = solution
     @↓ Df! = rhs
-    @↓ tableau, stepsize, newton = solver
+    @↓ tableau, newton = solver
     @↓ A, b, c, s = tableau
     @↓ Mₙ = newton
 
@@ -88,7 +86,7 @@ function step!(
     @↓ n, v, Δkᵢ, k, e = cache
     @↓ u, t = solution
     @↓ L = rhs
-    @↓ tableau, stepsize = solver
+    @↓ tableau = solver
     @↓ A, b, c, s = tableau
 
     # Stages:

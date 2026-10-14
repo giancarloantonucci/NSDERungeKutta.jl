@@ -1,5 +1,3 @@
-# NSDERungeKutta/src/exprk/constructor.jl
-
 """
     ExponentialRungeKuttaSolver <: AbstractRungeKuttaSolver
 

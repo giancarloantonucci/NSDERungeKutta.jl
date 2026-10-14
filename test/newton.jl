@@ -1,8 +1,7 @@
 @testset "Newton: no silent use of an unconverged stage" begin
     # u′ = u², u₀ = 1, backward Euler with h = 1: the stage equation
-    # y = 1 + y² has no real root. The solver used to return a finite garbage
-    # step after exhausting Mₙ, with no signal at all; a later draft compared
-    # `Inf ≤ Inf` and returned -Inf. Neither is acceptable.
+    # y = 1 + y² has no real root. After exhausting Mₙ the solver must throw,
+    # not return a finite step or compare `Inf ≤ Inf` and return -Inf.
     blowup = IVP((u, t) -> u .^ 2, [1.0], (0.0, 1.0))
     @test_throws NewtonFailure solve(blowup, BackwardEuler(h=1.0, Mₙ=2))
     @test_throws NewtonFailure solve(blowup, BackwardEuler(h=1.0, Mₙ=50)) # diverges to ±Inf: still throws
@@ -56,8 +55,8 @@ end
     restsplit = IVP((u, t) -> 0.3 .* (1 .- u), (u, t) -> (1 .- u) .^ 2, [1.0], (0.0, 1.0))
     @test all(u -> u == [1.0], solve(restsplit, IMEXEuler(h=0.5, Mₙ=3)).u)
     # Residual norms must not under- or overflow for representable scales:
-    # the coupled IRK residual used to be summed as squares, so u′ = 1e-200
-    # was "accepted" at the zero initial stages and u′ = 1e200 threw.
+    # summed as squares, the coupled IRK residual "accepts" u′ = 1e-200 at the
+    # zero initial stages and throws on u′ = 1e200.
     for c in (1e-200, 1e-100, 1.0, 1e100, 1e200)
         tiny = IVP((u, t) -> fill(c, length(u)), [0.0], (0.0, 1.0))
         for solver in (

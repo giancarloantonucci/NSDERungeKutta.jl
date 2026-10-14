@@ -1,5 +1,3 @@
-# NSDERungeKutta/src/irk/step.jl
-
 function step!(
     cache::ImplicitRungeKuttaCache,
     solution::AbstractRungeKuttaSolution,
@@ -10,7 +8,7 @@ function step!(
     @↓ n, e, v, V, k, Δk, J = cache
     @↓ u, t = solution
     @↓ Df! = rhs
-    @↓ tableau, newton, stepsize = solver
+    @↓ tableau, newton = solver
     @↓ A, b, c, s = tableau
     @↓ Mₙ = newton
 
@@ -47,8 +45,7 @@ function step!(
             break
         end
         (l == Mₙ || !isfinite(rnorm)) && break
-        # Δk = DF \ F
-        # TO-DO: ldiv!(DF, Δk)
+        # Δk = DF \ F, through the flat buffer V
         for i in 1:s
             d = length(Δk[i])
             @. V[((i - 1) * d + 1):(i * d)] = Δk[i]
@@ -59,7 +56,6 @@ function step!(
             @. Δk[i] = V[((i - 1) * d + 1):(i * d)]
         end
         # k += Δk
-        # TO-DO: @. k += Δk
         for i in eachindex(k)
             @. k[i] += Δk[i]
         end
@@ -89,10 +85,10 @@ function step!(
     solver::ImplicitRungeKuttaSolver,
     h::Real=solver.stepsize.h,
 )
-    @↓ n, v, k, V, J, e = cache
+    @↓ n, v, k, V, e = cache
     @↓ u, t = solution
     @↓ L, g! = rhs
-    @↓ tableau, stepsize = solver
+    @↓ tableau = solver
     @↓ A, b, c, s = tableau
 
     # Stages:
@@ -104,8 +100,7 @@ function step!(
         g! isa Nothing ? zero!(k[i]) : g!(k[i], t[n] + h * c[i])
         @. k[i] += v
     end
-    # k = DF \ F
-    # TO-DO: ldiv!(DF, k)
+    # k = DF \ F, through the flat buffer V
     for i in 1:s
         d = length(k[i])
         @. V[((i - 1) * d + 1):(i * d)] = k[i]

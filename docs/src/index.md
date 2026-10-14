@@ -6,7 +6,7 @@ Serial Runge–Kutta integration: explicit, implicit, IMEX, and exponential meth
 
 ```julia
 using NSDERungeKutta
-problem = IVP((u,t) -> [u[2], -sin(u[1])], [π/4, 0.0], (0.0, 2.0))
+problem = IVP((u, t) -> [u[2], -sin(u[1])], [π/4, 0.0], (0.0, 2.0))
 solver = RK4(h=0.01)
 solution = solve(problem, solver)
 @assert solution.t[end] == 2.0

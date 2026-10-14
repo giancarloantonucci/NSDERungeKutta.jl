@@ -1,9 +1,7 @@
-# NSDERungeKutta/src/utils.jl
-
 """
     compensated_sum(sum::T, addend::Real, error::Ref{T}) where T<:AbstractFloat
 
-Adds `addend` to `sum` using the Kahan-Babuška-Neumaier algorithm to minimize 
+adds `addend` to `sum` using the Kahan–Babuška–Neumaier algorithm to minimize
 floating-point round-off error. The step is converted to the problem time type `T`.
 The accumulated error is stored in the `error` Ref.
 """
@@ -47,17 +45,15 @@ end
 """
     directldiv!(M, v)
 
-In-place left-division `v = M \\ v` for a factorisation `M`. Identical to
-`LinearAlgebra.ldiv!(M, v)` except for factorisation types that ship without a
-two-argument in-place method — notably `SparseArrays.CHOLMOD.Factor`, which
-`factorize` returns for symmetric positive-definite SPARSE matrices (i.e.
-every method-of-lines Laplacian fed to the direct-linear DIRK/IERK/IRK
-branches as `I - hA⋅L`) and which supports only `\\` (checked through Julia 1.13). The
-fallback allocates one vector per call; the per-step `factorize` sitting next
-to every call site already allocates strictly more, so the hot-path cost is
-unchanged in order. CHOLMOD's `\\` also handles a complex right-hand side
-against a real factor (real/imaginary split), covering the `iscomplex`
-spectral path.
+in-place left division `v = M \\ v` for a factorisation `M`. Identical to
+`LinearAlgebra.ldiv!(M, v)` except for factorisation types without a
+two-argument in-place method, notably `SparseArrays.CHOLMOD.Factor`, which
+`factorize` returns for symmetric positive-definite sparse matrices (every
+method-of-lines Laplacian fed to the direct-linear DIRK, IERK and IRK branches
+as `I - hA⋅L`). The fallback allocates one vector per call; the `factorize`
+next to every call site already allocates more, so the cost is unchanged in
+order. CHOLMOD's `\\` also handles a complex right-hand side against a real
+factor, covering the complex spectral path.
 """
 directldiv!(M, v) = ldiv!(M, v)
 

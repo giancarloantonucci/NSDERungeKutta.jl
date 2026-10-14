@@ -1,5 +1,3 @@
-# NSDERungeKutta/src/NSDERungeKutta.jl
-
 module NSDERungeKutta
 
 using Reexport

@@ -27,6 +27,19 @@
     end
 end
 
+@testset "ButcherTableau printing" begin
+    out = sprint(show, MIME("text/plain"), RK4(h=1.0).tableau)
+    @test occursin("s = 4, p = 4", out)
+    @test occursin("1/6", out) && occursin("1/2", out)   # exact rationals recovered
+    @test occursin("┼", out)                             # the Butcher rule
+    @test length(findall("│", out)) == 5                 # 4 stage rows + weights
+
+    emb = sprint(show, MIME("text/plain"), DP54(h=1.0).tableau)
+    @test occursin("q = ", emb)                          # embedded order in header
+    @test occursin("9017/3168", emb)                     # a DP54 coefficient, exactly
+    @test length(findall("┼", emb)) == 2                 # weights and embedded rules
+end
+
 @testset "stability function ℛ(z)" begin
     z = -0.5 + 0.3im
     @test stability_function(z, Euler(h=0.1)) ≈ 1 + z
@@ -62,10 +75,10 @@ end
     for method in
         (Euler, RK4, DormandPrince54, BackwardEuler, GaussLegendre4, IMEXEuler, ExponentialEuler)
         @test_throws UndefKeywordError method()
-        solver=method(h=0.1)
-        changed=@inferred withstepsize(solver, 0.02)
-        @test stepsize(changed)==0.02
-        @test stepsize(solver)==0.1
+        solver = method(h=0.1)
+        changed = @inferred withstepsize(solver, 0.02)
+        @test stepsize(changed) == 0.02
+        @test stepsize(solver) == 0.1
         @test_throws ArgumentError withstepsize(solver, 0)
     end
     @test_throws UndefKeywordError DormandPrince54(εᵣ=1e-8)
@@ -75,8 +88,20 @@ end
         NSDERungeKutta.ORDERSTAR,
         NSDERungeKutta.ORDERSTARF,
     )
-        output=RecipesBase.apply_recipe(Dict{Symbol,Any}(), recipe((RK4,)))
-        @test !isempty(output)
-        @test output[1].args[3](0.0, 0.0)==1.0
+        # A method constructor, a configured solver, a tableau and R itself
+        for input in (RK4, RK4(h=0.1), RK4(h=0.1).tableau, z -> 1 + z)
+            output = RecipesBase.apply_recipe(Dict{Symbol,Any}(), recipe((input,)))
+            @test !isempty(output)
+            @test output[1].args[3](0.0, 0.0) == 1.0
+        end
+        @test_throws ArgumentError RecipesBase.apply_recipe(
+            Dict{Symbol,Any}(), recipe((IMEXEuler(h=0.1),))
+        )
+        err = try
+            RecipesBase.apply_recipe(Dict{Symbol,Any}(), recipe((3,)))
+        catch e
+            e
+        end
+        @test err isa ArgumentError && occursin("Got Int64 instead", err.msg)
     end
 end

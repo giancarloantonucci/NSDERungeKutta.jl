@@ -1,5 +1,3 @@
-# NSDERungeKutta/src/exprk/cache.jl
-
 mutable struct ExponentialRungeKuttaCache{
     n_T<:Integer,
     e_T<:Ref{<:AbstractFloat},

@@ -1,5 +1,3 @@
-# NSDERungeKutta/src/erk/cache.jl
-
 mutable struct ExplicitRungeKuttaCache{
     n_T<:Integer,e_T<:Ref{<:AbstractFloat},v_T<:AbstractVector{<:Number},k_T<:AbstractVector{v_T}
 } <: AbstractRungeKuttaCache

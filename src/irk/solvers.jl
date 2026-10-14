@@ -1,5 +1,3 @@
-# NSDERungeKutta/src/irk/solvers.jl
-
 """
     LobattoIIIC2(; h::Real, εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10) :: ImplicitRungeKuttaSolver
 

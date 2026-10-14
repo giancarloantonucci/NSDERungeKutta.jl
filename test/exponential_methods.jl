@@ -48,10 +48,10 @@ end
     @test Matrix(φd[1]) ≈ phifunctions(Matrix(Diagonal(λ)), 1)[1] atol = 1e-13
 end
 
-@testset "stiff modes decay to their true exponential (regression)" begin
-    # With the old zφ₁ + I reconstruction the first component came out as 0
-    # or a ~1e-16 roundoff floor; the chain exponential gives e^{λ} to
-    # relative accuracy. Elementwise comparison on purpose.
+@testset "stiff modes decay to their true exponential" begin
+    # Reconstructing e^z as zφ₁ + I gives 0 or a ~1e-16 roundoff floor for the
+    # first component; the chain exponential gives e^{λ} to relative accuracy.
+    # Elementwise comparison on purpose.
     λ = [-240.0, -1.0]
     problem = IVP(LRHS(Diagonal(λ)), [1.0, 1.0], (0.0, 1.0))
     solution = solve(problem, ETD4RK(h=0.25))
@@ -168,5 +168,26 @@ end
         @test_throws ArgumentError NSDERungeKutta.step!(cache, sol, rhs, solver, 0.1)
         @test all(isfinite, solve(p, solver).u[end])
         @test solve(p, solver).t[end] == 0.7
+    end
+end
+
+@testset "split problem with forcing in the linear part" begin
+    # u' = -2u + sin(t) + 0.1u²: the forcing g(t) rides with the non-stiff part.
+    problem = IVP(LRHS(hcat(-2.0), t -> [sin(t)]), (u, t) -> 0.1 .* u .^ 2, [0.5], (0.0, 1.0))
+    whole = IVP((u, t) -> -2 .* u .+ sin(t) .+ 0.1 .* u .^ 2, [0.5], (0.0, 1.0))
+    reference = solve(whole, RK4(h=1e-4)).u[end]
+    for (method, p) in (
+        (LawsonEuler, 1),
+        (NorsettEuler, 1),
+        (ETD2RK, 2),
+        (ETD3RK, 3),
+        (ETD4RK, 4),
+        (Lawson4, 4),
+        (Krogstad, 4),
+        (HochbruckOstermann4, 4),
+    )
+        e₁ = norm(solve(problem, method(h=0.05)).u[end] - reference)
+        e₂ = norm(solve(problem, method(h=0.025)).u[end] - reference)
+        @test log2(e₁ / e₂) > p - 0.4
     end
 end

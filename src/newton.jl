@@ -1,5 +1,3 @@
-# NSDERungeKutta/src/newton.jl
-
 """
     NewtonParameters <: AbstractNewtonParameters
 
@@ -26,7 +24,6 @@ acceptance, the step throws a [`NewtonFailure`](@ref); an unconverged stage is
 never used.
 
 Tolerances must be finite, non-negative and not both zero; `Mₙ ≥ 1`.
-
 """
 struct NewtonParameters{εᵣ_T<:Real,εₐ_T<:Real,Mₙ_T<:Integer} <: AbstractNewtonParameters
     εᵣ::εᵣ_T
@@ -108,7 +105,7 @@ and `NaN` comparisons are both `false` here on purpose.
 newton_accept(rnorm::Real, tol::Real) = isfinite(rnorm) && isfinite(tol) && rnorm ≤ tol
 
 """
-    newton_check(converged, rnorm, tol, newton, t, stage, updates)
+    newton_check(converged, rnorm, tol, t, stage, updates)
 
 throws a [`NewtonFailure`](@ref) unless `converged`.
 """

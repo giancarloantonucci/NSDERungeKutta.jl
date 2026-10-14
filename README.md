@@ -8,7 +8,7 @@ Serial Runge–Kutta integration: explicit, implicit, IMEX, and exponential meth
 
 ```julia
 using NSDERungeKutta
-problem = IVP((u,t) -> [u[2], -sin(u[1])], [π/4, 0.0], (0.0, 2.0))
+problem = IVP((u, t) -> [u[2], -sin(u[1])], [π/4, 0.0], (0.0, 2.0))
 solver = RK4(h=0.01)
 solution = solve(problem, solver)
 @assert solution.t[end] == 2.0
@@ -45,8 +45,7 @@ For a registered release, use `Pkg.add("NSDERungeKutta")`. These docs describe t
 current development API; a registered version may differ. To use a local
 checkout, activate your working environment and `Pkg.develop(path="/path/to/NSDERungeKutta")`.
 Develop matching local dependency checkouts in that environment too, then check
-`Pkg.status()`. The serial and parallel guides also require NSDERungeKutta;
-plotting requires Plots.
+`Pkg.status()`. Plotting requires Plots.
 
 See the [documentation](https://giancarloantonucci.github.io/NSDERungeKutta.jl/dev/)
 and [API reference](docs/src/api.md) for details.

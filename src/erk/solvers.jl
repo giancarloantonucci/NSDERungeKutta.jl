@@ -1,5 +1,3 @@
-# NSDERungeKutta/src/erk/solvers.jl
-
 """
     Euler(; h::Real) :: ExplicitRungeKuttaSolver
     ExplicitEuler(args...; kwargs...) :: ExplicitRungeKuttaSolver

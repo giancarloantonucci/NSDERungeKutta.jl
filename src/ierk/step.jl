@@ -1,5 +1,3 @@
-# NSDERungeKutta/src/ierk/step.jl
-
 function step!(
     cache::ImplicitExplicitRungeKuttaCache,
     solution::AbstractRungeKuttaSolution,
@@ -11,7 +9,7 @@ function step!(
     @↓ u, t = solution
     @↓ fₛ, fₙₛ = rhs
     @↓ Df! = fₛ
-    @↓ implicitableau, explicitableau, stepsize, newton = solver
+    @↓ implicitableau, explicitableau, newton = solver
     @↓ Aᴵ ← A, bᴵ ← b, cᴵ ← c, s = implicitableau
     @↓ Aᴱ ← A, bᴱ ← b, cᴱ ← c = explicitableau
     @↓ Mₙ = newton
@@ -92,11 +90,11 @@ function step!(
     solver::ImplicitExplicitRungeKuttaSolver,
     h::Real=solver.stepsize.h,
 ) where {𝐿<:LinearRightHandSide,𝑁<:NonlinearRightHandSide}
-    @↓ n, v, kᴵ, kᴱ, Uᵢ, J, e = cache
+    @↓ n, v, kᴵ, kᴱ, Uᵢ, e = cache
     @↓ u, t = solution
     @↓ fₛ, fₙₛ = rhs
     @↓ L, g! = fₛ
-    @↓ implicitableau, explicitableau, stepsize = solver
+    @↓ implicitableau, explicitableau = solver
     @↓ Aᴵ ← A, bᴵ ← b, cᴵ ← c, s = implicitableau
     @↓ Aᴱ ← A, bᴱ ← b, cᴱ ← c = explicitableau
 

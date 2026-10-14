@@ -1,5 +1,3 @@
-# NSDERungeKutta/src/phi.jl
-
 @doc raw"""
     phifunctions(z, K::Integer; d::Integer=13) :: Vector
 

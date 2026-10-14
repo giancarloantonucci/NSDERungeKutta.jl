@@ -1,5 +1,3 @@
-# NSDERungeKutta/src/tableau_show.jl
-#
 # Butcher-array REPL display.
 
 function _tableauentry(x::Real)
@@ -36,19 +34,3 @@ function Base.show(io::IO, ::MIME"text/plain", tableau::ButcherTableau)
     end
     return nothing
 end
-
-# ---------------------------------------------------------------------------
-# Testset — paste into test/runtests.jl:
-#
-# @testset "ButcherTableau printing" begin
-#     out = sprint(show, MIME("text/plain"), RK4(h = 1.0).tableau)
-#     @test occursin("s = 4, p = 4", out)
-#     @test occursin("1/6", out) && occursin("1/2", out)   # exact rationals recovered
-#     @test occursin("┼", out)                             # the Butcher rule
-#     @test length(findall("│", out)) == 5                 # 4 stage rows + weights
-#
-#     emb = sprint(show, MIME("text/plain"), DP54(h = 1.0).tableau)
-#     @test occursin("q = ", emb)                          # embedded order in header
-#     @test occursin("9017/3168", emb)                     # a DP54 coefficient, exactly
-#     @test length(findall("┼", emb)) == 2                 # weights AND embedded rules
-# end

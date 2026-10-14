@@ -1,5 +1,3 @@
-# NSDERungeKutta/src/ierk/cache.jl
-
 mutable struct ImplicitExplicitRungeKuttaCache{
     n_T<:Integer,
     e_T<:Ref{<:AbstractFloat},

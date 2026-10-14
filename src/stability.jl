@@ -1,5 +1,3 @@
-# NSDERungeKutta/src/stability.jl
-
 @doc raw"""
     stability_function(z::Number, tableau::AbstractButcherTableau) :: Number
     stability_function(z::Number, solver::AbstractRungeKuttaSolver) :: Number

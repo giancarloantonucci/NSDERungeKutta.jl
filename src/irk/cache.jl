@@ -1,5 +1,3 @@
-# NSDERungeKutta/src/irk/cache.jl
-
 mutable struct ImplicitRungeKuttaCache{
     n_T<:Integer,
     e_T<:Ref{<:AbstractFloat},
@@ -25,9 +23,7 @@ function RungeKuttaCache(problem::AbstractInitialValueProblem, solver::ImplicitR
     v = similar(u0)
 
     d = length(u0)
-    # Note: This assumes u0 is flat or linearizable. 
-    # If u0 is a matrix, this might need `s * length(u0)`
-    V = similar(u0, s*d)
+    V = similar(u0, s * d)
 
     k = [similar(u0) for i in 1:s]
     Δk = [similar(u0) for i in 1:s]
