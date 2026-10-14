@@ -42,6 +42,8 @@ Requires NSDEBase 0.4.
   built for; a shortened final step uses its own coefficients.
 - Sources, tests and examples follow the repository JuliaFormatter
   configuration (Blue style), checked in CI.
+- The API reference is split into four pages: types and functions, explicit
+  methods, implicit methods, and IMEX and exponential methods.
 
 ### Fixed
 

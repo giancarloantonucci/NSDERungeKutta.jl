@@ -6,7 +6,12 @@ PAGES = [
     "Guided tour" => "guide.md",
     "Solvers" => "solvers.md",
     "Examples" => "examples.md",
-    "API" => "api.md",
+    "API" => [
+        "Types and functions" => "api.md",
+        "Explicit methods" => "api_explicit.md",
+        "Implicit methods" => "api_implicit.md",
+        "IMEX and exponential methods" => "api_imex_exponential.md",
+    ],
 ]
 
 makedocs(;
