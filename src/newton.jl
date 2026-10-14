@@ -25,21 +25,22 @@ iterates or residuals are never accepted. If `Mₙ` updates pass without
 acceptance, the step throws a [`NewtonFailure`](@ref); an unconverged stage is
 never used.
 
-Tolerances must be finite and non-negative; `Mₙ ≥ 1`.
+Tolerances must be finite, non-negative and not both zero; `Mₙ ≥ 1`.
 
-The default `εᵣ = 1e-8` is tighter than the `1e-3` of the former
-increment-based test. This is a deliberate accuracy choice for a bound that
-now applies to the residual of the iterate actually used; its cost relative
-to the old test has not been benchmarked.
 """
-struct NewtonParameters{εᵣ_T<:Real, εₐ_T<:Real, Mₙ_T<:Integer} <: AbstractNewtonParameters
+struct NewtonParameters{εᵣ_T<:Real,εₐ_T<:Real,Mₙ_T<:Integer} <: AbstractNewtonParameters
     εᵣ::εᵣ_T
     εₐ::εₐ_T
     Mₙ::Mₙ_T
-    function NewtonParameters(εᵣ::εᵣ_T, εₐ::εₐ_T, Mₙ::Mₙ_T) where {εᵣ_T<:Real, εₐ_T<:Real, Mₙ_T<:Integer}
-        isfinite(εᵣ) && εᵣ ≥ 0 && isfinite(εₐ) && εₐ ≥ 0 && Mₙ ≥ 1 ||
-            throw(ArgumentError("`NewtonParameters` needs finite εᵣ ≥ 0, finite εₐ ≥ 0 and Mₙ ≥ 1; got εᵣ = $εᵣ, εₐ = $εₐ, Mₙ = $Mₙ."))
-        return new{εᵣ_T, εₐ_T, Mₙ_T}(εᵣ, εₐ, Mₙ)
+    function NewtonParameters(
+        εᵣ::εᵣ_T, εₐ::εₐ_T, Mₙ::Mₙ_T
+    ) where {εᵣ_T<:Real,εₐ_T<:Real,Mₙ_T<:Integer}
+        isfinite(εᵣ) && εᵣ ≥ 0 && isfinite(εₐ) && εₐ ≥ 0 && (εₐ > 0 || εᵣ > 0) && Mₙ ≥ 1 || throw(
+            ArgumentError(
+                "`NewtonParameters` needs finite εᵣ ≥ 0, finite εₐ ≥ 0, at least one positive tolerance, and Mₙ ≥ 1; got εᵣ = $εᵣ, εₐ = $εₐ, Mₙ = $Mₙ.",
+            ),
+        )
+        return new{εᵣ_T,εₐ_T,Mₙ_T}(εᵣ, εₐ, Mₙ)
     end
 end
 
@@ -47,7 +48,7 @@ NewtonParameters(εᵣ::Real, Mₙ::Integer) = NewtonParameters(εᵣ, 1e-12, M�
 NewtonParameters(; εᵣ::Real=1e-8, εₐ::Real=1e-12, Mₙ::Integer=10) = NewtonParameters(εᵣ, εₐ, Mₙ)
 
 """
-    NewtonFailure <: Exception
+    NewtonFailure <: SolverFailure
 
 thrown by an implicit Runge-Kutta step when simplified Newton cannot bring the
 stage residual within tolerance: either `Mₙ` updates were spent, or the
@@ -60,7 +61,7 @@ Adaptive implicit solvers do not yet recover from this on their own: the
 exception is raised before the step-size controller sees the step. That is a
 known limit of this release, not a promise the controller makes.
 """
-struct NewtonFailure{t_T<:Real, r_T<:Real} <: Exception
+struct NewtonFailure{t_T<:Real,r_T<:Real} <: SolverFailure
     t::t_T
     stage::Int
     updates::Int
@@ -70,10 +71,21 @@ end
 
 function Base.showerror(io::IO, e::NewtonFailure)
     where_ = e.stage == 0 ? "the coupled stage system" : "stage $(e.stage)"
-    print(io, "NewtonFailure: simplified Newton did not converge on ", where_,
-          " at t = ", e.t, " after ", e.updates, " updates (residual ",
-          e.residual, ", tolerance ", e.tolerance, "). The stage is unusable; ",
-          "shorten the step, raise `Mₙ`, or loosen `εᵣ`/`εₐ`.")
+    return print(
+        io,
+        "NewtonFailure: simplified Newton did not converge on ",
+        where_,
+        " at t = ",
+        e.t,
+        " after ",
+        e.updates,
+        " updates (residual ",
+        e.residual,
+        ", tolerance ",
+        e.tolerance,
+        "). The stage is unusable; ",
+        "shorten the step, raise `Mₙ`, or loosen `εᵣ`/`εₐ`.",
+    )
 end
 
 """
@@ -100,16 +112,20 @@ newton_accept(rnorm::Real, tol::Real) = isfinite(rnorm) && isfinite(tol) && rnor
 
 throws a [`NewtonFailure`](@ref) unless `converged`.
 """
-function newton_check(converged::Bool, rnorm::Real, tol::Real, t::Real, stage::Integer, updates::Integer)
+function newton_check(
+    converged::Bool, rnorm::Real, tol::Real, t::Real, stage::Integer, updates::Integer
+)
     converged && return nothing
-    throw(NewtonFailure(t, Int(stage), Int(updates), promote(float(rnorm), float(tol))...))
+    return throw(NewtonFailure(t, Int(stage), Int(updates), promote(float(rnorm), float(tol))...))
 end
 
 # `norm` of a vector of stage vectors, and `all(isfinite, ·)` for the same.
 # Accumulated with `hypot`, never as a sum of squares: squaring a component
 # norm of 1e-200 underflows to 0 (a zero residual would then be "accepted"),
 # and 1e200 overflows to Inf, while both are ordinary representable values.
-stagesnorm(k::AbstractVector{<:AbstractVector}) = mapreduce(norm, hypot, k; init=zero(float(real(eltype(eltype(k))))))
+function stagesnorm(k::AbstractVector{<:AbstractVector})
+    return mapreduce(norm, hypot, k; init=zero(float(real(eltype(eltype(k))))))
+end
 stagesnorm(k::AbstractVector) = norm(k)
 stagesfinite(k::AbstractVector{<:AbstractVector}) = all(x -> all(isfinite, x), k)
 stagesfinite(k::AbstractVector) = all(isfinite, k)

@@ -1,10 +1,3 @@
-# NSDERungeKutta/test/oracle.jl
-#
-# Mathematical verification oracle for the exprk solvers — include from
-# runtests.jl AFTER exprk.jl. Adapted from the standalone ExpRKOracle.jl:
-# @test instead of the script's gate() (so failures FAIL Pkg.test), testset
-# scoping instead of globals, helper names deconflicted. Costs ~6-8 s.
-#
 # References: [KT05] Kassam & Trefethen SISC 26(4) 2005 (the naive-formula
 # instability near zero eigenvalues, contour-integral fix); [TW14] Trefethen
 # & Weideman SIREV 56(3) 2014 (exponentially convergent trapezoidal rule for
@@ -22,7 +15,7 @@
 # accurate, relatively meaningless under strong damping) that
 # expphifunctions now replaces.
 
-using Test, LinearAlgebra, Printf
+using Printf
 
 # ---- oracle 1: 256-bit direct formulas (unusable in doubles — that is the
 # point: at 256 bits the cancellation costs ~77 digits of headroom and
@@ -31,13 +24,13 @@ function oracle_φbig(z::Number, K::Integer)
     setprecision(BigFloat, 256) do
         zb = Complex{BigFloat}(z)
         if abs(zb) < big"1e-40"
-            return [ComplexF64(1 / factorial(big(k))) for k = 1:K]
+            return [ComplexF64(1 / factorial(big(k))) for k in 1:K]
         end
         et = exp(zb)
         part = one(zb)
         tk = zb
         out = Vector{ComplexF64}(undef, K)
-        for k = 1:K
+        for k in 1:K
             out[k] = ComplexF64((et - part) / tk)
             part += tk / factorial(big(k))
             tk *= zb
@@ -51,10 +44,10 @@ end
 function oracle_φhybrid(t::Complex, K::Integer)
     out = Vector{ComplexF64}(undef, K)
     if abs(t) ≤ 1
-        for k = 1:K
+        for k in 1:K
             s = zero(ComplexF64)
             term = ComplexF64(1 / factorial(k))
-            for j = 0:29
+            for j in 0:29
                 s += term
                 term *= t / (j + k + 1)
             end
@@ -64,7 +57,7 @@ function oracle_φhybrid(t::Complex, K::Integer)
         et = exp(t)
         part = one(ComplexF64)
         tk = t
-        for k = 1:K
+        for k in 1:K
             out[k] = (et - part) / tk
             part += tk / factorial(k)
             tk *= t
@@ -75,18 +68,20 @@ end
 
 function oracle_φcontour(Z::AbstractMatrix, K::Integer; N::Integer=512, margin::Real=3.0)
     ev = eigvals(Matrix{ComplexF64}(Z))
-    c = (minimum(real, ev) + maximum(real, ev)) / 2 + im * (minimum(imag, ev) + maximum(imag, ev)) / 2
+    c =
+        (minimum(real, ev) + maximum(real, ev)) / 2 +
+        im * (minimum(imag, ev) + maximum(imag, ev)) / 2
     r = maximum(abs, ev .- c) + margin
     n = size(Z, 1)
     Id = Matrix{ComplexF64}(I, n, n)
-    acc = [zeros(ComplexF64, n, n) for _ = 1:K]
-    for j = 0:N-1
+    acc = [zeros(ComplexF64, n, n) for _ in 1:K]
+    for j in 0:(N - 1)
         w = r * cis(2π * (j + 0.5) / N)
         t = c + w
         R = (t * Id - Z) \ Id
         f = oracle_φhybrid(t, K)
         wR = w .* R
-        for k = 1:K
+        for k in 1:K
             acc[k] .+= f[k] .* wR
         end
     end
@@ -98,23 +93,25 @@ oracle_relerr(a, b) = norm(a - b) / max(norm(b), eps())
 # Chebyshev differentiation matrix (Trefethen, Spectral Methods in MATLAB,
 # p. 54) — the non-normal Allen-Cahn operator of [KT05] §5.
 function oracle_cheb(N::Integer)
-    x = [cos(π * i / N) for i = 0:N]
-    c = [(i == 0 || i == N ? 2.0 : 1.0) * (-1.0)^i for i = 0:N]
-    D = [i == j ? 0.0 : c[i+1] / c[j+1] / (x[i+1] - x[j+1]) for i = 0:N, j = 0:N]
-    D -= Diagonal(vec(sum(D, dims=2)))
+    x = [cos(π * i / N) for i in 0:N]
+    c = [(i == 0 || i == N ? 2.0 : 1.0) * (-1.0)^i for i in 0:N]
+    D = [i == j ? 0.0 : c[i + 1] / c[j + 1] / (x[i + 1] - x[j + 1]) for i in 0:N, j in 0:N]
+    D -= Diagonal(vec(sum(D; dims=2)))
     return D
 end
 
 # The [KT05] KS symbol on [0, 32π] with d Fourier modes: exact zero
 # eigenvalue at κ = 0, small POSITIVE ones at the lowest modes.
 function oracle_ks_spectrum(d::Integer)
-    m = [j ≤ d ÷ 2 ? j - 1 : j - 1 - d for j = 1:d]
+    m = [j ≤ d ÷ 2 ? j - 1 : j - 1 - d for j in 1:d]
     κ = m ./ 16
     return κ, κ .^ 2 .- κ .^ 4
 end
 
-oracle_solvers = (LawsonEuler, NorsettEuler, ETD2RK, ETD3RK, ETD4RK, Lawson4, Krogstad, HochbruckOstermann4)
-oracle_Zcheb = 0.25 .* (0.01 .* (oracle_cheb(20) * oracle_cheb(20))[2:end-1, 2:end-1])
+oracle_solvers = (
+    LawsonEuler, NorsettEuler, ETD2RK, ETD3RK, ETD4RK, Lawson4, Krogstad, HochbruckOstermann4
+)
+oracle_Zcheb = 0.25 .* (0.01 .* (oracle_cheb(20) * oracle_cheb(20))[2:(end - 1), 2:(end - 1)])
 
 @testset "oracle: φ engine vs 256-bit ground truth [KT05 poison set]" begin
     _, λ128 = oracle_ks_spectrum(128)
@@ -125,7 +122,7 @@ oracle_Zcheb = 0.25 .* (0.01 .* (oracle_cheb(20) * oracle_cheb(20))[2:end-1, 2:e
     for z in poison
         φp = imag(z) == 0 ? phifunctions(real(z), 3) : phifunctions(z, 3)
         φb = oracle_φbig(z, 3)
-        for k = 1:3
+        for k in 1:3
             worst = max(worst, abs(ComplexF64(φp[k]) - φb[k]) / abs(φb[k]))
         end
     end
@@ -145,22 +142,38 @@ oracle_Zcheb = 0.25 .* (0.01 .* (oracle_cheb(20) * oracle_cheb(20))[2:end-1, 2:e
 end
 
 @testset "oracle: φ engine vs [TW14] contour integral on matrices" begin
-    Msym = [sin(3i + j) for i = 1:6, j = 1:6] - 3.0I
+    Msym = [sin(3i + j) for i in 1:6, j in 1:6] - 3.0I
     Msym = (Msym + Msym') / 2
     for Z in (Msym, oracle_Zcheb) # dense symmetric; non-normal Chebyshev z = h⋅L
         φp = phifunctions(Z, 3)
         φc = oracle_φcontour(Z, 3; N=512)
         φc2 = oracle_φcontour(Z, 3; N=1024)
-        @test maximum(oracle_relerr(φp[k], φc[k]) for k = 1:3) < 1e-11
-        @test maximum(oracle_relerr(φc[k], φc2[k]) for k = 1:3) < 1e-12 # oracle self-consistency
+        @test maximum(oracle_relerr(φp[k], φc[k]) for k in 1:3) < 1e-11
+        @test maximum(oracle_relerr(φc[k], φc2[k]) for k in 1:3) < 1e-12 # oracle self-consistency
     end
 end
 
 @testset "oracle: [HO10] operator identities of the shipped tableaus" begin
-    ψ_applicable = Dict(:LawsonEuler => 0, :NorsettEuler => 1, :ETD2RK => 2, :ETD3RK => 3,
-                        :ETD4RK => 3, :Lawson4 => 0, :Krogstad => 3, :HochbruckOstermann4 => 3)
-    rows_are_φform = Dict(:LawsonEuler => false, :NorsettEuler => true, :ETD2RK => true, :ETD3RK => true,
-                          :ETD4RK => true, :Lawson4 => false, :Krogstad => true, :HochbruckOstermann4 => true)
+    ψ_applicable = Dict(
+        :LawsonEuler => 0,
+        :NorsettEuler => 1,
+        :ETD2RK => 2,
+        :ETD3RK => 3,
+        :ETD4RK => 3,
+        :Lawson4 => 0,
+        :Krogstad => 3,
+        :HochbruckOstermann4 => 3,
+    )
+    rows_are_φform = Dict(
+        :LawsonEuler => false,
+        :NorsettEuler => true,
+        :ETD2RK => true,
+        :ETD3RK => true,
+        :ETD4RK => true,
+        :Lawson4 => false,
+        :Krogstad => true,
+        :HochbruckOstermann4 => true,
+    )
     _, λ128 = oracle_ks_spectrum(128)
     testargs = Any[hcat(z) for z in (1e-8, 1e-2, -40.0, 137.0)]
     push!(testargs, hcat(2.5 + 1.3im))
@@ -176,39 +189,64 @@ end
             scale = max(norm(φ[1]), 1.0)
             # U/V exponential identities — RELATIVE, elementwise on spectra:
             expref(w) = w isa Diagonal ? Diagonal(exp.(w.diag)) : exp(Matrix(w))
-            exprel(a, ref) = ref isa Diagonal ?
-                maximum(abs.((a isa Diagonal ? a.diag : diag(Matrix(a))) .- ref.diag) ./ max.(abs.(ref.diag), floatmin())) :
-                oracle_relerr(Matrix(a), ref)
+            exprel(a, ref) =
+                if ref isa Diagonal
+                    maximum(
+                        abs.((a isa Diagonal ? a.diag : diag(Matrix(a))) .- ref.diag) ./
+                        max.(abs.(ref.diag), floatmin()),
+                    )
+                else
+                    oracle_relerr(Matrix(a), ref)
+                end
             ez = expref(z)
             worstexp = max(worstexp, exprel(V, ez))
-            for i = 1:tab.s
+            for i in 1:tab.s
                 ci = tab.c[i]
-                target = ci == 0 ? (z isa Diagonal ? Diagonal(ones(size(z, 1))) : Matrix(one(z))) :
-                         ci == 1 ? ez : expref(ci * z)
+                target = if ci == 0
+                    (z isa Diagonal ? Diagonal(ones(size(z, 1))) : Matrix(one(z)))
+                elseif ci == 1
+                    ez
+                else
+                    expref(ci * z)
+                end
                 worstexp = max(worstexp, exprel(U[i], target))
             end
             # ψ weight identities:
             if nψ ≥ 1
-                worstψ = max(worstψ, norm(sum(B[i] for i = 1:tab.s if B[i] !== nothing) - φ[1]) / scale)
+                worstψ = max(
+                    worstψ, norm(sum(B[i] for i in 1:tab.s if B[i] !== nothing) - φ[1]) / scale
+                )
             end
             if nψ ≥ 2
-                worstψ = max(worstψ, norm(sum(B[i] * tab.c[i] for i = 1:tab.s if B[i] !== nothing) - φ[2]) / max(norm(φ[2]), 1.0))
+                worstψ = max(
+                    worstψ,
+                    norm(sum(B[i] * tab.c[i] for i in 1:tab.s if B[i] !== nothing) - φ[2]) /
+                    max(norm(φ[2]), 1.0),
+                )
             end
             if nψ ≥ 3
-                worstψ = max(worstψ, norm(sum(B[i] * tab.c[i]^2 for i = 1:tab.s if B[i] !== nothing) / 2 - φ[3]) / max(norm(φ[3]), 1.0))
+                worstψ = max(
+                    worstψ,
+                    norm(sum(B[i] * tab.c[i]^2 for i in 1:tab.s if B[i] !== nothing) / 2 - φ[3]) /
+                    max(norm(φ[3]), 1.0),
+                )
             end
             # internal-row consistency (φ-form schemes) or z = 0 consistency (Lawson):
             if rows_are_φform[tab.name]
-                for i = 2:tab.s
-                    rowsum = sum(A[i, j] for j = 1:i-1 if A[i, j] !== nothing)
-                    worstrow = max(worstrow, norm(rowsum - tab.c[i] * phifunctions(tab.c[i] * z, 1)[1]) / scale)
+                for i in 2:tab.s
+                    rowsum = sum(A[i, j] for j in 1:(i - 1) if A[i, j] !== nothing)
+                    worstrow = max(
+                        worstrow, norm(rowsum - tab.c[i] * phifunctions(tab.c[i] * z, 1)[1]) / scale
+                    )
                 end
             else
                 z0 = zero(Matrix(z))
                 U0, V0, A0, B0 = tab.κ(z0)
-                worstψ = max(worstψ, norm(sum(B0[i] for i = 1:tab.s if B0[i] !== nothing) - one(z0)))
-                for i = 2:tab.s
-                    rowsum = sum(A0[i, j] for j = 1:i-1 if A0[i, j] !== nothing)
+                worstψ = max(
+                    worstψ, norm(sum(B0[i] for i in 1:tab.s if B0[i] !== nothing) - one(z0))
+                )
+                for i in 2:tab.s
+                    rowsum = sum(A0[i, j] for j in 1:(i - 1) if A0[i, j] !== nothing)
                     worstrow = max(worstrow, norm(rowsum - tab.c[i] * one(z0)))
                 end
             end
@@ -226,9 +264,9 @@ end
     # cross-family RK4 reference.
     dks = 128
     κ, λ = oracle_ks_spectrum(dks)
-    W = [cis(-2π * m * j / dks) for m = 0:dks-1, j = 0:dks-1]
+    W = [cis(-2π * m * j / dks) for m in 0:(dks - 1), j in 0:(dks - 1)]
     Winv = W' ./ dks
-    xs = [32π * j / dks for j = 0:dks-1]
+    xs = [32π * j / dks for j in 0:(dks - 1)]
     û0 = W * complex.(@. cos(xs / 16) * (1 + sin(xs / 16)))
     Lks = Diagonal(complex.(λ))
     nonstiff(û, t) = (-im / 2) .* κ .* (W * ((Winv * û) .^ 2))

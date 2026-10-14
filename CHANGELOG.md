@@ -1,8 +1,32 @@
 # Changelog
 
+## 0.3.0 development revision (unreleased)
+
+- Make NewtonFailure and the new StepFailure subtypes of SolverFailure; numerical adaptive retry/precision failures are distinct from invalid arguments.
+- Reject and shrink NaN adaptive trials, restoring time compensation on rejection. Start nonlinear IMEX Newton stages from their predictor and reject zero Newton tolerances.
+- Replace rounded Ralston4 coefficients with closed forms and audit primary, embedded and continuous-extension order conditions using RootedTrees. Add the fourth-order Dormand–Prince continuous extension; reject unsupported dense output.
+- Copy solution assignments and fix component labels, phase-plot keywords and unsupported stability inputs.
+- Correct embedded error scaling: include h, use componentwise endpoint scales and an RMS norm, and accept equality. Validate tolerances and default the absolute tolerance to 1e-12. Adaptive histories and results change.
+- Use the problem time type for compensated time sums across all solver families. Reuse plain exponential final-step coefficients. Test the getting-started example.
+- Validate exponential steps against the coefficient cache step; shortened final steps use their own cached coefficients. Exponential constructors require `h`.
+- Start adaptive solution storage small, independently of the initial step. Reject step-size reductions that cannot advance floating-point time.
+
+- Fold rounding-sized tails into the preceding step. Integration constructors require
+  `h`; stability recipes also accept method constructors. Adaptive kernels receive
+  the realised step directly, without rebuilding solver settings.
+
+- Immutable step-size settings and solution-owned adaptive histories remove cross-run/thread mutation. Fixed and adaptive solves land on the endpoint, with a shortened last step. Chunk plans share one divisibility policy. Full and final exponential coefficients are prepared once per chunk cache. Removed obsolete Julia-version shims.
+
+- All Julia sources, tests, and examples follow the repository JuliaFormatter configuration. Historical implementation notes have been removed from current API descriptions.
+
+## 0.2.2
+
+- Add opt-in `FixedStepChunk` for a prescribed, translation-stable full-step/short-tail schedule. Existing solve endpoint conventions remain unchanged.
+
 ## 0.2.1
 
 ### Fixed
+
 - `dense=true` with an IMEX solver errored on the first accepted step, because the cache holds two stage families. It is now refused with an `ArgumentError` before stepping, in both `solve` and `solve!`.
 - Stdlib compat bounds are `"<0.0.1, 1"`, so the package resolves on Julia 1.6 to 1.8 as declared.
 
@@ -11,6 +35,7 @@
 Requires NSDEBase 0.3.1 (four-argument RHS form).
 
 ### Fixed (numerical)
+
 - Butcher tableaus: `Butcher7` coefficient `5/164` → `5/154`; `RadauIIA5`
   denominators `75` → `225` in two entries; `IMEXSSP3_332` implicit tableau
   rows and weights corrected, and its order stated as 2 (SSP3 names the
@@ -29,6 +54,7 @@ Requires NSDEBase 0.3.1 (four-argument RHS form).
 - Plots recipe skips the trailing empty rejection bin.
 
 ### Changed (breaking)
+
 - Implicit solvers (DIRK, IRK, IERK) accept a Newton stage on its residual,
   `‖r‖ ≤ εₐ + εᵣ·max(‖x‖, ‖f‖)`, with `hypot`-accumulated norms; non-finite
   iterates are rejected; exhausting `Mₙ` throws `NewtonFailure`. No
@@ -53,6 +79,7 @@ Requires NSDEBase 0.3.1 (four-argument RHS form).
   `SparseArrays.CHOLMOD`.
 
 ### Added
+
 - Exponential solvers `LawsonEuler`, `Lawson4`, `NorsettEuler`/`ETDEuler`/
   `ExponentialEuler`, `ETD2RK`, `ETD3RK`, `ETD4RK`, `Krogstad`,
   `HochbruckOstermann4`/`HochOst4`; `phifunctions`, `expphifunctions`.
@@ -63,13 +90,16 @@ Requires NSDEBase 0.3.1 (four-argument RHS form).
   oracle runs under `Pkg.test`.
 
 ### Removed
+
 - The unused `MakieCore` and `Pkg` dependencies.
 
 ### Known limits
+
 - A Newton failure inside an adaptive implicit step is thrown before the
   controller can reject the step; automatic retry is not implemented.
 
 ### Migration
+
 - Replace `ExRK`/`ExplicitExponentialRungeKuttaSolver` with `EXPRK`/
   `ExponentialRungeKuttaSolver`.
 - Code that relied on an implicit solver silently returning after `Mₙ`

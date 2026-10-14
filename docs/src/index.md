@@ -1,26 +1,28 @@
 # NSDERungeKutta.jl
 
-This is the documentation of [NSDERungeKutta.jl](https://github.com/giancarloantonucci/NSDERungeKutta.jl), a Julia package implementing Runge-Kutta methods: explicit, embedded adaptive explicit, diagonally implicit, fully implicit, implicit-explicit (IMEX) and exponential (EXPRK) families over one shared solving shell.
+Serial Runge–Kutta integration: explicit, implicit, IMEX, and exponential methods.
 
-## Installation
-
-From the Julia REPL,
-
-```
-]add https://github.com/giancarloantonucci/NSDERungeKutta.jl
-```
-
-## Getting started
+## First example
 
 ```julia
 using NSDERungeKutta
-
-problem = IVP((u, t) -> [u[2]; -sin(u[1])], [0.0, π/4], (0.0, 10.0))
-solution = solve(problem, RK4(h = 1e-2))              # fixed step
-solution = solve(problem, DormandPrince54(εᵣ = 1e-8)) # adaptive
-u_mid = solution(5.0)                                  # interpolate
+problem = IVP((u,t) -> [u[2], -sin(u[1])], [π/4, 0.0], (0.0, 2.0))
+solver = RK4(h=0.01)
+solution = solve(problem, solver)
+@assert solution.t[end] == 2.0
+solution(0.75)  # linear interpolation
 ```
 
-- The [Solvers](solvers.md) page lists the whole zoo with orders and explains adaptive stepping, dense output and the stability functions.
-- The [Examples](examples.md) page walks through the bundled test problems with plots.
-- The [API](api.md) holds the full reference.
+Start with the [guided tour](guide.md), then consult:
+
+- [Method catalogue and contracts](solvers.md)
+- [Additional examples](examples.md)
+- [API](api.md)
+
+## Environment
+
+These pages describe the current development checkout (Julia 1.10 or later).
+Use compatible versions of the NSDE packages in one project. For local
+checkouts, develop each package with `Pkg.develop(path="/path/to/package")`;
+`Pkg.status()` reports what will actually load. A registered release may expose
+an older API. Plotting examples additionally need Plots.

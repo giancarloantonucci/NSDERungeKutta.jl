@@ -5,18 +5,18 @@ module NSDERungeKutta
 using Reexport
 using ArrowMacros
 using LinearAlgebra
-import SparseArrays
+using SparseArrays: SparseArrays
 @reexport using NSDEBase
 using RecipesBase
 
 include("abstract.jl")
 include("utils.jl")
+include("stepsize.jl")
 include("solution.jl")
 include("solve.jl")
 
 include("tableau.jl")
 include("tableau_show.jl")
-include("stepsize.jl")
 include("newton.jl")
 include("adaptive.jl")
 
@@ -54,9 +54,10 @@ export AbstractRungeKuttaSolver
 export AbstractRungeKuttaSolution
 export AbstractRungeKuttaParameters
 
+export withstepsize
 export RungeKuttaSolution
 export ButcherTableau
-export NewtonParameters, NewtonFailure
+export NewtonParameters, StepFailure, NewtonFailure
 
 export ExplicitRungeKuttaSolver, ERK
 export Euler, ExplicitEuler
@@ -128,5 +129,7 @@ export butchertableau
 export stepsize
 export numtimesteps, numvariables, extract
 export stability_function
+
+include("schedule.jl")
 
 end

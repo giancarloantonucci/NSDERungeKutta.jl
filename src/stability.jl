@@ -22,7 +22,7 @@ function stability_function(z::Number, tableau::AbstractButcherTableau)
 
         for i in 1:s
             sum_Aj = zero(T)
-            @inbounds for j in 1:i-1
+            @inbounds for j in 1:(i - 1)
                 sum_Aj += A[i, j] * w[j]
             end
             w[i] = 1 + z * sum_Aj
@@ -36,7 +36,9 @@ function stability_function(z::Number, tableau::AbstractButcherTableau)
     return one(z) + z * dot(b, w)
 end
 
-stability_function(z::Number, solver::AbstractRungeKuttaSolver) = stability_function(z, solver.tableau)
+function stability_function(z::Number, solver::AbstractRungeKuttaSolver)
+    return stability_function(z, solver.tableau)
+end
 
 @doc raw"""
     stability_function(Z::AbstractMatrix, tableau::AbstractButcherTableau) :: AbstractMatrix
@@ -56,12 +58,14 @@ function stability_function(Z::AbstractMatrix, tableau::AbstractButcherTableau)
     LHS = I - kron(A, Z)
     RHS = kron(ones_s, Z)
     Y = LHS \ RHS
-    
+
     # R(Z) = I + (bᵀ ⊗ I) Y
     return I_d + kron(b', I_d) * Y
 end
 
-stability_function(Z::AbstractMatrix, solver::AbstractRungeKuttaSolver) = stability_function(Z, solver.tableau)
+function stability_function(Z::AbstractMatrix, solver::AbstractRungeKuttaSolver)
+    return stability_function(Z, solver.tableau)
+end
 
 """
     is_strictly_lower_triangular(A::AbstractMatrix) :: Bool
@@ -70,7 +74,7 @@ Returns `true` if all entries on and above the main diagonal of `A` are zero.
 """
 function is_strictly_lower_triangular(A::AbstractMatrix)
     for j in axes(A, 2), i in 1:j
-        if !iszero(A[i,j])
+        if !iszero(A[i, j])
             return false
         end
     end

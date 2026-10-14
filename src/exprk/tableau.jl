@@ -33,15 +33,17 @@ so that a step reads ``U_i = U_i u_n + h \sum_{j<i} A_{ij} k_j``,
 - `c :: AbstractVector{<:Real}` : quadrature nodes.
 - `κ :: Function` : the coefficient function described above.
 """
-struct ExponentialTableau{c_T<:AbstractVector{<:Real}, κ_T<:Function} <: AbstractRungeKuttaParameters
-    name :: Symbol
-    p :: Int
-    q :: Int
-    s :: Int
-    c :: c_T
-    κ :: κ_T
-    function ExponentialTableau(name::Symbol, p::Integer, q::Integer, s::Integer, c::c_T, κ::κ_T) where {c_T<:AbstractVector{<:Real}, κ_T<:Function}
+struct ExponentialTableau{c_T<:AbstractVector{<:Real},κ_T<:Function} <: AbstractRungeKuttaParameters
+    name::Symbol
+    p::Int
+    q::Int
+    s::Int
+    c::c_T
+    κ::κ_T
+    function ExponentialTableau(
+        name::Symbol, p::Integer, q::Integer, s::Integer, c::c_T, κ::κ_T
+    ) where {c_T<:AbstractVector{<:Real},κ_T<:Function}
         length(c) == s || throw(ArgumentError("`ExponentialTableau` needs `length(c) == s`."))
-        return new{c_T, κ_T}(name, Int(p), Int(q), Int(s), c, κ)
+        return new{c_T,κ_T}(name, Int(p), Int(q), Int(s), c, κ)
     end
 end

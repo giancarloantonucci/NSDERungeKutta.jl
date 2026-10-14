@@ -20,26 +20,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # The declared minimum (Project.toml `julia = "1.6"`, verified 1.6–1.13)
-        # spelled out so it does not move with the LTS label, plus current stable.
-        version: ['1.6', '1']
+        # Supported minimum and latest stable Julia.
+        version: ['1.10', '1']
         os: [ubuntu-latest, macos-latest, windows-latest]
-        # macos-latest is Apple Silicon and Julia 1.6 ships Intel-only macOS
-        # binaries: swap in the Intel runner for the minimum version.
-        exclude:
-          - version: '1.6'
-            os: macos-latest
-        include:
-          - version: '1.6'
-            os: macos-15-intel
     steps:
       - uses: actions/checkout@v6
       - uses: julia-actions/setup-julia@v3
         with:
           version: ${{ matrix.version }}
       - uses: julia-actions/cache@v3
-      # Every dependency, including the NSDE packages, resolves from General:
-      # the stock build/test actions are all that is needed.
+      # Register coordinated dependency releases before enabling release CI.
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
       - uses: julia-actions/julia-processcoverage@v1
@@ -50,3 +40,15 @@ jobs:
           files: lcov.info
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: false
+
+
+
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: julia-actions/setup-julia@v3
+        with:
+          version: '1.10'
+      - name: Check Julia formatting
+        run: julia -e 'using Pkg; Pkg.activate(mktempdir()); Pkg.add(PackageSpec(name="JuliaFormatter", version="2.14.0")); using JuliaFormatter; @assert format("."; overwrite=false)'

@@ -32,23 +32,59 @@ EXPRK(args...; kwargs...)
 
 returns the `solution` of a `problem` using `solver`.
 """
-struct ExponentialRungeKuttaSolver{tableau_T<:ExponentialTableau, stepsize_T<:AbstractStepSize, adaptive_T<:Union{AbstractAdaptiveParameters,Nothing}} <: AbstractRungeKuttaSolver
-    tableau :: tableau_T
-    stepsize :: stepsize_T
-    adaptive :: adaptive_T
-    function ExponentialRungeKuttaSolver(tableau::tableau_T, stepsize::stepsize_T, adaptive::adaptive_T) where {tableau_T<:ExponentialTableau, stepsize_T<:AbstractStepSize, adaptive_T<:Union{AbstractAdaptiveParameters,Nothing}}
+struct ExponentialRungeKuttaSolver{
+    tableau_T<:ExponentialTableau,
+    stepsize_T<:AbstractStepSize,
+    adaptive_T<:Union{AbstractAdaptiveParameters,Nothing},
+} <: AbstractRungeKuttaSolver
+    tableau::tableau_T
+    stepsize::stepsize_T
+    adaptive::adaptive_T
+    function ExponentialRungeKuttaSolver(
+        tableau::tableau_T, stepsize::stepsize_T, adaptive::adaptive_T
+    ) where {
+        tableau_T<:ExponentialTableau,
+        stepsize_T<:AbstractStepSize,
+        adaptive_T<:Union{AbstractAdaptiveParameters,Nothing},
+    }
         if !(adaptive isa Nothing)
-            throw(ArgumentError("Adaptive stepping is not available for exponential solvers: the φ-coefficients are precomputed at z = h⋅L (see the docstring)."))
+            throw(
+                ArgumentError(
+                    "Adaptive stepping is not available for exponential solvers: the φ-coefficients are precomputed at z = h⋅L (see the docstring).",
+                ),
+            )
         end
-        return new{tableau_T, stepsize_T, adaptive_T}(tableau, stepsize, adaptive)
+        return new{tableau_T,stepsize_T,adaptive_T}(tableau, stepsize, adaptive)
     end
 end
 
-ExponentialRungeKuttaSolver(tableau::ExponentialTableau, h::Real, adaptive::Union{AbstractAdaptiveParameters,Nothing}) = ExponentialRungeKuttaSolver(tableau, StepSize(h; save_stepsizes=false), adaptive)
-ExponentialRungeKuttaSolver(tableau::ExponentialTableau, stepsize::Union{AbstractStepSize,Real}) = ExponentialRungeKuttaSolver(tableau, stepsize, nothing)
-@doc (@doc ExponentialRungeKuttaSolver) EXPRK(args...; kwargs...) = ExponentialRungeKuttaSolver(args...; kwargs...)
+function ExponentialRungeKuttaSolver(
+    tableau::ExponentialTableau, h::Real, adaptive::Union{AbstractAdaptiveParameters,Nothing}
+)
+    return ExponentialRungeKuttaSolver(tableau, StepSize(h; save_stepsizes=false), adaptive)
+end
+function ExponentialRungeKuttaSolver(
+    tableau::ExponentialTableau, stepsize::Union{AbstractStepSize,Real}
+)
+    return ExponentialRungeKuttaSolver(tableau, stepsize, nothing)
+end
+@doc (@doc ExponentialRungeKuttaSolver) EXPRK(args...; kwargs...) =
+    ExponentialRungeKuttaSolver(args...; kwargs...)
 
 #----------------------------------- METHODS -----------------------------------
 
-(solver::ExponentialRungeKuttaSolver)(solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem; kwargs...) = solve!(solution, problem, solver; kwargs...)
-(solver::ExponentialRungeKuttaSolver)(problem::AbstractInitialValueProblem; kwargs...) = solve(problem, solver; kwargs...)
+function (solver::ExponentialRungeKuttaSolver)(
+    solution::AbstractRungeKuttaSolution, problem::AbstractInitialValueProblem; kwargs...
+)
+    return solve!(solution, problem, solver; kwargs...)
+end
+function (solver::ExponentialRungeKuttaSolver)(problem::AbstractInitialValueProblem; kwargs...)
+    return solve(problem, solver; kwargs...)
+end
+
+"Build changed step-size settings while retaining the method and tolerances."
+function NSDEBase.withstepsize(solver::ExponentialRungeKuttaSolver, h::Real)
+    return ExponentialRungeKuttaSolver(
+        solver.tableau, StepSize(h; save_stepsizes=solver.stepsize.save_stepsizes), solver.adaptive
+    )
+end

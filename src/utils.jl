@@ -1,27 +1,26 @@
 # NSDERungeKutta/src/utils.jl
 
-hairernorm(v) = sqrt(sum(abs2, v) / length(v))
-
 """
-    compensated_sum(sum::T, addend::T, error::Ref{T}) where T<:AbstractFloat
+    compensated_sum(sum::T, addend::Real, error::Ref{T}) where T<:AbstractFloat
 
 Adds `addend` to `sum` using the Kahan-Babuška-Neumaier algorithm to minimize 
-floating-point round-off error. The accumulated error is stored in the `error` Ref.
+floating-point round-off error. The step is converted to the problem time type `T`.
+The accumulated error is stored in the `error` Ref.
 """
-@inline function compensated_sum(sum::T, addend::T, error::Ref{T}) where T<:AbstractFloat
+@inline function compensated_sum(sum::T, addend::Real, error::Ref{T}) where {T<:AbstractFloat}
     # 1. Recover the previous compensation
-    v = addend + error[]
-    
+    v = T(addend) + error[]
+
     # 2. Perform the addition
     new_sum = sum + v
-    
+
     # 3. Update the error (Neumaier)
     if abs(sum) >= abs(v)
         error[] = (sum - new_sum) + v
     else
         error[] = (v - new_sum) + sum
     end
-    
+
     return new_sum
 end
 
@@ -62,21 +61,5 @@ spectral path.
 """
 directldiv!(M, v) = ldiv!(M, v)
 
-# Where the CHOLMOD bindings live depends on the Julia version. From 1.9 the
-# SuiteSparse solvers were merged into SparseArrays (`SparseArrays.CHOLMOD`).
-# On 1.6–1.8 they are the separate `SuiteSparse` stdlib; it is part of the
-# system image there and already loaded whenever SparseArrays is, so it can be
-# taken from `Base.loaded_modules` without declaring a dependency that would
-# not exist on newer Julias. If, on an old Julia, it is somehow not loaded,
-# the specialised method is simply not defined and a CHOLMOD factor falls
-# through to `ldiv!`, whose MethodError names the problem.
-@static if VERSION ≥ v"1.9"
-    directldiv!(M::SparseArrays.CHOLMOD.Factor, v) = copyto!(v, M \ v)
-else
-    let id = Base.PkgId(Base.UUID("4607b0f0-06f3-5cda-b6b1-a6196a1729e9"), "SuiteSparse")
-        if haskey(Base.loaded_modules, id)
-            SuiteSparse = Base.loaded_modules[id]
-            @eval directldiv!(M::$(SuiteSparse.CHOLMOD.Factor), v) = copyto!(v, M \ v)
-        end
-    end
-end
+# CHOLMOD factors provide an allocating solve rather than two-argument ldiv!.
+directldiv!(M::SparseArrays.CHOLMOD.Factor, v) = copyto!(v, M \ v)

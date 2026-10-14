@@ -78,7 +78,7 @@ expphifunctions(z::AbstractMatrix{<:Number}, K::Integer; d::Integer=13) = _expph
 function expphifunctions(z::Diagonal, K::Integer; d::Integer=13)
     per = [_expphicore(λ, K, d) for λ in z.diag]
     ez = Diagonal([per[i][1] for i in eachindex(per)])
-    φ = [Diagonal([per[i][2][k] for i in eachindex(per)]) for k = 1:K]
+    φ = [Diagonal([per[i][2][k] for i in eachindex(per)]) for k in 1:K]
     return ez, φ
 end
 
@@ -107,19 +107,19 @@ function _expphicore(z, K::Integer, d::Integer)
     N, D = padecoefficients(d, K)
     Z² = zs * zs
     φ = Vector{typeof(Z²)}(undef, K)
-    for k = 1:K
+    for k in 1:K
         φ[k] = _evalpoly_evenodd(zs, Z², Id, D[k]) \ _evalpoly_evenodd(zs, Z², Id, N[k])
     end
 
     # Undo the scaling: Wright's φ-squaring recurrences (EXPINT's square_pade).
     Ez = zs * φ[1] + Id
-    for _ = 1:s
+    for _ in 1:s
         φ² = similar(φ)
         φ²[1] = (Ez + Id) * φ[1] / 2
-        for k = 2:K
+        for k in 2:K
             v = φ[fld(k, 2)] * φ[cld(k, 2)]
             c = 2.0
-            for j = k:-1:(fld(k, 2) + 1 + (isodd(k) ? 1 : 0))
+            for j in k:-1:(fld(k, 2) + 1 + (isodd(k) ? 1 : 0))
                 v += c * φ[j]
                 c /= (k + 1 - j)
             end
@@ -144,7 +144,7 @@ end
 
 function _horner(Z², Id, c::AbstractVector{<:Real})
     p = c[end] * Id
-    for j = length(c)-1:-1:1
+    for j in (length(c) - 1):-1:1
         p = p * Z² + c[j] * Id
     end
     return p
@@ -166,29 +166,29 @@ function padecoefficients(d::Integer, K::Integer)
     d1 = n1
     N = Vector{Vector{Float64}}(undef, K)
     D = Vector{Vector{Float64}}(undef, K)
-    for ℓ = 1:K
+    for ℓ in 1:K
         # Numerator: nᵢ = Σⱼ₌₀..ᵢ aᵢⱼ with a_{i0} = n1 ⋅ ∏ₘ₌₁..ᵢ 1/(ℓ+m) and
         # ratio recurrence aᵢⱼ = a_{i,j-1} ⋅ (-(d+1-j)(ℓ+1+i-j)) / ((2d+ℓ+1-j)j).
         n = Vector{Float64}(undef, d + 1)
-        for i = 0:d
+        for i in 0:d
             a = n1
-            for m = 1:i
+            for m in 1:i
                 a /= (ℓ + m)
             end
             acc = a
-            for j = 1:i
+            for j in 1:i
                 a *= -(d + 1 - j) * (ℓ + 1 + i - j) / ((2d + ℓ + 1 - j) * j)
                 acc += a
             end
-            n[i+1] = acc
+            n[i + 1] = acc
         end
         # Denominator: dᵢ = d1 ⋅ ∏ₘ₌₁..ᵢ (-(d+1-m)) / (m(2d+ℓ+1-m)).
         dd = Vector{Float64}(undef, d + 1)
         a = d1
         dd[1] = a
-        for i = 1:d
+        for i in 1:d
             a *= -(d + 1 - i) / (i * (2d + ℓ + 1 - i))
-            dd[i+1] = a
+            dd[i + 1] = a
         end
         N[ℓ] = n
         D[ℓ] = dd

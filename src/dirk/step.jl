@@ -1,22 +1,27 @@
 # NSDERungeKutta/src/dirk/step.jl
 
-function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, rhs::NonlinearRightHandSide, solver::DiagonallyImplicitRungeKuttaSolver)
+function step!(
+    cache::DiagonallyImplicitRungeKuttaCache,
+    solution::AbstractRungeKuttaSolution,
+    rhs::NonlinearRightHandSide,
+    solver::DiagonallyImplicitRungeKuttaSolver,
+    h::Real=solver.stepsize.h,
+)
     @↓ n, e, v, Uᵢ, Δkᵢ, k, J = cache
     @↓ u, t = solution
     @↓ Df! = rhs
     @↓ tableau, stepsize, newton = solver
     @↓ A, b, c, s = tableau
-    @↓ h = stepsize
     @↓ Mₙ = newton
 
     # Stages:
     Df!(J, v, u[n], t[n])
-    for i = 1:s
+    for i in 1:s
         # Eᵢ = u[n] + h * sum(A[i,j] * k[j] for j = 1:i-1)
         zero!(v)
-        for j = 1:i-1
-            if A[i,j] ≠ 0.0
-                @. v += A[i,j] * k[j]
+        for j in 1:(i - 1)
+            if A[i, j] ≠ 0.0
+                @. v += A[i, j] * k[j]
             end
         end
         @. v = u[n] + h * v
@@ -24,7 +29,7 @@ function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRunge
         # Simplified Newton:
         # DFᵢ = I - h * A[i,i] * J
         zero!(k[i])
-        DFᵢ = factorize(I - h * A[i,i] * J)
+        DFᵢ = factorize(I - h * A[i, i] * J)
         # Residual-checked simplified Newton: evaluate the stage equation at
         # the current iterate, accept on a small RESIDUAL, otherwise update.
         # `Mₙ` bounds the number of updates; the residual is always evaluated
@@ -33,9 +38,9 @@ function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRunge
         converged = false
         updates = 0
         rnorm = tol = zero(float(h))
-        for l = 0:Mₙ
+        for l in 0:Mₙ
             # Uᵢ = Eᵢ + h * A[i,i] * k[i]
-            @. Uᵢ = v + h * A[i,i] * k[i]
+            @. Uᵢ = v + h * A[i, i] * k[i]
             # rᵢ = f(t[n] + h * c[i], Uᵢ) - k[i]
             rhs(Δkᵢ, Uᵢ, t[n] + h * c[i])
             fnorm = norm(Δkᵢ)
@@ -61,38 +66,43 @@ function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRunge
     # Step:
     # u[n+1] = u[n] + h * sum(b[i] * k[i] for i = 1:s)
     zero!(v)
-    for i = 1:s
+    for i in 1:s
         if b[i] ≠ 0.0
             @. v += b[i] * k[i]
         end
     end
-    @. u[n+1] = u[n] + h * v
+    @. u[n + 1] = u[n] + h * v
     # t[n+1] = t[n] + h
-    t[n+1] = compensated_sum(t[n], h, e)
+    t[n + 1] = compensated_sum(t[n], h, e)
 
-    return u[n+1], t[n+1]
+    return u[n + 1], t[n + 1]
 end
 
-function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRungeKuttaSolution, rhs::LinearRightHandSide, solver::DiagonallyImplicitRungeKuttaSolver)
+function step!(
+    cache::DiagonallyImplicitRungeKuttaCache,
+    solution::AbstractRungeKuttaSolution,
+    rhs::LinearRightHandSide,
+    solver::DiagonallyImplicitRungeKuttaSolver,
+    h::Real=solver.stepsize.h,
+)
     @↓ n, v, Δkᵢ, k, e = cache
     @↓ u, t = solution
     @↓ L = rhs
     @↓ tableau, stepsize = solver
     @↓ A, b, c, s = tableau
-    @↓ h = stepsize
 
     # Stages:
-    for i = 1:s
+    for i in 1:s
         # Eᵢ = u[n] + h * sum(A[i,j] * k[j] for j = 1:i-1)
         zero!(v)
-        for j in 1:i-1
+        for j in 1:(i - 1)
             if A[i, j] ≠ 0.0
-                @. v += A[i,j] * k[j]
+                @. v += A[i, j] * k[j]
             end
         end
         @. v = u[n] + h * v
         # DFᵢ = I - h * A[i,i] * L
-        DFᵢ = factorize(I - h * A[i,i] * L)
+        DFᵢ = factorize(I - h * A[i, i] * L)
         # Fᵢ = L * Eᵢ + g(t[n] + h * c[i])
         rhs(k[i], Δkᵢ, v, t[n] + h * c[i]) # 4-arg form: `Δkᵢ` is idle here and serves as scratch
         # k[i] = DFᵢ \ Fᵢ
@@ -102,14 +112,14 @@ function step!(cache::DiagonallyImplicitRungeKuttaCache, solution::AbstractRunge
     # Step:
     # u[n+1] = u[n] + h * sum(b[i] * k[i] for i = 1:s)
     zero!(v)
-    for i = 1:s
+    for i in 1:s
         if b[i] ≠ 0.0
             @. v += b[i] * k[i]
         end
     end
-    @. u[n+1] = u[n] + h * v
+    @. u[n + 1] = u[n] + h * v
     # t[n+1] = t[n] + h
-    t[n+1] = compensated_sum(t[n], h, e)
+    t[n + 1] = compensated_sum(t[n], h, e)
 
-    return u[n+1], t[n+1]
+    return u[n + 1], t[n + 1]
 end

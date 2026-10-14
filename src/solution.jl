@@ -27,31 +27,51 @@ RungeKuttaSolution(problem, solver; dense=false)
 - [`numvariables`](@ref) : get the number of variables
 """
 struct RungeKuttaSolution{
-            u_T <: AbstractVector{<:AbstractVector{<:Number}},
-            t_T <: AbstractVector{<:Real},
-            k_T <: Union{AbstractVector{<:AbstractVector{<:AbstractVector{<:Number}}}, Nothing}
-        } <: AbstractRungeKuttaSolution
-    u :: u_T
-    t :: t_T
-    k :: k_T
+    u_T<:AbstractVector{<:AbstractVector{<:Number}},
+    t_T<:AbstractVector{<:Real},
+    k_T<:Union{AbstractVector{<:AbstractVector{<:AbstractVector{<:Number}}},Nothing},
+    history_T<:Union{Nothing,StepSizes},
+} <: AbstractRungeKuttaSolution
+    u::u_T
+    t::t_T
+    k::k_T
+    stepsizes::history_T
 end
 
-# IMEX methods have two stage families. The current dense-history container
-# stores only one, so reject the request before allocating or advancing a step.
-# Keep this check shared with solve! for callers reusing an existing solution.
+RungeKuttaSolution(u, t, k) = RungeKuttaSolution(u, t, k, nothing)
+
+# Require a continuous extension before storing stages. The check is shared
+# with solve! so reused solutions cannot silently fall back to linear output.
 function check_dense_support(solver::AbstractRungeKuttaSolver, dense::Bool)
-    if dense && solver isa ImplicitExplicitRungeKuttaSolver
-        throw(ArgumentError("Dense stage output is not implemented for IMEX solvers: both implicit and explicit stage histories are required. Use dense=false; the returned solution still supports linear interpolation."))
+    if dense && !(
+        hasproperty(solver, :tableau) &&
+        solver.tableau isa ButcherTableau &&
+        solver.tableau.b_dense !== nothing
+    )
+        throw(
+            ArgumentError(
+                "dense=true requires a continuous extension (Euler, BogackiShampine or DormandPrince54); use dense=false for linear interpolation",
+            ),
+        )
     end
     return nothing
 end
 
-function RungeKuttaSolution(problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; dense::Bool=false)
+function RungeKuttaSolution(
+    problem::AbstractInitialValueProblem, solver::AbstractRungeKuttaSolver; dense::Bool=false
+)
     check_dense_support(solver, dense)
     @↓ u0, (t0, tN) ← tspan = problem
     @↓ h = solver.stepsize
-    N = ceil(Int, (tN - t0) / h) + 1 # e.g. tspan = (0, 1), h = 0.3 -> t = [0.0, 0.3, 0.6, 0.9, 1.2]
-    u = [similar(u0) for _ = 1:N]
+    # An adaptive starting step is not a prediction of the eventual grid size.
+    # Storage grows on demand as steps are accepted.
+    N = if solver.adaptive === nothing
+        plan = StepSchedule(tN - t0, h)
+        plan.full + (plan.tail > 0) + 1
+    else
+        2
+    end
+    u = [similar(u0) for _ in 1:N]
     copyto!(u[1], u0)
     t = Vector{typeof(t0)}(undef, N)
     t[1] = t0
@@ -60,9 +80,11 @@ function RungeKuttaSolution(problem::AbstractInitialValueProblem, solver::Abstra
         # Outer: time, Middle: stages, Inner: state
         k = Vector{Vector{typeof(u0)}}()
         sizehint!(k, N)
-        return RungeKuttaSolution(u, t, k)
+        return RungeKuttaSolution(u, t, k, solver.stepsize.save_stepsizes ? StepSizes(h) : nothing)
     else
-        return RungeKuttaSolution(u, t, nothing)
+        return RungeKuttaSolution(
+            u, t, nothing, solver.stepsize.save_stepsizes ? StepSizes(h) : nothing
+        )
     end
 end
 
@@ -85,7 +107,7 @@ function (solution::RungeKuttaSolution)(tₚ::Real)
     # Parareal hot loop (chunk boundary values, every sweep), where a linear
     # scan over a 10³-step chunk multiplies through steps × s × N × K × M.
     n = searchsortedlast(t, tₚ) # t[n] ≤ tₚ < t[n+1]
-    return linearspline(tₚ, t[n], t[n+1], u[n], u[n+1])
+    return linearspline(tₚ, t[n], t[n + 1], u[n], u[n + 1])
 end
 
 """
@@ -102,8 +124,8 @@ function (solution::RungeKuttaSolution)(tₚ::Real, f::Function)
         return u[N]
     end
     n = searchsortedlast(t, tₚ) # t[n] ≤ tₚ < t[n+1]
-    duₙ, duₙ₊₁ = f(u[n], t[n]), f(u[n+1], t[n+1])
-    return hermitecubicspline(tₚ, t[n], t[n+1], u[n], u[n+1], duₙ, duₙ₊₁)
+    duₙ, duₙ₊₁ = f(u[n], t[n]), f(u[n + 1], t[n + 1])
+    return hermitecubicspline(tₚ, t[n], t[n + 1], u[n], u[n + 1], duₙ, duₙ₊₁)
 end
 
 """
@@ -113,16 +135,16 @@ Evaluates the dense output solution at `tₚ` using the stored stages and tablea
 """
 function (solution::RungeKuttaSolution)(tₚ::Real, tableau::AbstractButcherTableau)
     @↓ u, t, k = solution
-    
+
     if k isa Nothing || tableau.b_dense isa Nothing
         # Fallback to linear spline if data is missing
-        return solution(tₚ) 
+        return solution(tₚ)
     end
 
     N = length(t)
     # Find index n such that t[n] <= tₚ <= t[n+1]
     n = searchsortedlast(t, tₚ)
-    
+
     if n == N
         return u[N]
     end
@@ -132,34 +154,34 @@ function (solution::RungeKuttaSolution)(tₚ::Real, tableau::AbstractButcherTabl
     end
 
     # Calculation for dense output
-    dt = t[n+1] - t[n]
+    dt = t[n + 1] - t[n]
     θ = (tₚ - t[n]) / dt
-    
+
     # b(θ) calculation
     # b_dense is a matrix where column j contains coeffs for stage j
     # b_j(θ) = b_dense[1,j]*θ + b_dense[2,j]*θ^2 + ...
-    
+
     uₚ = copy(u[n]) # Start with u_n
-    
+
     # Perform the summation: u(θ) = u_n + h * Σ b_j(θ) * k_j
     # Note: k[n] contains the stages for step n
-    
+
     stages = k[n]
     s = length(stages)
-    
-    for j = 1:s
+
+    for j in 1:s
         # Evaluate polynomial for weight j
         # coeffs = tableau.b_dense[:, j]
         bj_θ = 0.0
         θ_pow = θ
         for p in axes(tableau.b_dense, 1)
-             bj_θ += tableau.b_dense[p, j] * θ_pow
-             θ_pow *= θ
+            bj_θ += tableau.b_dense[p, j] * θ_pow
+            θ_pow *= θ
         end
-        
+
         @. uₚ += dt * bj_θ * stages[j]
     end
-    
+
     return uₚ
 end
 
@@ -198,14 +220,18 @@ Base.size(solution::RungeKuttaSolution) = (numvariables(solution), numtimesteps(
 
 returns the `i`-th variable of `solution`. `i = 0` returns `t`.
 """
-extract(solution::RungeKuttaSolution, i::Integer) = i == 0 ? solution.t : [solution.u[n][i] for n = 1:length(solution)]
+function extract(solution::RungeKuttaSolution, i::Integer)
+    return i == 0 ? solution.t : [solution.u[n][i] for n in 1:length(solution)]
+end
 
 """
     extract(solution::RungeKuttaSolution, v::AbstractVector) :: RungeKuttaSolution
 
 returns the variables of `solution` indicated by the indices `v`.
 """
-extract(solution::RungeKuttaSolution, v::AbstractVector) = tuple([extract(solution, i) for i in v]...)
+function extract(solution::RungeKuttaSolution, v::AbstractVector)
+    return tuple([extract(solution, i) for i in v]...)
+end
 
 """
     extract(solution::RungeKuttaSolution) :: RungeKuttaSolution
@@ -243,7 +269,7 @@ at the contiguous nodes `v`, together with the stage history of the
 """
 function Base.getindex(solution::RungeKuttaSolution, v::AbstractUnitRange)
     @↓ u, t, k = solution
-    new_k = (k isa Nothing || isempty(v)) ? nothing : k[first(v):last(v)-1]
+    new_k = (k isa Nothing || isempty(v)) ? nothing : k[first(v):(last(v) - 1)]
     return RungeKuttaSolution(u[v], t[v], new_k)
 end
 
@@ -259,9 +285,13 @@ so the request is refused with an `ArgumentError`; slice `solution.u` and
 function Base.getindex(solution::RungeKuttaSolution, v::AbstractVector)
     @↓ u, t, k = solution
     if !(k isa Nothing) && !(isempty(v) || v == first(v):last(v))
-        throw(ArgumentError("cannot slice a dense `RungeKuttaSolution` at non-contiguous nodes: the stored stages belong to adjacent intervals only. Use a range, or index `solution.u`/`solution.t` directly."))
+        throw(
+            ArgumentError(
+                "cannot slice a dense `RungeKuttaSolution` at non-contiguous nodes: the stored stages belong to adjacent intervals only. Use a range, or index `solution.u`/`solution.t` directly.",
+            ),
+        )
     end
-    new_k = (k isa Nothing || isempty(v)) ? nothing : k[first(v):last(v)-1]
+    new_k = (k isa Nothing || isempty(v)) ? nothing : k[first(v):(last(v) - 1)]
     return RungeKuttaSolution(u[v], t[v], new_k)
 end
 
@@ -276,8 +306,13 @@ end
 # and `k` directly and take responsibility for their consistency. Non-dense
 # solutions carry no such record and accept any node write.
 
-_dense_partial_write() = throw(ArgumentError(
-    "cannot write single nodes into a dense `RungeKuttaSolution`: the stored stages of the adjoining intervals would no longer match the nodes. Write the whole solution (all nodes and all interval stages), or edit `solution.u`, `solution.t` and `solution.k` directly."))
+function _dense_partial_write()
+    return throw(
+        ArgumentError(
+            "cannot write single nodes into a dense `RungeKuttaSolution`: the stored stages of the adjoining intervals would no longer match the nodes. Write the whole solution (all nodes and all interval stages), or edit `solution.u`, `solution.t` and `solution.k` directly.",
+        ),
+    )
+end
 
 _contiguous(v::AbstractVector) = isempty(v) || v == first(v):last(v)
 
@@ -290,9 +325,10 @@ solution refuses the write (see the note on partial writes above).
 function Base.setindex!(solution::RungeKuttaSolution, values::Tuple, i::Integer)
     @↓ u, t, k = solution
     k isa Nothing || _dense_partial_write()
-    length(values) == 2 || throw(ArgumentError("expected a `(u, t)` pair, got a $(length(values))-tuple."))
+    length(values) == 2 ||
+        throw(ArgumentError("expected a `(u, t)` pair, got a $(length(values))-tuple."))
     u_new, t_new = values
-    u[i] = u_new
+    axes(u[i]) == axes(u_new) ? copyto!(u[i], u_new) : (u[i] = copy(u_new))
     t[i] = t_new
     return solution
 end
@@ -307,8 +343,9 @@ partial writes above).
 function Base.setindex!(solution::RungeKuttaSolution, values::RungeKuttaSolution, i::Integer)
     @↓ u, t, k = solution
     k isa Nothing || _dense_partial_write()
-    length(values) == 1 || throw(DimensionMismatch("expected a single-node slice, got $(length(values)) nodes."))
-    u[i] = values.u[1]
+    length(values) == 1 ||
+        throw(DimensionMismatch("expected a single-node slice, got $(length(values)) nodes."))
+    axes(u[i]) == axes(values.u[1]) ? copyto!(u[i], values.u[1]) : (u[i] = copy(values.u[1]))
     t[i] = values.t[1]
     return solution
 end
@@ -333,18 +370,25 @@ function Base.setindex!(solution::RungeKuttaSolution, values::RungeKuttaSolution
     if !(k isa Nothing)
         (_contiguous(v) && !isempty(v) && first(v) == firstindex(t) && last(v) == lastindex(t)) ||
             _dense_partial_write()
-        k_new isa Nothing && throw(ArgumentError("a dense solution can only be overwritten by a dense one carrying its interval stages."))
-        length(k_new) == length(v) - 1 ||
-            throw(DimensionMismatch("expected $(length(v) - 1) stage entries for $(length(v)) nodes, got $(length(k_new))."))
+        k_new isa Nothing && throw(
+            ArgumentError(
+                "a dense solution can only be overwritten by a dense one carrying its interval stages.",
+            ),
+        )
+        length(k_new) == length(v) - 1 || throw(
+            DimensionMismatch(
+                "expected $(length(v) - 1) stage entries for $(length(v)) nodes, got $(length(k_new)).",
+            ),
+        )
     end
     for (j, i) in enumerate(v)
-        u[i] = u_new[j]
+        u[i] = copy(u_new[j])
         t[i] = t_new[j]
     end
     if !(k isa Nothing)
-        intervals = first(v):last(v)-1 # computed OUTSIDE any broadcast: `@.` would dot `first`/`last`
+        intervals = first(v):(last(v) - 1) # computed OUTSIDE any broadcast: `@.` would dot `first`/`last`
         for (j, i) in enumerate(intervals)
-            k[i] = k_new[j]
+            k[i] = copy.(k_new[j])
         end
     end
     return solution
@@ -363,4 +407,3 @@ Base.firstindex(solution::RungeKuttaSolution) = firstindex(solution.t)
 returns the last index of `solution`.
 """
 Base.lastindex(solution::RungeKuttaSolution) = lastindex(solution.t)
-

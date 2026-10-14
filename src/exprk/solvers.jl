@@ -12,12 +12,12 @@
 # their true e^{hλ} instead of a 1e-16 floor.
 
 """
-    LawsonEuler(; h::Real=0.0) :: ExponentialRungeKuttaSolver
+    LawsonEuler(; h::Real) :: ExponentialRungeKuttaSolver
 
 returns an [`ExponentialRungeKuttaSolver`](@ref) for the Lawson–Euler method
 (Lawson 1967), classical order 1, stiff order 1.
 """
-function LawsonEuler(; h::Real=0.0)
+function LawsonEuler(; h::Real)
     κ = function (z)
         ez, (φ₁,) = expphifunctions(z, 1)
         Id = one(z)
@@ -32,7 +32,7 @@ function LawsonEuler(; h::Real=0.0)
 end
 
 """
-    NorsettEuler(; h::Real=0.0) :: ExponentialRungeKuttaSolver
+    NorsettEuler(; h::Real) :: ExponentialRungeKuttaSolver
     ETDEuler(args...; kwargs...) :: ExponentialRungeKuttaSolver
     ExponentialEuler(args...; kwargs...) :: ExponentialRungeKuttaSolver
 
@@ -41,7 +41,7 @@ returns an [`ExponentialRungeKuttaSolver`](@ref) for the Nørsett–Euler method
 classical order 1, stiff order 1. Exact for constant non-stiff parts at any
 step size, since `b₁ = φ₁` integrates a constant integrand exactly.
 """
-function NorsettEuler(; h::Real=0.0)
+function NorsettEuler(; h::Real)
     κ = function (z)
         ez, (φ₁,) = expphifunctions(z, 1)
         Id = one(z)
@@ -58,7 +58,7 @@ end
 @doc (@doc NorsettEuler) ExponentialEuler(args...; kwargs...) = NorsettEuler(args...; kwargs...)
 
 """
-    ETD2RK(; h::Real=0.0) :: ExponentialRungeKuttaSolver
+    ETD2RK(; h::Real) :: ExponentialRungeKuttaSolver
 
 returns an [`ExponentialRungeKuttaSolver`](@ref) for the 2-stage ETD2RK
 method (Cox & Matthews 2002, eq. 26), classical order 2, stiff order 2.
@@ -75,13 +75,13 @@ method (Cox & Matthews 2002, eq. 26), classical order 2, stiff order 2.
     never uses it, a leftover of the midpoint form. This port implements the
     endpoint variant with the CORRECT weights, matching Cox & Matthews.
 """
-function ETD2RK(; h::Real=0.0)
+function ETD2RK(; h::Real)
     κ = function (z)
         ez, (φ₁, φ₂) = expphifunctions(z, 2)
         Id = one(z)
         U = [Id, ez]
         A = Matrix{Any}(nothing, 2, 2)
-        A[2,1] = φ₁
+        A[2, 1] = φ₁
         B = Vector{Any}(nothing, 2)
         B[1] = φ₁ - φ₂ # NOT EXPINT's φ₁ - 2φ₂; see the docstring
         B[2] = φ₂
@@ -92,21 +92,21 @@ function ETD2RK(; h::Real=0.0)
 end
 
 """
-    ETD3RK(; h::Real=0.0) :: ExponentialRungeKuttaSolver
+    ETD3RK(; h::Real) :: ExponentialRungeKuttaSolver
 
 returns an [`ExponentialRungeKuttaSolver`](@ref) for the 3-stage ETD3RK
 method, classical order 3, stiff order 2.
 """
-function ETD3RK(; h::Real=0.0)
+function ETD3RK(; h::Real)
     κ = function (z)
         ez, (φ₁, φ₂, φ₃) = expphifunctions(z, 3)
         ez2, (φ₁₂,) = expphifunctions(z / 2, 1)
         Id = one(z)
         U = [Id, ez2, ez]
         A = Matrix{Any}(nothing, 3, 3)
-        A[2,1] = φ₁₂ / 2
-        A[3,1] = -φ₁
-        A[3,2] = 2φ₁
+        A[2, 1] = φ₁₂ / 2
+        A[3, 1] = -φ₁
+        A[3, 2] = 2φ₁
         B = Vector{Any}(nothing, 3)
         B[1] = φ₁ - 3φ₂ + 4φ₃
         B[2] = 4φ₂ - 8φ₃
@@ -118,7 +118,7 @@ function ETD3RK(; h::Real=0.0)
 end
 
 """
-    ETD4RK(; h::Real=0.0) :: ExponentialRungeKuttaSolver
+    ETD4RK(; h::Real) :: ExponentialRungeKuttaSolver
     ETDRK4(args...; kwargs...) :: ExponentialRungeKuttaSolver
 
 returns an [`ExponentialRungeKuttaSolver`](@ref) for the classic 4-stage
@@ -126,17 +126,17 @@ Cox–Matthews method (Cox & Matthews 2002), classical order 4, stiff order 2
 (the well-documented order reduction on stiff semilinear problems; see
 Krogstad 2005 and [`HochbruckOstermann4`](@ref) for stiff orders 3 and 4).
 """
-function ETD4RK(; h::Real=0.0)
+function ETD4RK(; h::Real)
     κ = function (z)
         ez, (φ₁, φ₂, φ₃) = expphifunctions(z, 3)
         ez2, (φ₁₂,) = expphifunctions(z / 2, 1)
         Id = one(z)
         U = [Id, ez2, ez2, ez]
         A = Matrix{Any}(nothing, 4, 4)
-        A[2,1] = φ₁₂ / 2
-        A[3,2] = φ₁₂ / 2
-        A[4,1] = φ₁₂ * φ₁₂ * z / 4
-        A[4,3] = φ₁₂
+        A[2, 1] = φ₁₂ / 2
+        A[3, 2] = φ₁₂ / 2
+        A[4, 1] = φ₁₂ * φ₁₂ * z / 4
+        A[4, 3] = φ₁₂
         B = Vector{Any}(nothing, 4)
         B[1] = φ₁ - 3φ₂ + 4φ₃
         B[2] = 2φ₂ - 4φ₃
@@ -150,21 +150,21 @@ end
 @doc (@doc ETD4RK) ETDRK4(args...; kwargs...) = ETD4RK(args...; kwargs...)
 
 """
-    Lawson4(; h::Real=0.0) :: ExponentialRungeKuttaSolver
+    Lawson4(; h::Real) :: ExponentialRungeKuttaSolver
 
 returns an [`ExponentialRungeKuttaSolver`](@ref) for the classical
 Runge–Kutta–Lawson method (Lawson 1967), classical order 4, stiff order 1.
 """
-function Lawson4(; h::Real=0.0)
+function Lawson4(; h::Real)
     κ = function (z)
         ez, (φ₁,) = expphifunctions(z, 1)
         ez2, (φ₁₂,) = expphifunctions(z / 2, 1)
         Id = one(z)
         U = [Id, ez2, ez2, ez]
         A = Matrix{Any}(nothing, 4, 4)
-        A[2,1] = ez2 / 2
-        A[3,2] = Id / 2
-        A[4,3] = ez2
+        A[2, 1] = ez2 / 2
+        A[3, 2] = Id / 2
+        A[4, 3] = ez2
         B = Vector{Any}(nothing, 4)
         B[1] = ez / 6
         B[2] = ez2 / 3
@@ -177,23 +177,23 @@ function Lawson4(; h::Real=0.0)
 end
 
 """
-    Krogstad(; h::Real=0.0) :: ExponentialRungeKuttaSolver
+    Krogstad(; h::Real) :: ExponentialRungeKuttaSolver
 
 returns an [`ExponentialRungeKuttaSolver`](@ref) for Krogstad's 4-stage ETD
 method (Krogstad 2005), classical order 4, stiff order 3.
 """
-function Krogstad(; h::Real=0.0)
+function Krogstad(; h::Real)
     κ = function (z)
         ez, (φ₁, φ₂, φ₃) = expphifunctions(z, 3)
         ez2, (φ₁₂, φ₂₂) = expphifunctions(z / 2, 2)
         Id = one(z)
         U = [Id, ez2, ez2, ez]
         A = Matrix{Any}(nothing, 4, 4)
-        A[2,1] = φ₁₂ / 2
-        A[3,1] = φ₁₂ / 2 - φ₂₂
-        A[3,2] = φ₂₂
-        A[4,1] = φ₁ - 2φ₂
-        A[4,3] = 2φ₂
+        A[2, 1] = φ₁₂ / 2
+        A[3, 1] = φ₁₂ / 2 - φ₂₂
+        A[3, 2] = φ₂₂
+        A[4, 1] = φ₁ - 2φ₂
+        A[4, 3] = 2φ₂
         B = Vector{Any}(nothing, 4)
         B[1] = φ₁ - 3φ₂ + 4φ₃
         B[2] = 2φ₂ - 4φ₃
@@ -206,7 +206,7 @@ function Krogstad(; h::Real=0.0)
 end
 
 """
-    HochbruckOstermann4(; h::Real=0.0) :: ExponentialRungeKuttaSolver
+    HochbruckOstermann4(; h::Real) :: ExponentialRungeKuttaSolver
     HochOst4(args...; kwargs...) :: ExponentialRungeKuttaSolver
 
 returns an [`ExponentialRungeKuttaSolver`](@ref) for the 5-stage exponential
@@ -214,7 +214,7 @@ Runge-Kutta method of Hochbruck & Ostermann (2005, p. 19), classical order 4
 and STIFF order 4 — the method of choice for stiff semilinear PDEs among the
 schemes implemented here.
 """
-function HochbruckOstermann4(; h::Real=0.0)
+function HochbruckOstermann4(; h::Real)
     κ = function (z)
         ez, (φ₁, φ₂, φ₃) = expphifunctions(z, 3)
         ez2, (φ₁₂, φ₂₂, φ₃₂) = expphifunctions(z / 2, 3)
@@ -223,16 +223,16 @@ function HochbruckOstermann4(; h::Real=0.0)
         a₅₄ = φ₂₂ / 4 - a₅₂
         U = [Id, ez2, ez2, ez, ez2]
         A = Matrix{Any}(nothing, 5, 5)
-        A[2,1] = φ₁₂ / 2
-        A[3,1] = φ₁₂ / 2 - φ₂₂
-        A[3,2] = φ₂₂
-        A[4,1] = φ₁ - 2φ₂
-        A[4,2] = φ₂
-        A[4,3] = φ₂
-        A[5,1] = φ₁₂ / 2 - 2a₅₂ - a₅₄
-        A[5,2] = a₅₂
-        A[5,3] = a₅₂
-        A[5,4] = a₅₄
+        A[2, 1] = φ₁₂ / 2
+        A[3, 1] = φ₁₂ / 2 - φ₂₂
+        A[3, 2] = φ₂₂
+        A[4, 1] = φ₁ - 2φ₂
+        A[4, 2] = φ₂
+        A[4, 3] = φ₂
+        A[5, 1] = φ₁₂ / 2 - 2a₅₂ - a₅₄
+        A[5, 2] = a₅₂
+        A[5, 3] = a₅₂
+        A[5, 4] = a₅₄
         B = Vector{Any}(nothing, 5)
         B[1] = φ₁ - 3φ₂ + 4φ₃
         B[4] = -φ₂ + 4φ₃
@@ -242,4 +242,5 @@ function HochbruckOstermann4(; h::Real=0.0)
     tableau = ExponentialTableau(:HochbruckOstermann4, 4, 4, 5, [0.0, 0.5, 0.5, 1.0, 0.5], κ)
     return EXPRK(tableau, h)
 end
-@doc (@doc HochbruckOstermann4) HochOst4(args...; kwargs...) = HochbruckOstermann4(args...; kwargs...)
+@doc (@doc HochbruckOstermann4) HochOst4(args...; kwargs...) =
+    HochbruckOstermann4(args...; kwargs...)

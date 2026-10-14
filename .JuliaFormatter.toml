@@ -1,0 +1,6 @@
+style = "blue"
+indent = 4
+margin = 100
+always_for_in = true
+remove_extra_newlines = true
+format_markdown = false
