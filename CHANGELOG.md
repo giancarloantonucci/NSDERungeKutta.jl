@@ -52,6 +52,8 @@ Requires NSDEBase 0.4.
   and unsupported stability inputs are handled correctly.
 - `solution(t, f)` accepts the problem's right-hand side, as documented, not
   only a function.
+- The documented constructor `ButcherTableau(A, b, c, s, p, d, q)` exists; only
+  the five-argument and matrix forms did.
 
 ## 0.2.2
 

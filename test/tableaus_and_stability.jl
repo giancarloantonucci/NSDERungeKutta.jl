@@ -105,3 +105,21 @@ end
         @test err isa ArgumentError && occursin("Got Int64 instead", err.msg)
     end
 end
+
+@testset "ButcherTableau constructors" begin
+    # The documented positional forms, with and without an embedded pair, build
+    # the same tableaus as the matrix form.
+    embedded = HeunEuler(h=0.1).tableau
+    A, b, c, d = embedded.A, embedded.b, embedded.c, embedded.d
+    @test ButcherTableau(A, b, c, 2, 2, d, 1).d == d
+    @test ButcherTableau(A, b, c, 2, 2, d, 1).q == 1
+    plain = ButcherTableau(A, b, c, 2, 2)
+    @test plain.d === nothing && plain.q === nothing
+    # An adaptive solver built on the positional form matches the named one.
+    problem = Logistic(0.3, (0.0, 1.0))
+    named = solve(problem, HeunEuler(h=0.1, εᵣ=1e-6))
+    custom = ERK(
+        ButcherTableau(A, b, c, 2, 2, d, 1), 0.1, NSDERungeKutta.AdaptiveParameters(; εᵣ=1e-6)
+    )
+    @test solve(problem, custom).u == named.u
+end

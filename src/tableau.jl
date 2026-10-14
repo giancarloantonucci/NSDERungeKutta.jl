@@ -13,8 +13,8 @@ A composite type for the Butcher tableau of a Runge-Kutta solver:
 
 # Constructors
 ```julia
-ButcherTableau(A, b, c, s, p[, d, q])
-ButcherTableau(tableau::AbstractMatrix{<:Real})
+ButcherTableau(A, b, c, s, p[, d, q]; b_dense=nothing)
+ButcherTableau(tableau::AbstractMatrix{<:Real}; b_dense=nothing)
 ```
 
 ## Arguments
@@ -25,7 +25,8 @@ ButcherTableau(tableau::AbstractMatrix{<:Real})
 - `p :: Integer` : order of accuracy
 - `d :: AbstractVector{<:Real}` : embedding's vector of weights (can be `nothing`)
 - `q :: Integer` : embedding's order of accuracy (can be `nothing`)
-- `b_dense :: AbstractMatrix{<:Real}` : matrix where col j is powers of theta for stage j
+- `b_dense :: AbstractMatrix{<:Real}` : continuous-extension weights; row `i` holds the
+  coefficients of `θ^i`, column `j` belongs to stage `j` (can be `nothing`)
 
 # Functions
 [`butchertableau`](@ref) : return matrix of parameters.
@@ -59,6 +60,19 @@ function ButcherTableau(
     b_dense=nothing,
 ) where {ℝ<:Real}
     return ButcherTableau(A, b, c, s, p, nothing, nothing, b_dense)
+end
+
+function ButcherTableau(
+    A::AbstractMatrix{ℝ},
+    b::AbstractVector{ℝ},
+    c::AbstractVector{ℝ},
+    s::Integer,
+    p::Integer,
+    d::AbstractVector{ℝ},
+    q::Integer;
+    b_dense=nothing,
+) where {ℝ<:Real}
+    return ButcherTableau(A, b, c, s, p, d, q, b_dense)
 end
 
 function ButcherTableau(tableau::AbstractMatrix{<:Real}; b_dense=nothing)
