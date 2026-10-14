@@ -54,6 +54,9 @@ Requires NSDEBase 0.4.
   only a function.
 - The documented constructor `ButcherTableau(A, b, c, s, p, d, q)` exists; only
   the five-argument and matrix forms did.
+- DIRK and IRK solvers given a split problem, and IMEX solvers given an unsplit
+  one, throw an `ArgumentError` naming the solvers that fit, instead of a
+  `MethodError` on the first step.
 
 ## 0.2.2
 

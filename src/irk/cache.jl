@@ -16,6 +16,7 @@ mutable struct ImplicitRungeKuttaCache{
 end
 
 function RungeKuttaCache(problem::AbstractInitialValueProblem, solver::ImplicitRungeKuttaSolver)
+    check_unsplit_rhs(problem.rhs, solver)
     @↓ u0 = problem
     @↓ s = solver.tableau
     n = m = 1

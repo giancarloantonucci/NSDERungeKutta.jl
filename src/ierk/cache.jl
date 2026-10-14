@@ -18,6 +18,7 @@ end
 function RungeKuttaCache(
     problem::AbstractInitialValueProblem, solver::ImplicitExplicitRungeKuttaSolver
 )
+    check_split_rhs(problem.rhs, solver)
     @↓ u0 = problem
     @↓ s = solver.implicitableau
     n = m = 1

@@ -81,3 +81,27 @@ end
     @test_throws ArgumentError NP(εᵣ=-1.0)
     @test_throws ArgumentError NP(Mₙ=0)
 end
+
+@testset "solver families refuse right-hand sides they cannot integrate" begin
+    split = IVP(-1.0, (u, t) -> u, [1.0], (0.0, 1.0))
+    unsplit = Logistic(0.3, (0.0, 1.0))
+    message(f) =
+        try
+            f()
+            ""
+        catch e
+            e isa ArgumentError ? e.msg : rethrow()
+        end
+    for solver in (SDIRK2(h=0.1), RadauIIA3(h=0.1))
+        msg = message(() -> solve(split, solver))
+        @test occursin("SplitRightHandSide", msg) && occursin("IMEX", msg)
+        # refused when the cache is built, before any step
+        @test_throws ArgumentError initialize_cache(split, solver)
+    end
+    msg = message(() -> solve(unsplit, IMEXEuler(h=0.1)))
+    @test occursin("needs a `SplitRightHandSide`", msg)
+    @test_throws ArgumentError initialize_cache(unsplit, IMEXEuler(h=0.1))
+    # the supported pairings still solve
+    @test solve(unsplit, SDIRK2(h=0.1)).t[end] == 1.0
+    @test solve(split, IMEXEuler(h=0.1)).t[end] == 1.0
+end
