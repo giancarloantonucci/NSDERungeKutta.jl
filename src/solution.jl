@@ -109,13 +109,13 @@ function (solution::RungeKuttaSolution)(tₚ::Real)
 end
 
 """
-    (solution::RungeKuttaSolution)(tₚ::Real, f::Function)
+    (solution::RungeKuttaSolution)(tₚ::Real, f)
 
 uses cubic Hermite splines to interpolate `solution` and approximate its value
-at `tₚ`. It needs the derivative function `f(u, t)`, for example the
-right-hand side of the problem.
+at `tₚ`. It needs the derivative `f(u, t)`: a function, or the right-hand side
+of the problem.
 """
-function (solution::RungeKuttaSolution)(tₚ::Real, f::Function)
+function (solution::RungeKuttaSolution)(tₚ::Real, f::Union{Function,AbstractRightHandSide})
     @↓ u, t = solution
     N = length(t)
     if tₚ < t[1]

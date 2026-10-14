@@ -130,3 +130,22 @@ end
     )
     @test sum(length, rejected.stepsizes.rejected) > 0
 end
+
+@testset "interpolation" begin
+    problem = Logistic(0.3, (0.0, 1.0))
+    exact(t) = 0.3 * exp(t) / (1 + 0.3 * (exp(t) - 1))
+    solution = solve(problem, RK4(h=0.25))
+    # Cubic Hermite with the problem's own right-hand side or a plain function
+    hermite = solution(0.3, problem.rhs)
+    @test hermite == solution(0.3, (u, t) -> problem.rhs(u, t))
+    @test abs(hermite[1] - exact(0.3)) < abs(solution(0.3)[1] - exact(0.3)) / 100
+    # Outside the grid every form returns the end value
+    @test solution(-1.0, problem.rhs) == solution.u[1]
+    @test solution(2.0, problem.rhs) == solution.u[end]
+    dense = solve(problem, Euler(h=0.25); dense=true)
+    tableau = Euler(h=0.25).tableau
+    @test dense(-1.0, tableau) == dense.u[1]
+    @test dense(2.0, tableau) == dense.u[end]
+    # Without stored stages the dense form falls back to linear interpolation
+    @test solution(0.3, tableau) == solution(0.3)
+end

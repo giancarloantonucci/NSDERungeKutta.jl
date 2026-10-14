@@ -50,6 +50,8 @@ Requires NSDEBase 0.4.
   the time compensation; a step that cannot advance time raises `StepFailure`.
 - Solution assignment copies its input; component labels, phase-plot keywords
   and unsupported stability inputs are handled correctly.
+- `solution(t, f)` accepts the problem's right-hand side, as documented, not
+  only a function.
 
 ## 0.2.2
 
