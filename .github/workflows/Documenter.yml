@@ -23,8 +23,8 @@ jobs:
           show-versioninfo: true
       - uses: julia-actions/cache@v3
 
-      # docs/Project.toml holds the documentation dependencies; the package
-      # itself is dev-ed from the checkout.
+      # Develop this checkout into the docs environment. Dependencies resolve
+      # from General under the package compatibility bounds.
       - name: Install dependencies
         shell: julia --color=yes --project=docs {0}
         run: |
